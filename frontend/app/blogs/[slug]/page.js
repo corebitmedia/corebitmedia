@@ -5,6 +5,12 @@ import StructuredData from '../../../components/StructuredData';
 
 export async function generateStaticParams() {
   const posts = await getBlogPosts();
+  // Next's `output: export` mode fails the whole build with a misleading
+  // "missing generateStaticParams()" error if this ever returns a truly
+  // empty array (e.g. the backend was unreachable at build time, or there
+  // are simply no published posts yet). A placeholder slug that resolves to
+  // notFound() below avoids that without needing real data to exist.
+  if (posts.length === 0) return [{ slug: '_none' }];
   return posts.map((p) => ({ slug: p.slug }));
 }
 

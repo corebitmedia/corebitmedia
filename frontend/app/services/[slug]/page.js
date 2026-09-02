@@ -8,6 +8,9 @@ import FaqSection from '../../../components/FaqSection';
 // Required for static export: tells Next.js which service pages to pre-render at build time
 export async function generateStaticParams() {
   const services = await getServices();
+  // See the same guard in blogs/[slug]/page.js — output: export fails the
+  // entire build on a truly empty generateStaticParams() array.
+  if (services.length === 0) return [{ slug: '_none' }];
   return services.map((s) => ({ slug: s.slug }));
 }
 

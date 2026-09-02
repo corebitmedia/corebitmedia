@@ -5,6 +5,9 @@ import StructuredData from '../../../components/StructuredData';
 
 export async function generateStaticParams() {
   const items = await getCaseStudies();
+  // See the same guard in blogs/[slug]/page.js — output: export fails the
+  // entire build on a truly empty generateStaticParams() array.
+  if (items.length === 0) return [{ slug: '_none' }];
   return items.map((c) => ({ slug: c.slug }));
 }
 
