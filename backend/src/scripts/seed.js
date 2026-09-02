@@ -458,7 +458,7 @@ A dashboard should lead to action. Ask: can a team member make a decision after 
 Final Thoughts
 A dashboard isn't just a report, it's a decision-making tool. When built right, real-time dashboards align teams, spotlight what matters, and turn raw data into real momentum. The winning formula: ask the right questions, use the right tools, design for clarity, and enable action.`,
         aiAnswerSummary: 'Real-time dashboards drive action when built around specific decisions (not raw data), using tools like Looker Studio, Power BI, or Tableau, with automated refresh and clear, actionable visual design.',
-        metaTitle: 'From Data to Decisions: Building Real-Time Dashboards That Drive Action',
+        metaTitle: 'From Data to Decisions: Real-Time Dashboards That Drive Action',
         metaDescription: 'A five-step framework for building real-time dashboards that actually drive decisions, not just display data.'
       },
       {
@@ -633,7 +633,7 @@ Track email open and click-through rates, lead-to-customer conversion rate, cust
 Can CRM marketing automation improve customer retention, not just new leads?
 Yes — automated renewal reminders, loyalty campaigns, and re-engagement sequences are highly effective at keeping existing customers active and reducing churn.`,
         aiAnswerSummary: 'CRM marketing automation combines customer data with automated workflows (email/SMS triggers, lead scoring, segmentation) to nurture leads and retain customers without manual repetitive work.',
-        metaTitle: 'CRM Marketing Automation: What It Is, How It Works, and Why Your Business Needs It',
+        metaTitle: 'CRM Marketing Automation: What It Is & How It Works',
         metaDescription: 'A practical guide to CRM marketing automation — how it works, core benefits, key features, and how to get started.'
       },
       {
