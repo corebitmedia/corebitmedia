@@ -20,7 +20,10 @@ async function request(path, { method = 'GET', body, isForm = false } = {}) {
     body: isForm ? body : body ? JSON.stringify(body) : undefined
   });
 
-  if (res.status === 401) {
+  // A 401 on the login call itself just means wrong credentials, not an
+  // expired session — let it fall through to the generic error handling
+  // below so the real "Invalid credentials" message reaches the user.
+  if (res.status === 401 && path !== '/api/auth/login') {
     localStorage.removeItem('cbm_token');
     window.location.href = '/admin/login';
     throw new Error('Session expired');
