@@ -71,10 +71,20 @@ router.delete('/admin/faqs/:id', requireAuth, requireRole('admin', 'editor'), as
   res.status(204).send();
 });
 
+// Simple RFC-5322-ish check — good enough to catch typos/junk without
+// rejecting real addresses; the actual proof an address works is the
+// confirmation email/reply, not this regex.
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 // Contact form - public submit, admin view
 router.post('/contact', async (req, res) => {
   const { name, email, phone, message, source, recaptchaToken } = req.body;
-  if (!name || !email) return res.status(400).json({ error: 'Name and email required' });
+  if (!name || !email || !phone) {
+    return res.status(400).json({ error: 'Name, email and phone are required' });
+  }
+  if (!EMAIL_RE.test(email)) {
+    return res.status(400).json({ error: 'Please enter a valid email address' });
+  }
   if (!(await verifyRecaptcha(recaptchaToken))) {
     return res.status(400).json({ error: 'reCAPTCHA verification failed — please try again.' });
   }

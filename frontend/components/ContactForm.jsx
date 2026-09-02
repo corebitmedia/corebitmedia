@@ -11,6 +11,7 @@ export default function ContactForm() {
     firstName: '', lastName: '', email: '', phone: '', company: '', website: '', message: ''
   });
   const [status, setStatus] = useState('idle'); // idle | sending | sent | error
+  const [errorMessage, setErrorMessage] = useState('');
   const [recaptchaError, setRecaptchaError] = useState(false);
 
   async function handleSubmit(e) {
@@ -41,10 +42,14 @@ export default function ContactForm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email: form.email, phone: form.phone, message, source: 'contact-us-page', recaptchaToken })
       });
-      if (!res.ok) throw new Error('Failed');
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Failed');
+      }
       setStatus('sent');
       setForm({ firstName: '', lastName: '', email: '', phone: '', company: '', website: '', message: '' });
-    } catch {
+    } catch (err) {
+      setErrorMessage(err.message === 'Failed' ? '' : err.message);
       setStatus('error');
     } finally {
       if (RECAPTCHA_SITE_KEY && window.grecaptcha) window.grecaptcha.reset();
@@ -99,7 +104,11 @@ export default function ContactForm() {
         {status === 'sending' ? 'Sending…' : 'Send Message'}
       </button>
       {recaptchaError && <p style={{ color: '#dc2626', marginTop: 10, fontSize: 13 }}>Please complete the reCAPTCHA check.</p>}
-      {status === 'error' && <p style={{ color: '#dc2626', marginTop: 10, fontSize: 13 }}>Something went wrong — please try again or email us directly.</p>}
+      {status === 'error' && (
+        <p style={{ color: '#dc2626', marginTop: 10, fontSize: 13 }}>
+          {errorMessage || 'Something went wrong — please try again or email us directly.'}
+        </p>
+      )}
     </form>
   );
 }
