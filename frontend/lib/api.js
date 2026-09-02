@@ -7,7 +7,12 @@ const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 async function safeFetch(path, fallback) {
   try {
-    const res = await fetch(`${API_BASE}${path}`, { cache: 'no-store' });
+    // No cache option here on purpose: `{ cache: 'no-store' }` forces dynamic
+    // rendering, which Next.js's `output: 'export'` (static export) does not
+    // support and fails the build on. These fetches only ever run once, at
+    // `next build` time, so the default (cached-per-build) behavior is what
+    // we want anyway.
+    const res = await fetch(`${API_BASE}${path}`);
     if (!res.ok) return fallback;
     return await res.json();
   } catch (err) {
