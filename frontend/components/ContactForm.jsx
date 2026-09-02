@@ -1,17 +1,32 @@
 'use client';
 
 import { useState } from 'react';
+import Script from 'next/script';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
+const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
 
 export default function ContactForm() {
   const [form, setForm] = useState({
     firstName: '', lastName: '', email: '', phone: '', company: '', website: '', message: ''
   });
   const [status, setStatus] = useState('idle'); // idle | sending | sent | error
+  const [recaptchaError, setRecaptchaError] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
+    setRecaptchaError(false);
+
+    // grecaptcha only exists once the widget script has loaded and rendered
+    // (skipped entirely if no site key is configured, e.g. local dev).
+    const recaptchaToken = RECAPTCHA_SITE_KEY && window.grecaptcha
+      ? window.grecaptcha.getResponse()
+      : null;
+    if (RECAPTCHA_SITE_KEY && !recaptchaToken) {
+      setRecaptchaError(true);
+      return;
+    }
+
     setStatus('sending');
     try {
       const name = [form.firstName, form.lastName].filter(Boolean).join(' ');
@@ -24,13 +39,15 @@ export default function ContactForm() {
       const res = await fetch(`${API_BASE}/api/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email: form.email, phone: form.phone, message, source: 'contact-us-page' })
+        body: JSON.stringify({ name, email: form.email, phone: form.phone, message, source: 'contact-us-page', recaptchaToken })
       });
       if (!res.ok) throw new Error('Failed');
       setStatus('sent');
       setForm({ firstName: '', lastName: '', email: '', phone: '', company: '', website: '', message: '' });
     } catch {
       setStatus('error');
+    } finally {
+      if (RECAPTCHA_SITE_KEY && window.grecaptcha) window.grecaptcha.reset();
     }
   }
 
@@ -58,6 +75,9 @@ export default function ContactForm() {
 
   return (
     <form className="card" onSubmit={handleSubmit}>
+      {RECAPTCHA_SITE_KEY && (
+        <Script src="https://www.google.com/recaptcha/api.js" strategy="lazyOnload" />
+      )}
       <div className="grid" style={{ gridTemplateColumns: '1fr 1fr', gap: 16 }}>
         <div>{field('First Name', 'firstName', { required: true })}</div>
         <div>{field('Last Name', 'lastName', { required: true })}</div>
@@ -72,9 +92,13 @@ export default function ContactForm() {
         onChange={(e) => setForm({ ...form, message: e.target.value })}
         style={{ width: '100%', padding: 10, marginBottom: 16, border: '1px solid var(--border)', borderRadius: 6, minHeight: 120 }}
       />
+      {RECAPTCHA_SITE_KEY && (
+        <div className="g-recaptcha" data-sitekey={RECAPTCHA_SITE_KEY} style={{ marginBottom: 16 }} />
+      )}
       <button type="submit" className="btn" disabled={status === 'sending'} style={{ width: '100%' }}>
         {status === 'sending' ? 'Sending…' : 'Send Message'}
       </button>
+      {recaptchaError && <p style={{ color: '#dc2626', marginTop: 10, fontSize: 13 }}>Please complete the reCAPTCHA check.</p>}
       {status === 'error' && <p style={{ color: '#dc2626', marginTop: 10, fontSize: 13 }}>Something went wrong — please try again or email us directly.</p>}
     </form>
   );
