@@ -1,30 +1,12 @@
 // Best-effort email notification for contact form submissions. Fully
-// optional: if SMTP env vars aren't set (or nodemailer isn't installed yet),
-// this quietly logs and returns instead of throwing — a submission always
-// saves to the database and shows up in the admin panel either way, whether
-// or not email is configured.
-
-let nodemailer;
-try {
-  nodemailer = require('nodemailer');
-} catch {
-  nodemailer = null;
-}
-
-let transporter = null;
-function getTransporter() {
-  if (transporter) return transporter;
-  if (!nodemailer || !process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
-    return null;
-  }
-  transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT) || 587,
-    secure: Number(process.env.SMTP_PORT) === 465,
-    auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
-  });
-  return transporter;
-}
+// optional: if RESEND_API_KEY isn't set, this quietly logs and returns
+// instead of throwing — a submission always saves to the database and shows
+// up in the admin panel either way, whether or not email is configured.
+//
+// Uses Resend's HTTP API (not raw SMTP) on purpose: Render's free tier
+// blocks outbound SMTP (ports 587/465) entirely, which made nodemailer time
+// out against every provider tried (Namecheap and Gmail alike) — a plain
+// HTTPS POST isn't subject to that block.
 
 function escapeHtml(str) {
   return String(str)
@@ -72,35 +54,46 @@ function buildContactEmailHtml(submission) {
 }
 
 async function sendContactNotification(submission) {
-  const t = getTransporter();
-  if (!t) {
-    if (!nodemailer) {
-      console.warn('[mailService] nodemailer not installed — run `npm install` in /backend to enable contact form emails. Submission was still saved.');
-    } else {
-      console.warn('[mailService] SMTP_HOST/SMTP_USER/SMTP_PASS not set in backend/.env — skipping email. Submission was still saved.');
-    }
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    console.warn('[mailService] RESEND_API_KEY not set — skipping email. Submission was still saved.');
     return;
   }
 
   const to = process.env.CONTACT_TO_EMAIL || 'sales@corebitmedia.com';
-  const from = process.env.SMTP_FROM || 'Core Bit Media <no-reply@corebitmedia.com>';
+  // Resend's shared sandbox sender works with no setup; swap in RESEND_FROM
+  // once corebitmedia.com's domain is verified with Resend for a branded
+  // "from" address instead.
+  const from = process.env.RESEND_FROM || 'Core Bit Media <onboarding@resend.dev>';
 
   try {
-    await t.sendMail({
-      from,
-      to,
-      replyTo: submission.email,
-      subject: `New contact form submission — ${submission.name}`,
-      text: [
-        `Name: ${submission.name}`,
-        `Email: ${submission.email}`,
-        submission.phone ? `Phone: ${submission.phone}` : null,
-        submission.source ? `Source: ${submission.source}` : null,
-        '',
-        submission.message || '(no message)'
-      ].filter(Boolean).join('\n'),
-      html: buildContactEmailHtml(submission)
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        from,
+        to,
+        reply_to: submission.email,
+        subject: `New contact form submission — ${submission.name}`,
+        text: [
+          `Name: ${submission.name}`,
+          `Email: ${submission.email}`,
+          submission.phone ? `Phone: ${submission.phone}` : null,
+          submission.source ? `Source: ${submission.source}` : null,
+          '',
+          submission.message || '(no message)'
+        ].filter(Boolean).join('\n'),
+        html: buildContactEmailHtml(submission)
+      })
     });
+
+    if (!res.ok) {
+      const body = await res.text().catch(() => '');
+      console.error('[mailService] Resend API error:', res.status, body);
+    }
   } catch (err) {
     console.error('[mailService] Failed to send contact notification email:', err.message);
   }
