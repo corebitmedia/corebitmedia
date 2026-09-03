@@ -297,7 +297,7 @@ export default async function HomePage() {
       </section>
 
       <section className="section gradient-purple" style={{ background: '#652A7D', color: 'white' }}>
-        <div className="container grid" style={{ gridTemplateColumns: '1fr 1fr', gap: 40, alignItems: 'center' }}>
+        <div className="container grid grid-2" style={{ gap: 40, alignItems: 'center' }}>
           <div>
             <h2 style={{ color: 'white' }}>Real Stories of Success</h2>
             <p className="eyebrow" style={{ color: '#f3c9ff', marginTop: 10 }}>Hear It Straight from Those Who&rsquo;ve Succeeded</p>

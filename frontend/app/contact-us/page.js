@@ -35,7 +35,7 @@ export default function ContactPage() {
       </section>
 
       <section className="section">
-        <div className="container grid" style={{ gridTemplateColumns: '1fr 1fr', gap: 48, alignItems: 'start' }}>
+        <div className="container grid grid-2" style={{ gap: 48, alignItems: 'start' }}>
           <div>
             <div className="eyebrow">Get In Touch</div>
             <h2>Claim Your Free Audit — Supercharge Your Campaigns!</h2>

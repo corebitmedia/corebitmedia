@@ -83,7 +83,7 @@ export default function ContactForm() {
       {RECAPTCHA_SITE_KEY && (
         <Script src="https://www.google.com/recaptcha/api.js" strategy="lazyOnload" />
       )}
-      <div className="grid" style={{ gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+      <div className="grid grid-2" style={{ gap: 16 }}>
         <div>{field('First Name', 'firstName', { required: true })}</div>
         <div>{field('Last Name', 'lastName', { required: true })}</div>
       </div>
