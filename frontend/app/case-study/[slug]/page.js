@@ -14,7 +14,17 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }) {
   const cs = await getCaseStudy(params.slug);
   if (!cs) return {};
-  return { title: cs.metaTitle || cs.title, description: cs.metaDescription };
+  return {
+    title: cs.metaTitle || cs.title,
+    description: cs.metaDescription,
+    alternates: { canonical: `/case-study/${cs.slug}/` },
+    openGraph: {
+      title: cs.metaTitle || cs.title,
+      description: cs.metaDescription,
+      url: `/case-study/${cs.slug}/`,
+      images: cs.coverImageUrl ? [cs.coverImageUrl] : []
+    }
+  };
 }
 
 // The backend stores `metrics` as a JSON column, but depending on the MySQL/MariaDB
@@ -41,9 +51,20 @@ export default async function CaseStudyDetailPage({ params }) {
   const allCaseStudies = await getCaseStudies();
   const moreCaseStudies = allCaseStudies.filter((c) => c.slug !== params.slug).slice(0, 3);
 
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.corebitmedia.com/' },
+      { '@type': 'ListItem', position: 2, name: 'Case Study', item: 'https://www.corebitmedia.com/case-study/' },
+      { '@type': 'ListItem', position: 3, name: cs.title, item: `https://www.corebitmedia.com/case-study/${cs.slug}/` }
+    ]
+  };
+
   return (
     <>
       <StructuredData data={cs.structuredData} />
+      <StructuredData data={breadcrumbSchema} />
       <section className="section" style={{ background: 'var(--bg-alt)' }}>
         <div className="container" style={{ maxWidth: 780 }}>
           <Link href="/case-study/" className="text-muted" style={{ fontSize: 14, display: 'inline-block', marginBottom: 16 }}>&larr; All Case Studies</Link>

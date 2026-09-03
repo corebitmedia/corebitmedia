@@ -20,7 +20,13 @@ export async function generateMetadata({ params }) {
   return {
     title: service.metaTitle || service.title,
     description: service.metaDescription || service.shortDescription,
-    openGraph: { images: service.heroImageUrl ? [service.heroImageUrl] : [] }
+    alternates: { canonical: `/services/${service.slug}/` },
+    openGraph: {
+      title: service.metaTitle || service.title,
+      description: service.metaDescription || service.shortDescription,
+      url: `/services/${service.slug}/`,
+      images: service.heroImageUrl ? [service.heroImageUrl] : []
+    }
   };
 }
 
@@ -229,9 +235,29 @@ export default async function ServiceDetailPage({ params }) {
   const parentService = service.parentId ? allServices.find((s) => s.id === service.parentId) : null;
   const childServices = allServices.filter((s) => s.parentId === service.id);
 
+  const breadcrumbItems = [
+    { name: 'Home', url: 'https://www.corebitmedia.com/' },
+    { name: 'Services', url: 'https://www.corebitmedia.com/services/' },
+    ...(parentService
+      ? [{ name: parentService.title, url: `https://www.corebitmedia.com/services/${parentService.slug}/` }]
+      : []),
+    { name: service.title, url: `https://www.corebitmedia.com/services/${service.slug}/` }
+  ];
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: breadcrumbItems.map((item, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: item.name,
+      item: item.url
+    }))
+  };
+
   return (
     <>
       <StructuredData data={service.structuredData} />
+      <StructuredData data={breadcrumbSchema} />
 
       {/* Live detail-page heroes carry no eyebrow line (that's specific to
           the /services/ listing hero) — just a heading, a short intro line,

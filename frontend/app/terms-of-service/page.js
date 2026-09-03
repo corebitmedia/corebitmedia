@@ -1,6 +1,7 @@
 export const metadata = {
   title: 'Terms of Service',
-  description: 'Terms of Service for Core Bit Media.'
+  description: 'Terms of Service for Core Bit Media.',
+  alternates: { canonical: '/terms-of-service/' }
 };
 
 // Verbatim from the live corebitmedia.com/terms-of-service/ page (WordPress

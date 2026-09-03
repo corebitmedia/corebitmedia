@@ -3,7 +3,8 @@ import { getCaseStudies } from '../../lib/api';
 
 export const metadata = {
   title: 'Case Study',
-  description: 'How Core Bit Media makes businesses boom — real results across SEO, PPC, and analytics.'
+  description: 'How Core Bit Media makes businesses boom — real results across SEO, PPC, and analytics.',
+  alternates: { canonical: '/case-study/' }
 };
 
 // The real site's card excerpt is an auto-generated 15-word trim of the case

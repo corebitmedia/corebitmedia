@@ -15,9 +15,20 @@ export const metadata = {
     template: '%s | Core Bit Media'
   },
   description: 'Strategic digital marketing for scalable growth — SEO, PPC, analytics, dashboards, and CRM marketing from Core Bit Media.',
+  alternates: {
+    canonical: '/'
+  },
+  icons: {
+    icon: 'https://www.corebitmedia.com/wp-content/uploads/2025/06/favicon.png',
+    apple: 'https://www.corebitmedia.com/wp-content/uploads/2025/06/favicon.png'
+  },
   openGraph: {
     siteName: 'Core Bit Media',
-    type: 'website'
+    type: 'website',
+    images: ['https://www.corebitmedia.com/wp-content/uploads/2025/07/logo-corebitmedia1-2.png']
+  },
+  twitter: {
+    card: 'summary_large_image'
   }
 };
 

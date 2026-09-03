@@ -4,7 +4,8 @@ import HeroAnimation from '../../components/HeroAnimation';
 
 export const metadata = {
   title: 'Contact Us',
-  description: 'Contact Us — Claim your Free Audit, Supercharge Your Campaigns! Get in touch with Core Bit Media for a free digital marketing audit.'
+  description: 'Contact Us — Claim your Free Audit, Supercharge Your Campaigns! Get in touch with Core Bit Media for a free digital marketing audit.',
+  alternates: { canonical: '/contact-us/' }
 };
 
 export default function ContactPage() {

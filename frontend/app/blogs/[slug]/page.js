@@ -20,7 +20,14 @@ export async function generateMetadata({ params }) {
   return {
     title: post.metaTitle || post.title,
     description: post.metaDescription || post.excerpt,
-    openGraph: { images: post.coverImageUrl ? [post.coverImageUrl] : [] }
+    alternates: { canonical: `/blogs/${post.slug}/` },
+    openGraph: {
+      title: post.metaTitle || post.title,
+      description: post.metaDescription || post.excerpt,
+      url: `/blogs/${post.slug}/`,
+      type: 'article',
+      images: post.coverImageUrl ? [post.coverImageUrl] : []
+    }
   };
 }
 
@@ -31,9 +38,41 @@ export default async function BlogPostPage({ params }) {
   const allPosts = await getBlogPosts();
   const morePosts = allPosts.filter((p) => p.slug !== params.slug).slice(0, 3);
 
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.corebitmedia.com/' },
+      { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://www.corebitmedia.com/blogs/' },
+      { '@type': 'ListItem', position: 3, name: post.title, item: `https://www.corebitmedia.com/blogs/${post.slug}/` }
+    ]
+  };
+
+  // Falls back to a computed Article schema when the CMS record doesn't
+  // already carry its own `structuredData` (e.g. not yet filled in via the
+  // AI SEO assistant) — Google's rich-result eligibility for articles
+  // depends on this being present, so every post should have one or the other.
+  const articleSchema = post.structuredData || {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: post.title,
+    description: post.metaDescription || post.excerpt,
+    image: post.coverImageUrl ? [post.coverImageUrl] : undefined,
+    datePublished: post.publishedAt || post.createdAt,
+    dateModified: post.updatedAt || post.publishedAt || post.createdAt,
+    author: { '@type': post.author?.name ? 'Person' : 'Organization', name: post.author?.name || 'Core Bit Media' },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Core Bit Media',
+      logo: { '@type': 'ImageObject', url: 'https://www.corebitmedia.com/wp-content/uploads/2025/07/logo-corebitmedia1-2.png' }
+    },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': `https://www.corebitmedia.com/blogs/${post.slug}/` }
+  };
+
   return (
     <>
-      <StructuredData data={post.structuredData} />
+      <StructuredData data={articleSchema} />
+      <StructuredData data={breadcrumbSchema} />
       <article className="section">
         <div className="container" style={{ maxWidth: 780 }}>
           <Link href="/blogs/" className="text-muted" style={{ fontSize: 14, display: 'inline-block', marginBottom: 16 }}>&larr; All Blogs</Link>

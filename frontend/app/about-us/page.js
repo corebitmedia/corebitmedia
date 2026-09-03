@@ -6,7 +6,8 @@ import Carousel from '../../components/Carousel';
 
 export const metadata = {
   title: 'About Us',
-  description: 'About Us — Strategic Digital Marketing for Scalable Growth. Core Bit Media — 10 years of collective experience delivering customized marketing and analytics services for measurable growth.'
+  description: 'About Us — Strategic Digital Marketing for Scalable Growth. Core Bit Media — 10 years of collective experience delivering customized marketing and analytics services for measurable growth.',
+  alternates: { canonical: '/about-us/' }
 };
 
 // Verbatim from the live site's About Us page (WordPress database export, Aug 2026).

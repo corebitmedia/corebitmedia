@@ -36,7 +36,8 @@ const SERVICE_TESTIMONIALS = [
 
 export const metadata = {
   title: 'Services',
-  description: 'Explore Core Bit Media\'s digital marketing, reporting, analytics, and CRM services built for scalable growth.'
+  description: 'Explore Core Bit Media\'s digital marketing, reporting, analytics, and CRM services built for scalable growth.',
+  alternates: { canonical: '/services/' }
 };
 
 // Verbatim from the live site's pricing table (WordPress database export, Aug 2026).

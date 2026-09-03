@@ -3,7 +3,8 @@ import { getBlogPosts } from '../../lib/api';
 
 export const metadata = {
   title: 'Blogs',
-  description: 'Insights on SEO, analytics, and digital marketing from the Core Bit Media team.'
+  description: 'Insights on SEO, analytics, and digital marketing from the Core Bit Media team.',
+  alternates: { canonical: '/blogs/' }
 };
 
 export default async function BlogsPage() {
