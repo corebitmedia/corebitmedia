@@ -64,7 +64,7 @@ export default async function BlogPostPage({ params }) {
     publisher: {
       '@type': 'Organization',
       name: 'Core Bit Media',
-      logo: { '@type': 'ImageObject', url: 'https://media.corebitmedia.com/wp-content/uploads/2025/07/logo-corebitmedia1-2.png' }
+      logo: { '@type': 'ImageObject', url: 'https://www.corebitmedia.com/media/uploads/2025/07/logo-corebitmedia1-2.png' }
     },
     mainEntityOfPage: { '@type': 'WebPage', '@id': `https://www.corebitmedia.com/blogs/${post.slug}/` }
   };

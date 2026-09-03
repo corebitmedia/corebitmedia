@@ -16,7 +16,7 @@ export default function ContactPage() {
         style={{
           color: 'white',
           padding: '56px 0',
-          backgroundImage: "linear-gradient(135deg, rgba(142,38,128,0.88), rgba(35,35,88,0.92)), url('https://media.corebitmedia.com/wp-content/uploads/2025/07/contact-banner.jpg')",
+          backgroundImage: "linear-gradient(135deg, rgba(142,38,128,0.88), rgba(35,35,88,0.92)), url('https://www.corebitmedia.com/media/uploads/2025/07/contact-banner.jpg')",
           backgroundSize: 'cover',
           backgroundPosition: 'center'
         }}

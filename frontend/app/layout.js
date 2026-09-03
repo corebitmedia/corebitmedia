@@ -19,13 +19,13 @@ export const metadata = {
     canonical: '/'
   },
   icons: {
-    icon: 'https://media.corebitmedia.com/wp-content/uploads/2025/06/favicon.png',
-    apple: 'https://media.corebitmedia.com/wp-content/uploads/2025/06/favicon.png'
+    icon: 'https://www.corebitmedia.com/media/uploads/2025/06/favicon.png',
+    apple: 'https://www.corebitmedia.com/media/uploads/2025/06/favicon.png'
   },
   openGraph: {
     siteName: 'Core Bit Media',
     type: 'website',
-    images: ['https://media.corebitmedia.com/wp-content/uploads/2025/07/logo-corebitmedia1-2.png']
+    images: ['https://www.corebitmedia.com/media/uploads/2025/07/logo-corebitmedia1-2.png']
   },
   twitter: {
     card: 'summary_large_image'
@@ -37,7 +37,7 @@ const orgSchema = {
   '@type': 'Organization',
   name: 'Core Bit Media',
   url: 'https://www.corebitmedia.com',
-  logo: 'https://media.corebitmedia.com/wp-content/uploads/2025/07/logo-corebitmedia1-2.png',
+  logo: 'https://www.corebitmedia.com/media/uploads/2025/07/logo-corebitmedia1-2.png',
   description: '10+ years of expertise delivering customized digital marketing and analytics services.',
   address: {
     '@type': 'PostalAddress',

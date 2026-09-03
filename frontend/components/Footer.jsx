@@ -71,7 +71,7 @@ export default function Footer() {
           }}
         >
           <img
-            src="https://media.corebitmedia.com/wp-content/uploads/2025/07/logo-corebitmedia1-2.png"
+            src="https://www.corebitmedia.com/media/uploads/2025/07/logo-corebitmedia1-2.png"
             alt="Core Bit Media"
             style={{ height: 36, width: 'auto', borderRadius: 10 }}
           />

@@ -1,4 +1,4 @@
-const MEDIA = 'https://media.corebitmedia.com/wp-content/uploads';
+const MEDIA = 'https://www.corebitmedia.com/media/uploads';
 
 // Partner/client badge strip — appears on Home, About Us, and Contact Us on
 // the live site as an auto-scrolling logo carousel (Elementor's
