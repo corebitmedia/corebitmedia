@@ -17,9 +17,16 @@ const app = express();
 
 app.use(helmet({ crossOriginResourcePolicy: false }));
 
-// Allow the production frontend + local dev servers (Next.js on 3000, Vite admin on 5173)
+// Allow the production frontend + local dev servers (Next.js on 3000, Vite admin on 5173).
+// FRONTEND_URL can be a single origin or a comma-separated list, since the
+// site is reachable at more than one live origin at once (apex + www,
+// the raw Vercel deployment URL, etc.) and forgetting one there shouldn't
+// need a code change here — the two production domains are hardcoded as a
+// baseline regardless of what's set.
 const allowedOrigins = [
-  process.env.FRONTEND_URL,
+  'https://corebitmedia.com',
+  'https://www.corebitmedia.com',
+  ...(process.env.FRONTEND_URL || '').split(',').map((o) => o.trim()),
   'http://localhost:3000',
   'http://localhost:5173',
   'http://127.0.0.1:5173'
@@ -27,7 +34,11 @@ const allowedOrigins = [
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
-    callback(new Error('Not allowed by CORS'));
+    // Reject without throwing — an uncaught CORS error falls through to the
+    // generic 500 handler below with no CORS headers attached at all, which
+    // browsers surface as an opaque "Failed to fetch" instead of a clean
+    // CORS rejection.
+    callback(null, false);
   }
 }));
 app.use(express.json({ limit: '2mb' }));
