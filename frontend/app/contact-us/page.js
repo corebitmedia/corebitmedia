@@ -47,8 +47,6 @@ export default function ContactPage() {
             <div style={{ marginTop: 32 }}>
               <p><strong>Address</strong></p>
               <p className="text-muted">Bestech Business Tower, Sector 66, Sahibzada Ajit Singh Nagar, Punjab 160055</p>
-              <p style={{ marginTop: 16 }}><strong>Phone</strong></p>
-              <p className="text-muted">+91-89686-61985</p>
               <p style={{ marginTop: 16 }}><strong>Email</strong></p>
               <p className="text-muted">sales@corebitmedia.com</p>
               <p style={{ marginTop: 16 }}><strong>Hours</strong></p>

@@ -301,7 +301,7 @@ export default async function HomePage() {
           <div>
             <h2 style={{ color: 'white' }}>Real Stories of Success</h2>
             <p className="eyebrow" style={{ color: '#f3c9ff', marginTop: 10 }}>Hear It Straight from Those Who&rsquo;ve Succeeded</p>
-            <a href="tel:+918968661985" className="btn" style={{ marginTop: 24, display: 'inline-block', background: 'white', color: 'var(--navy)' }}>Call Us Now</a>
+            <Link href="/contact-us/" className="btn" style={{ marginTop: 24, display: 'inline-block', background: 'white', color: 'var(--navy)' }}>Contact Us</Link>
           </div>
           {/* Real YouTube embed from the live site's own `video` widget on this
               section (WordPress export, post 7): youtube_url

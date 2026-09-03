@@ -49,7 +49,6 @@ const orgSchema = {
   },
   contactPoint: {
     '@type': 'ContactPoint',
-    telephone: '+91-89686-61985',
     contactType: 'sales',
     email: 'sales@corebitmedia.com'
   },

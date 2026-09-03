@@ -127,10 +127,6 @@ export default function Footer() {
               <span>Bestech Business Tower, Sector 66, Sahibzada Ajit Singh Nagar, Punjab 160055</span>
             </li>
             <li style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-              {ICONS.phone}
-              <a href="tel:+918968661985" style={{ color: 'white' }}>+91-89686-61985</a>
-            </li>
-            <li style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
               {ICONS.mail}
               <a href="mailto:sales@corebitmedia.com" style={{ color: 'white' }}>sales@corebitmedia.com</a>
             </li>
