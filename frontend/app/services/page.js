@@ -11,25 +11,25 @@ const SERVICE_TESTIMONIALS = [
   {
     name: 'Bindu',
     title: 'Marketing Agency',
-    image: 'https://www.corebitmedia.com/wp-content/uploads/2025/06/testimonial-1.jpg',
+    image: 'https://media.corebitmedia.com/wp-content/uploads/2025/06/testimonial-1.jpg',
     quote: "Since partnering with Core Bit Media, our website's visibility and organic traffic have experienced a remarkable boost. Their comprehensive strategies and commitment to staying ahead in SEO trends have truly set them apart. Thank you, Core Bit Media, for significantly enhancing our online presence."
   },
   {
     name: 'Sarah',
     title: 'Marketing manager',
-    image: 'https://www.corebitmedia.com/wp-content/uploads/2025/06/testimonial-2.jpg',
+    image: 'https://media.corebitmedia.com/wp-content/uploads/2025/06/testimonial-2.jpg',
     quote: 'Core Bit Media Agency delivered outstanding results in GA4 implementation, GTM setup, reporting, and SEO optimization. Their expertise in Google Analytics 4 and Tag Manager streamlined our tracking processes. The comprehensive reports provided valuable insights, and their SEO strategies significantly boosted our online visibility.'
   },
   {
     name: 'Hayley',
     title: 'Marketing Head',
-    image: 'https://www.corebitmedia.com/wp-content/uploads/2025/06/testimonial-3.jpg',
+    image: 'https://media.corebitmedia.com/wp-content/uploads/2025/06/testimonial-3.jpg',
     quote: 'Core Bit Media has truly elevated our online presence through their stellar management of our Google Ads campaigns. Their strategic approach and attention to detail have resulted in a significant increase in both clicks and conversions.'
   },
   {
     name: 'Martin',
     title: 'Marketing Operations',
-    image: 'https://www.corebitmedia.com/wp-content/uploads/2025/06/testimonial-4.jpg',
+    image: 'https://media.corebitmedia.com/wp-content/uploads/2025/06/testimonial-4.jpg',
     quote: 'Hats off to Core Bit Media Agency for their outstanding work on custom tracking in Google Analytics 4, Google Ads and Facebook Ads using GTM. The meticulous implementation of custom tracking solutions has provided us with unparalleled insights, empowering our marketing strategies.'
   }
 ];
@@ -105,7 +105,7 @@ export default async function ServicesPage() {
         style={{
           color: 'white',
           padding: '56px 0',
-          backgroundImage: "linear-gradient(135deg, rgba(142,38,128,0.88), rgba(35,35,88,0.92)), url('https://www.corebitmedia.com/wp-content/uploads/2025/07/services-banner.jpg')",
+          backgroundImage: "linear-gradient(135deg, rgba(142,38,128,0.88), rgba(35,35,88,0.92)), url('https://media.corebitmedia.com/wp-content/uploads/2025/07/services-banner.jpg')",
           backgroundSize: 'cover',
           backgroundPosition: 'center'
         }}
@@ -132,7 +132,7 @@ export default async function ServicesPage() {
           <div className="row align-items-center g-5">
             <div className="col-lg-5">
               <img
-                src="https://www.corebitmedia.com/wp-content/uploads/2025/06/inner-hero2-img.png"
+                src="https://media.corebitmedia.com/wp-content/uploads/2025/06/inner-hero2-img.png"
                 alt="Marketing analytics dashboard"
                 style={{ width: '100%', maxWidth: 380, margin: '0 auto', display: 'block' }}
               />
@@ -211,7 +211,7 @@ export default async function ServicesPage() {
           <div className="col-lg-5">
             <div style={{ background: '#F4EFF6', borderRadius: 10, padding: 20 }}>
               <img
-                src="https://www.corebitmedia.com/wp-content/uploads/2025/06/digital-solutions-img.png"
+                src="https://media.corebitmedia.com/wp-content/uploads/2025/06/digital-solutions-img.png"
                 alt="Digital solutions"
                 style={{ width: '100%', display: 'block' }}
               />

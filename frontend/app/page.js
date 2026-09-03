@@ -13,25 +13,25 @@ const REAL_TESTIMONIALS = [
   {
     name: 'Bindu',
     title: 'Marketing Agency',
-    image: 'https://www.corebitmedia.com/wp-content/uploads/2025/06/testimonial-1.jpg',
+    image: 'https://media.corebitmedia.com/wp-content/uploads/2025/06/testimonial-1.jpg',
     quote: "Since partnering with Core Bit Media, our website's visibility and organic traffic have experienced a remarkable boost. Their comprehensive strategies and commitment to staying ahead in SEO trends have truly set them apart. Thank you, Core Bit Media, for significantly enhancing our online presence."
   },
   {
     name: 'Sarah',
     title: 'Marketing manager',
-    image: 'https://www.corebitmedia.com/wp-content/uploads/2025/06/testimonial-2.jpg',
+    image: 'https://media.corebitmedia.com/wp-content/uploads/2025/06/testimonial-2.jpg',
     quote: 'Core Bit Media Agency delivered outstanding results in GA4 implementation, GTM setup, reporting, and SEO optimization. Their expertise in Google Analytics 4 and Tag Manager streamlined our tracking processes. The comprehensive reports provided valuable insights, and their SEO strategies significantly boosted our online visibility.'
   },
   {
     name: 'Hayley',
     title: 'Marketing Head',
-    image: 'https://www.corebitmedia.com/wp-content/uploads/2025/06/testimonial-3.jpg',
+    image: 'https://media.corebitmedia.com/wp-content/uploads/2025/06/testimonial-3.jpg',
     quote: 'Core Bit Media has truly elevated our online presence through their stellar management of our Google Ads campaigns. Their strategic approach and attention to detail have resulted in a significant increase in both clicks and conversions.'
   },
   {
     name: 'Martin',
     title: 'Marketing Operations',
-    image: 'https://www.corebitmedia.com/wp-content/uploads/2025/06/testimonial-4.jpg',
+    image: 'https://media.corebitmedia.com/wp-content/uploads/2025/06/testimonial-4.jpg',
     quote: 'Hats off to Core Bit Media Agency for their outstanding work on custom tracking in Google Analytics 4, Google Ads and Facebook Ads using GTM. The meticulous implementation of custom tracking solutions has provided us with unparalleled insights, empowering our marketing strategies.'
   }
 ];
@@ -59,10 +59,10 @@ const STEPS = ['Discover & Validate', 'Design & Build', 'Launch & Promote', 'Mea
 // widget, not the DB's default listing order.
 const IMPACT_SERVICE_ORDER = ['digital-marketing', 'reporting-and-dashboards', 'analytics-tms', 'crm-marketing'];
 const IMPACT_SERVICE_FALLBACK = [
-  { slug: 'digital-marketing', title: 'Digital Marketing', shortDescription: 'End-to-end omnichannel services to promote businesses online.', iconUrl: 'https://www.corebitmedia.com/wp-content/uploads/2025/07/dm-img.jpg' },
-  { slug: 'reporting-and-dashboards', title: 'Dashboards', shortDescription: 'Interactive dashboards with real-time KPI insights.', iconUrl: 'https://www.corebitmedia.com/wp-content/uploads/2025/06/s2.jpg' },
-  { slug: 'analytics-tms', title: 'Analytics & TMS', shortDescription: 'Manage all your digital marketing apps from one location.', iconUrl: 'https://www.corebitmedia.com/wp-content/uploads/2025/06/s4.jpg' },
-  { slug: 'crm-marketing', title: 'CRM & Marketing', shortDescription: 'Expert CRM and campaigns across every major platform.', iconUrl: 'https://www.corebitmedia.com/wp-content/uploads/2025/06/s3.jpg' }
+  { slug: 'digital-marketing', title: 'Digital Marketing', shortDescription: 'End-to-end omnichannel services to promote businesses online.', iconUrl: 'https://media.corebitmedia.com/wp-content/uploads/2025/07/dm-img.jpg' },
+  { slug: 'reporting-and-dashboards', title: 'Dashboards', shortDescription: 'Interactive dashboards with real-time KPI insights.', iconUrl: 'https://media.corebitmedia.com/wp-content/uploads/2025/06/s2.jpg' },
+  { slug: 'analytics-tms', title: 'Analytics & TMS', shortDescription: 'Manage all your digital marketing apps from one location.', iconUrl: 'https://media.corebitmedia.com/wp-content/uploads/2025/06/s4.jpg' },
+  { slug: 'crm-marketing', title: 'CRM & Marketing', shortDescription: 'Expert CRM and campaigns across every major platform.', iconUrl: 'https://media.corebitmedia.com/wp-content/uploads/2025/06/s3.jpg' }
 ];
 
 // Real values + alternating card backgrounds from the live site's 4 counter
@@ -94,7 +94,7 @@ export default async function HomePage() {
         style={{
           color: 'white',
           padding: '64px 0',
-          backgroundImage: "linear-gradient(135deg, rgba(142,38,128,0.88), rgba(35,35,88,0.92)), url('https://www.corebitmedia.com/wp-content/uploads/2025/07/home-hero-banner.jpg')",
+          backgroundImage: "linear-gradient(135deg, rgba(142,38,128,0.88), rgba(35,35,88,0.92)), url('https://media.corebitmedia.com/wp-content/uploads/2025/07/home-hero-banner.jpg')",
           backgroundSize: 'cover',
           backgroundPosition: 'center'
         }}

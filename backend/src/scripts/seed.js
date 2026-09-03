@@ -8,9 +8,9 @@ const { sequelize, User, Service, BlogPost, CaseStudy, Testimonial, Faq, SiteSet
 // IMPORTANT: images are served from the live site's OWN domain, not the
 // grincloudhost.com host that appeared in the database dump (that host was a
 // staging/migration copy and returns 404 for these files — confirmed by
-// direct fetch). www.corebitmedia.com/wp-content/uploads/... is the real,
+// direct fetch). media.corebitmedia.com/wp-content/uploads/... is the real,
 // currently-live media path.
-const MEDIA = 'https://www.corebitmedia.com/wp-content/uploads';
+const MEDIA = 'https://media.corebitmedia.com/wp-content/uploads';
 
 async function seed() {
   await sequelize.sync();
@@ -536,7 +536,7 @@ AI tools are incredibly powerful, but they're only as good as your strategy. Aut
         slug: 'ga4-vs-adobe-analytics-which-is-right-for-your-business-in-2026',
         title: 'GA4 vs Adobe Analytics: Which Is Right for Your Business in 2026',
         excerpt: 'Explore the key differences between GA4 and Adobe Analytics and discover which platform fits your business needs in 2026.',
-        coverImageUrl: 'https://www.corebitmedia.com/wp-content/uploads/2026/08/GA4-vs-Adobe-Analytics.png',
+        coverImageUrl: 'https://media.corebitmedia.com/wp-content/uploads/2026/08/GA4-vs-Adobe-Analytics.png',
         category: 'Digital Marketing',
         tags: ['GA4', 'Adobe Analytics'],
         authorId: admin.id,
@@ -583,7 +583,7 @@ That changes the calculus — if you're already using other Adobe tools, Adobe A
         slug: 'crm-marketing-automation-what-it-is-how-it-works-and-why-your-business-needs-it',
         title: 'CRM Marketing Automation: What It Is, How It Works, and Why Your Business Needs It',
         excerpt: 'A practical guide to CRM marketing automation — how it works, its core benefits, key features to look for, and how to get started.',
-        coverImageUrl: 'https://www.corebitmedia.com/wp-content/uploads/2026/08/1af0bf18-1ac3-412a-980d-a5b9eb55e018.png',
+        coverImageUrl: 'https://media.corebitmedia.com/wp-content/uploads/2026/08/1af0bf18-1ac3-412a-980d-a5b9eb55e018.png',
         category: 'Digital Marketing',
         tags: ['CRM', 'Marketing Automation'],
         authorId: admin.id,
@@ -640,7 +640,7 @@ Yes — automated renewal reminders, loyalty campaigns, and re-engagement sequen
         slug: 'how-to-rank-in-ai-search-results-in-2026-a-practical-geo-aeo-playbook-for-growing-brands',
         title: 'How to Rank in AI Search Results in 2026: A Practical GEO & AEO Playbook for Growing Brands',
         excerpt: 'A step-by-step guide to getting cited by ChatGPT, Perplexity & Google AI Overviews in 2026 — content structure, schema markup, entity signals, and a free GEO checklist.',
-        coverImageUrl: 'https://www.corebitmedia.com/wp-content/uploads/2026/08/95ceeaca-b114-4d0c-aaf3-c03d54cb91ad.png',
+        coverImageUrl: 'https://media.corebitmedia.com/wp-content/uploads/2026/08/95ceeaca-b114-4d0c-aaf3-c03d54cb91ad.png',
         category: 'Digital Marketing',
         tags: ['GEO', 'AEO', 'AI Search'],
         authorId: admin.id,

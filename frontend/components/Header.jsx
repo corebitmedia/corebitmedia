@@ -36,7 +36,7 @@ export default function Header({ services = [] }) {
       <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 76, position: 'relative' }}>
         <Link href="/" style={{ display: 'flex', alignItems: 'center' }}>
           <img
-            src="https://www.corebitmedia.com/wp-content/uploads/2025/07/logo-corebitmedia1-2.png"
+            src="https://media.corebitmedia.com/wp-content/uploads/2025/07/logo-corebitmedia1-2.png"
             alt="Core Bit Media — Unlocking Your Digital Potential"
             style={{ height: 58, width: 'auto' }}
           />

@@ -37,11 +37,11 @@ export async function generateMetadata({ params }) {
 // (confirmed — it's not a substitution we're introducing), so reusing it here
 // matches the source rather than deviating from it.
 const SUPPORTING_IMAGE = {
-  'digital-marketing': 'https://www.corebitmedia.com/wp-content/uploads/2025/06/90826.jpg',
-  'paid-ads-ppc': 'https://www.corebitmedia.com/wp-content/uploads/2025/06/6402635_3270759-e1751284787491.jpg',
-  'reporting-and-dashboards': 'https://www.corebitmedia.com/wp-content/uploads/2025/06/25025577_7038058-scaled.jpg',
-  'analytics-tms': 'https://www.corebitmedia.com/wp-content/uploads/2025/06/25025577_7038058-scaled.jpg',
-  'crm-marketing': 'https://www.corebitmedia.com/wp-content/uploads/2025/06/25025577_7038058-scaled.jpg'
+  'digital-marketing': 'https://media.corebitmedia.com/wp-content/uploads/2025/06/90826.jpg',
+  'paid-ads-ppc': 'https://media.corebitmedia.com/wp-content/uploads/2025/06/6402635_3270759-e1751284787491.jpg',
+  'reporting-and-dashboards': 'https://media.corebitmedia.com/wp-content/uploads/2025/06/25025577_7038058-scaled.jpg',
+  'analytics-tms': 'https://media.corebitmedia.com/wp-content/uploads/2025/06/25025577_7038058-scaled.jpg',
+  'crm-marketing': 'https://media.corebitmedia.com/wp-content/uploads/2025/06/25025577_7038058-scaled.jpg'
 };
 
 // Real per-page CTA copy from each live service page's own mid-page CTA band
