@@ -93,7 +93,7 @@ export default async function HomePage() {
         className="gradient-purple"
         style={{
           color: 'white',
-          padding: '64px 0',
+          padding: '44px 0',
           backgroundImage: "linear-gradient(135deg, rgba(142,38,128,0.72), rgba(35,35,88,0.8)), url('https://www.corebitmedia.com/media/uploads/2025/07/home-hero-banner.jpg')",
           backgroundSize: 'cover',
           backgroundPosition: 'center'
@@ -110,7 +110,7 @@ export default async function HomePage() {
               </div>
             </div>
             <div className="col-lg-5 mt-5 mt-lg-0">
-              <HeroAnimation maxWidth={520} />
+              <HeroAnimation maxWidth={340} />
             </div>
           </div>
         </div>
