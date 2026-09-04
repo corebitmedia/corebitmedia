@@ -78,11 +78,18 @@ h3 { font-size: 20px; }
    site actually uses (row, col-lg-{3,5,7,9}, g-4/g-5, align-items-*, mt-5,
    mt-lg-0) — replaces a full bootstrap.min.css import (~200KB) that was
    otherwise loaded for about a dozen rules. */
-.row { display: flex; flex-wrap: wrap; gap: 24px; } /* Bootstrap's default 1.5rem gutter */
+/* Bootstrap's actual gutter technique — negative margin on .row, matching
+   padding on each column, box-sizing:border-box — not a flexbox `gap`.
+   That matters: col-lg-7 + col-lg-5 already sum to exactly 100% width, so
+   adding a `gap` on top (rather than eating it out of each column's own
+   box) pushes their combined width past the row and flex-wrap drops the
+   second column onto its own line underneath instead of beside the first. */
+.row { display: flex; flex-wrap: wrap; margin-left: -12px; margin-right: -12px; row-gap: 24px; }
+.row > * { padding-left: 12px; padding-right: 12px; box-sizing: border-box; }
 .align-items-center { align-items: center; }
 .align-items-stretch { align-items: stretch; }
-.g-4 { gap: 24px; }
-.g-5 { gap: 48px; }
+.g-5 { margin-left: -24px; margin-right: -24px; row-gap: 48px; }
+.g-5 > * { padding-left: 24px; padding-right: 24px; }
 .mt-5 { margin-top: 48px; }
 .col { flex: 1 0 0%; }
 [class*="col-lg-"], [class*="col-sm-"] { width: 100%; }
