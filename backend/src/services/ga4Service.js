@@ -21,7 +21,15 @@ function getAuthUrl(state) {
   return client.generateAuthUrl({
     access_type: 'offline',
     prompt: 'consent', // forces a refresh token even on repeat connects
-    scope: ['https://www.googleapis.com/auth/analytics.readonly'],
+    // userinfo.email is needed to identify *which* Google account
+    // connected (so repeat connects update the same Ga4Connection row
+    // instead of creating duplicates) — without it, oauth2.userinfo.get()
+    // in exchangeCode() fails with "missing required authentication
+    // credential" because the access token has no scope covering it.
+    scope: [
+      'https://www.googleapis.com/auth/analytics.readonly',
+      'https://www.googleapis.com/auth/userinfo.email'
+    ],
     state
   });
 }
