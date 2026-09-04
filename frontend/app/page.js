@@ -94,7 +94,7 @@ export default async function HomePage() {
         style={{
           color: 'white',
           padding: '64px 0',
-          backgroundImage: "linear-gradient(135deg, rgba(142,38,128,0.88), rgba(35,35,88,0.92)), url('https://www.corebitmedia.com/media/uploads/2025/07/home-hero-banner.jpg')",
+          backgroundImage: "linear-gradient(135deg, rgba(142,38,128,0.72), rgba(35,35,88,0.8)), url('https://www.corebitmedia.com/media/uploads/2025/07/home-hero-banner.jpg')",
           backgroundSize: 'cover',
           backgroundPosition: 'center'
         }}
@@ -110,7 +110,7 @@ export default async function HomePage() {
               </div>
             </div>
             <div className="col-lg-5 mt-5 mt-lg-0">
-              <HeroAnimation />
+              <HeroAnimation maxWidth={520} />
             </div>
           </div>
         </div>

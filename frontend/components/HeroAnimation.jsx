@@ -41,8 +41,8 @@ export default function HeroAnimation({ maxWidth = 420 }) {
           width: '86%',
           aspectRatio: '1 / 1',
           borderRadius: '50%',
-          background: 'rgba(255,255,255,0.12)',
-          border: '1px dashed rgba(255,255,255,0.35)'
+          background: 'rgba(255,255,255,0.05)',
+          border: '1px dashed rgba(255,255,255,0.3)'
         }}
       />
       {ready && (
