@@ -53,14 +53,16 @@ function buildContactEmailHtml(submission) {
 </div>`;
 }
 
-async function sendContactNotification(submission) {
+// Shared Resend send — both sendContactNotification and
+// sendGa4LeadNotification go through this so there's one place handling
+// the missing-API-key/network-failure "best effort, never throw" contract.
+async function sendEmail({ to, subject, text, html, replyTo }) {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
-    console.warn('[mailService] RESEND_API_KEY not set — skipping email. Submission was still saved.');
+    console.warn('[mailService] RESEND_API_KEY not set — skipping email.');
     return;
   }
 
-  const to = process.env.CONTACT_TO_EMAIL || 'sales@corebitmedia.com';
   // Resend's shared sandbox sender works with no setup; swap in RESEND_FROM
   // once corebitmedia.com's domain is verified with Resend for a branded
   // "from" address instead.
@@ -73,21 +75,7 @@ async function sendContactNotification(submission) {
         Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        from,
-        to,
-        reply_to: submission.email,
-        subject: `New contact form submission — ${submission.name}`,
-        text: [
-          `Name: ${submission.name}`,
-          `Email: ${submission.email}`,
-          submission.phone ? `Phone: ${submission.phone}` : null,
-          submission.source ? `Source: ${submission.source}` : null,
-          '',
-          submission.message || '(no message)'
-        ].filter(Boolean).join('\n'),
-        html: buildContactEmailHtml(submission)
-      })
+      body: JSON.stringify({ from, to, reply_to: replyTo, subject, text, html })
     });
 
     if (!res.ok) {
@@ -95,8 +83,57 @@ async function sendContactNotification(submission) {
       console.error('[mailService] Resend API error:', res.status, body);
     }
   } catch (err) {
-    console.error('[mailService] Failed to send contact notification email:', err.message);
+    console.error('[mailService] Failed to send email:', err.message);
   }
 }
 
-module.exports = { sendContactNotification };
+async function sendContactNotification(submission) {
+  const to = process.env.CONTACT_TO_EMAIL || 'sales@corebitmedia.com';
+  await sendEmail({
+    to,
+    replyTo: submission.email,
+    subject: `New contact form submission — ${submission.name}`,
+    text: [
+      `Name: ${submission.name}`,
+      `Email: ${submission.email}`,
+      submission.phone ? `Phone: ${submission.phone}` : null,
+      submission.source ? `Source: ${submission.source}` : null,
+      '',
+      submission.message || '(no message)'
+    ].filter(Boolean).join('\n'),
+    html: buildContactEmailHtml(submission)
+  });
+}
+
+// New lead from the GA4 self-serve report tool (see routes/ga4Routes.js) —
+// fires when someone provides their name/email while generating a report.
+async function sendGa4LeadNotification({ leadName, leadEmail, propertyDisplayName, shareUrl }) {
+  const to = process.env.CONTACT_TO_EMAIL || 'sales@corebitmedia.com';
+  await sendEmail({
+    to,
+    replyTo: leadEmail,
+    subject: `New GA4 report lead — ${leadName || leadEmail}`,
+    text: [
+      `Name: ${leadName || '(not provided)'}`,
+      `Email: ${leadEmail}`,
+      propertyDisplayName ? `GA4 Property: ${propertyDisplayName}` : null,
+      `Report: ${shareUrl}`
+    ].filter(Boolean).join('\n'),
+    html: `
+<div style="font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f5f7fa;padding:32px 16px;">
+  <div style="max-width:560px;margin:0 auto;background:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #e2e8f0;">
+    <div style="background:#0b1f3a;padding:20px 28px;">
+      <span style="color:#ffffff;font-size:18px;font-weight:700;">New GA4 Report Lead</span>
+    </div>
+    <div style="padding:24px 28px;font-size:14px;color:#1a2233;line-height:1.8;">
+      <p><strong>Name:</strong> ${escapeHtml(leadName || '(not provided)')}</p>
+      <p><strong>Email:</strong> ${escapeHtml(leadEmail)}</p>
+      ${propertyDisplayName ? `<p><strong>GA4 Property:</strong> ${escapeHtml(propertyDisplayName)}</p>` : ''}
+      <p><strong>Report:</strong> <a href="${escapeHtml(shareUrl)}">${escapeHtml(shareUrl)}</a></p>
+    </div>
+  </div>
+</div>`
+  });
+}
+
+module.exports = { sendContactNotification, sendGa4LeadNotification };
