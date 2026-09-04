@@ -1,0 +1,165 @@
+'use client';
+
+import { Suspense, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { customerApi, isLoggedIn } from '../../../lib/customerApi';
+import StatCard from '../../../components/charts/StatCard';
+import LineChart from '../../../components/charts/LineChart';
+import BarList from '../../../components/charts/BarList';
+import PieChart from '../../../components/charts/PieChart';
+import BarChart from '../../../components/charts/BarChart';
+
+function formatPercent(n) {
+  return `${Math.round((n || 0) * 100)}%`;
+}
+
+function DashboardDetail() {
+  const params = useSearchParams();
+  const id = params.get('id');
+
+  const [status, setStatus] = useState('loading'); // loading | ready | notfound
+  const [connection, setConnection] = useState(null);
+  const [recStatus, setRecStatus] = useState('idle'); // idle | loading | done
+  const [shareCopied, setShareCopied] = useState(false);
+
+  useEffect(() => {
+    if (!isLoggedIn()) {
+      window.location.href = '/dashboard/login/';
+      return;
+    }
+    if (!id) {
+      setStatus('notfound');
+      return;
+    }
+    customerApi.get(`/api/ga4/my/connections/${id}`)
+      .then((data) => {
+        setConnection(data);
+        setStatus('ready');
+      })
+      .catch(() => setStatus('notfound'));
+  }, [id]);
+
+  async function generateRecommendations() {
+    setRecStatus('loading');
+    try {
+      const { aiRecommendations } = await customerApi.post(`/api/ga4/my/connections/${id}/recommendations`);
+      setConnection((prev) => ({ ...prev, report: { ...prev.report, aiRecommendations } }));
+    } finally {
+      setRecStatus('done');
+    }
+  }
+
+  function copyShareLink() {
+    const url = `${window.location.origin}/ga4-insights/view/?r=${connection.report.shareSlug}`;
+    navigator.clipboard.writeText(url).then(() => {
+      setShareCopied(true);
+      setTimeout(() => setShareCopied(false), 2000);
+    });
+  }
+
+  if (status === 'loading') {
+    return <p className="text-muted" style={{ textAlign: 'center' }}>Loading dashboard…</p>;
+  }
+  if (status === 'notfound' || !connection?.report) {
+    return (
+      <div className="card" style={{ maxWidth: 480, margin: '0 auto', textAlign: 'center' }}>
+        <p>This dashboard isn't ready yet.</p>
+        <a href="/dashboard/" className="btn" style={{ marginTop: 16 }}>Back to Dashboard</a>
+      </div>
+    );
+  }
+
+  const { data, aiRecommendations, lastRefreshedAt, shareSlug } = connection.report;
+
+  return (
+    <>
+      <a href="/dashboard/" className="text-muted" style={{ fontSize: 14, display: 'inline-block', marginBottom: 16 }}>&larr; All Properties</a>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12, marginBottom: 24 }}>
+        <div>
+          <div className="eyebrow">Last 30 days</div>
+          <h1>{connection.propertyDisplayName}</h1>
+          <p className="text-muted" style={{ fontSize: 13, marginTop: 4 }}>
+            Last updated {new Date(lastRefreshedAt).toLocaleString()}
+          </p>
+        </div>
+        <button type="button" onClick={copyShareLink} className="btn btn-outline btn-sm">
+          {shareCopied ? 'Link Copied!' : 'Share Report'}
+        </button>
+      </div>
+
+      <div className="grid grid-4" style={{ marginBottom: 24 }}>
+        <StatCard label="Sessions" value={data.totals.sessions.toLocaleString()} />
+        <StatCard label="Users" value={data.totals.users.toLocaleString()} />
+        <StatCard label="Engagement Rate" value={formatPercent(data.totals.engagementRate)} />
+        <StatCard label="Conversions" value={data.totals.conversions.toLocaleString()} />
+      </div>
+
+      <div className="card" style={{ marginBottom: 24 }}>
+        <h3 style={{ marginBottom: 16 }}>Traffic Trend</h3>
+        <LineChart
+          data={data.trend}
+          series={[
+            { key: 'sessions', label: 'Sessions', color: 'var(--teal)' },
+            { key: 'users', label: 'Users', color: 'var(--gold)' }
+          ]}
+        />
+      </div>
+
+      <div className="grid grid-2" style={{ marginBottom: 24 }}>
+        <div className="card">
+          <h3 style={{ marginBottom: 16 }}>By Device</h3>
+          <PieChart items={data.devices} labelKey="name" valueKey="sessions" />
+        </div>
+        <div className="card">
+          <h3 style={{ marginBottom: 16 }}>Top Countries</h3>
+          <BarChart items={data.countries} labelKey="name" valueKey="sessions" />
+        </div>
+      </div>
+
+      <div className="grid grid-2" style={{ marginBottom: 24 }}>
+        <div className="card">
+          <h3 style={{ marginBottom: 16 }}>Top Channels</h3>
+          <BarList items={data.channels} labelKey="name" valueKey="sessions" />
+        </div>
+        <div className="card">
+          <h3 style={{ marginBottom: 16 }}>Top Pages</h3>
+          <BarList items={data.topPages} labelKey="path" valueKey="views" />
+        </div>
+      </div>
+
+      <div className="card">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+          <h3>AI Recommendations</h3>
+          <button type="button" onClick={generateRecommendations} disabled={recStatus === 'loading'} className="btn btn-sm">
+            {recStatus === 'loading' ? 'Thinking…' : aiRecommendations ? 'Regenerate' : 'Generate'}
+          </button>
+        </div>
+        {!aiRecommendations && recStatus !== 'loading' && (
+          <p className="text-muted" style={{ fontSize: 13 }}>Get 3-5 specific, AI-generated recommendations based on this data.</p>
+        )}
+        {aiRecommendations && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            {aiRecommendations.map((rec, i) => (
+              <div key={i} style={{ paddingLeft: 12, borderLeft: `3px solid ${rec.priority === 'high' ? '#dc2626' : rec.priority === 'medium' ? 'var(--gold)' : 'var(--border)'}` }}>
+                <strong style={{ fontSize: 14 }}>{rec.title}</strong>
+                <p className="text-muted" style={{ fontSize: 13, marginTop: 4 }}>{rec.detail}</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </>
+  );
+}
+
+export default function DashboardViewPage() {
+  return (
+    <section className="section">
+      <div className="container" style={{ maxWidth: 900 }}>
+        <Suspense fallback={null}>
+          <DashboardDetail />
+        </Suspense>
+      </div>
+    </section>
+  );
+}

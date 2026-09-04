@@ -118,7 +118,10 @@ export default function Header({ services = [] }) {
           <Link href="/contact-us/" className="nav-link" style={{ fontSize: 16, fontWeight: 500, color: 'var(--text)' }}>Contact Us</Link>
         </nav>
 
-        <Link href="/contact-us/" className="btn btn-secondary header-cta-desktop" style={{ fontSize: 16 }}>Get Free Audit</Link>
+        <div className="header-cta-desktop" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <Link href="/dashboard/signup/" className="btn btn-outline" style={{ fontSize: 15 }}>Free Web Analytics Report</Link>
+          <Link href="/contact-us/" className="btn btn-secondary" style={{ fontSize: 16 }}>Get Free Audit</Link>
+        </div>
 
         <button
           type="button"
@@ -202,6 +205,15 @@ export default function Header({ services = [] }) {
               ))}
             </div>
           )}
+
+          <Link
+            href="/dashboard/signup/"
+            onClick={() => setMobileOpen(false)}
+            className="btn btn-outline"
+            style={{ marginTop: 12, textAlign: 'center', fontSize: 15 }}
+          >
+            Free Web Analytics Report
+          </Link>
 
           <Link
             href="/contact-us/"

@@ -6,6 +6,8 @@ const { Ga4Connection, Ga4Report } = require('../models');
 const { encrypt } = require('../services/cryptoService');
 const ga4Service = require('../services/ga4Service');
 const { sendGa4LeadNotification } = require('../services/mailService');
+const { requireCustomerAuth } = require('../middleware/customerAuth');
+const ga4AiService = require('../services/ga4AiService');
 
 const router = express.Router();
 
@@ -24,16 +26,31 @@ function verifySetupToken(token) {
   return payload.connectionId;
 }
 
+// A logged-in customer's dashboard passes its JWT through as `state` —
+// Google echoes `state` back verbatim on the callback, which is how a
+// full-page OAuth redirect (no room for an Authorization header) carries
+// the customer's identity across the round trip to Google and back.
 router.get('/oauth/start', (req, res) => {
-  const url = ga4Service.getAuthUrl();
+  const url = ga4Service.getAuthUrl(req.query.customerToken || '');
   res.redirect(url);
 });
 
+function customerIdFromState(state) {
+  if (!state) return null;
+  try {
+    const payload = jwt.verify(state, process.env.JWT_SECRET);
+    return payload.type === 'customer' ? payload.id : null;
+  } catch {
+    return null;
+  }
+}
+
 router.get('/oauth/callback', async (req, res) => {
   try {
-    const { code } = req.query;
+    const { code, state } = req.query;
     if (!code) return res.status(400).send('Missing authorization code');
 
+    const customerId = customerIdFromState(state);
     const { tokens, email } = await ga4Service.exchangeCode(code);
     if (!tokens.refresh_token) {
       // Google only issues a refresh token on the FIRST consent for an
@@ -43,13 +60,17 @@ router.get('/oauth/callback', async (req, res) => {
       return res.redirect(`${FRONTEND_URL}/ga4-insights/?error=no_refresh_token`);
     }
 
-    // Re-encrypting on every connect (rather than only when new) is
-    // intentional, not just simplest — AES-GCM uses a random IV per call,
-    // so comparing ciphertexts to detect "did the token actually change"
-    // would always be true anyway even for an identical token.
+    // Scoped by (customerId, googleEmail) when logged in, so the same
+    // customer reconnecting the same Google account updates one row —
+    // scoped by googleEmail alone for the original anonymous flow, where
+    // there's no customer to scope by. Re-encrypting on every connect
+    // (rather than only when new) is intentional too — AES-GCM uses a
+    // random IV per call, so comparing ciphertexts to detect "did the
+    // token actually change" would always be true anyway even for an
+    // identical token.
     const [connection] = await Ga4Connection.findOrCreate({
-      where: { googleEmail: email },
-      defaults: { googleEmail: email, encryptedRefreshToken: encrypt(tokens.refresh_token) }
+      where: customerId ? { customerId, googleEmail: email } : { googleEmail: email, customerId: null },
+      defaults: { customerId, googleEmail: email, encryptedRefreshToken: encrypt(tokens.refresh_token) }
     });
     await connection.update({ encryptedRefreshToken: encrypt(tokens.refresh_token) });
 
@@ -111,6 +132,71 @@ router.post('/reports', async (req, res) => {
   } catch (err) {
     console.error('[ga4] Failed to create report:', err.message);
     res.status(400).json({ error: 'Could not generate report — the setup link may have expired.' });
+  }
+});
+
+// The logged-in customer's dashboard listing — every property they've
+// connected, with its most recent report (if any) so the dashboard can
+// link straight into it.
+router.get('/my/connections', requireCustomerAuth, async (req, res) => {
+  const connections = await Ga4Connection.findAll({
+    where: { customerId: req.customer.id },
+    include: [{ association: 'reports', separate: true, order: [['createdAt', 'DESC']], limit: 1 }]
+  });
+
+  res.json(connections.map((c) => ({
+    id: c.id,
+    googleEmail: c.googleEmail,
+    propertyId: c.propertyId,
+    propertyDisplayName: c.propertyDisplayName,
+    latestReport: c.reports?.[0]
+      ? { shareSlug: c.reports[0].shareSlug, lastRefreshedAt: c.reports[0].lastRefreshedAt }
+      : null
+  })));
+});
+
+// Full detail for one of the customer's own connections — ownership
+// enforced via the where clause, not just findByPk, so one customer can
+// never load another's data by guessing a connection id.
+router.get('/my/connections/:id', requireCustomerAuth, async (req, res) => {
+  const connection = await Ga4Connection.findOne({
+    where: { id: req.params.id, customerId: req.customer.id },
+    include: [{ association: 'reports', separate: true, order: [['createdAt', 'DESC']], limit: 1 }]
+  });
+  if (!connection) return res.status(404).json({ error: 'Not found' });
+
+  const latest = connection.reports?.[0];
+  res.json({
+    id: connection.id,
+    googleEmail: connection.googleEmail,
+    propertyId: connection.propertyId,
+    propertyDisplayName: connection.propertyDisplayName,
+    report: latest
+      ? {
+          shareSlug: latest.shareSlug,
+          data: latest.cachedData,
+          aiRecommendations: latest.aiRecommendations,
+          lastRefreshedAt: latest.lastRefreshedAt
+        }
+      : null
+  });
+});
+
+router.post('/my/connections/:id/recommendations', requireCustomerAuth, async (req, res) => {
+  try {
+    const connection = await Ga4Connection.findOne({
+      where: { id: req.params.id, customerId: req.customer.id },
+      include: [{ association: 'reports', separate: true, order: [['createdAt', 'DESC']], limit: 1 }]
+    });
+    const report = connection?.reports?.[0];
+    if (!connection || !report) return res.status(404).json({ error: 'Not found' });
+
+    const aiRecommendations = await ga4AiService.getRecommendations(report.cachedData);
+    await report.update({ aiRecommendations });
+    res.json({ aiRecommendations });
+  } catch (err) {
+    console.error('[ga4] Failed to generate recommendations:', err.message);
+    res.status(500).json({ error: 'Could not generate recommendations right now.' });
   }
 });
 

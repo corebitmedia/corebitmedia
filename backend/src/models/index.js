@@ -8,6 +8,7 @@ const SiteSettings = require('./SiteSettings');
 const { Testimonial, Faq, ContactSubmission } = require('./misc');
 const Ga4Connection = require('./Ga4Connection');
 const Ga4Report = require('./Ga4Report');
+const Customer = require('./Customer');
 
 module.exports = {
   sequelize,
@@ -21,5 +22,6 @@ module.exports = {
   Faq,
   ContactSubmission,
   Ga4Connection,
-  Ga4Report
+  Ga4Report,
+  Customer
 };

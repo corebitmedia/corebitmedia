@@ -91,7 +91,7 @@ async function runReport(encryptedRefreshToken, propertyId) {
   const property = `properties/${propertyId}`;
   const dateRanges = [{ startDate: '30daysAgo', endDate: 'today' }];
 
-  const [trend, channels, pages, totals] = await Promise.all([
+  const [trend, channels, pages, totals, devices, countries] = await Promise.all([
     analyticsData.properties.runReport({
       property,
       requestBody: {
@@ -132,6 +132,25 @@ async function runReport(encryptedRefreshToken, propertyId) {
           { name: 'conversions' }
         ]
       }
+    }),
+    analyticsData.properties.runReport({
+      property,
+      requestBody: {
+        dateRanges,
+        dimensions: [{ name: 'deviceCategory' }],
+        metrics: [{ name: 'sessions' }],
+        orderBys: [{ metric: { metricName: 'sessions' }, desc: true }]
+      }
+    }),
+    analyticsData.properties.runReport({
+      property,
+      requestBody: {
+        dateRanges,
+        dimensions: [{ name: 'country' }],
+        metrics: [{ name: 'sessions' }],
+        orderBys: [{ metric: { metricName: 'sessions' }, desc: true }],
+        limit: 8
+      }
     })
   ]);
 
@@ -150,6 +169,14 @@ async function runReport(encryptedRefreshToken, propertyId) {
     topPages: rowsOf(pages).map((r) => ({
       path: r.dimensionValues[0].value,
       views: Number(r.metricValues[0].value)
+    })),
+    devices: rowsOf(devices).map((r) => ({
+      name: r.dimensionValues[0].value,
+      sessions: Number(r.metricValues[0].value)
+    })),
+    countries: rowsOf(countries).map((r) => ({
+      name: r.dimensionValues[0].value,
+      sessions: Number(r.metricValues[0].value)
     })),
     totals: (() => {
       const row = rowsOf(totals)[0];
