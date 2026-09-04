@@ -36,11 +36,24 @@ function getAuthUrl(state) {
 
 async function exchangeCode(code) {
   const client = getOAuthClient();
-  const { tokens } = await client.getToken(code);
+
+  let tokens;
+  try {
+    ({ tokens } = await client.getToken(code));
+  } catch (err) {
+    err.ga4Step = 'getToken';
+    throw err;
+  }
+
   client.setCredentials(tokens);
-  const oauth2 = google.oauth2({ version: 'v2', auth: client });
-  const { data: profile } = await oauth2.userinfo.get();
-  return { tokens, email: profile.email };
+  try {
+    const oauth2 = google.oauth2({ version: 'v2', auth: client });
+    const { data: profile } = await oauth2.userinfo.get();
+    return { tokens, email: profile.email };
+  } catch (err) {
+    err.ga4Step = 'userinfo';
+    throw err;
+  }
 }
 
 function clientFromRefreshToken(encryptedRefreshToken) {

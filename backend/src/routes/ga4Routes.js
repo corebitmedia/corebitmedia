@@ -56,7 +56,10 @@ router.get('/oauth/callback', async (req, res) => {
     const setupToken = signSetupToken(connection.id);
     res.redirect(`${FRONTEND_URL}/ga4-insights/setup/?token=${setupToken}`);
   } catch (err) {
-    console.error('[ga4] OAuth callback failed:', err.message);
+    // err.response?.data carries Google's actual API error body, which is
+    // far more specific than err.message alone (e.g. exactly which scope
+    // or credential was missing, invalid_grant details, etc.).
+    console.error('[ga4] OAuth callback failed at step:', err.ga4Step || 'unknown', '|', err.message, '|', JSON.stringify(err.response?.data || {}));
     res.redirect(`${FRONTEND_URL}/ga4-insights/?error=oauth_failed`);
   }
 });
