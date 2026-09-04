@@ -9,6 +9,8 @@ import Faqs from './pages/Faqs.jsx';
 import Leads from './pages/Leads.jsx';
 import Users from './pages/Users.jsx';
 import Theme from './pages/Theme.jsx';
+import Scripts from './pages/Scripts.jsx';
+import Customers from './pages/Customers.jsx';
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -28,6 +30,8 @@ export default function App() {
       <Route path="/faqs" element={<ProtectedRoute><Faqs /></ProtectedRoute>} />
       <Route path="/leads" element={<ProtectedRoute><Leads /></ProtectedRoute>} />
       <Route path="/theme" element={<ProtectedRoute><Theme /></ProtectedRoute>} />
+      <Route path="/scripts" element={<ProtectedRoute><Scripts /></ProtectedRoute>} />
+      <Route path="/customers" element={<ProtectedRoute><Customers /></ProtectedRoute>} />
       <Route path="/users" element={<ProtectedRoute><Users /></ProtectedRoute>} />
     </Routes>
   );

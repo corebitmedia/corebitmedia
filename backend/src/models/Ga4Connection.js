@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
+const Customer = require('./Customer');
 
 // One row per Google account that's gone through the OAuth flow to connect
 // a GA4 property. Not tied to our own `User` table on purpose — the person
@@ -21,5 +22,8 @@ const Ga4Connection = sequelize.define('Ga4Connection', {
   tableName: 'ga4_connections',
   timestamps: true
 });
+
+Ga4Connection.belongsTo(Customer, { as: 'customer', foreignKey: 'customerId' });
+Customer.hasMany(Ga4Connection, { as: 'connections', foreignKey: 'customerId' });
 
 module.exports = Ga4Connection;

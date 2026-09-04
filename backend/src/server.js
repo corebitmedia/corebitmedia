@@ -13,6 +13,7 @@ const miscRoutes = require('./routes/miscRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
 const ga4Routes = require('./routes/ga4Routes');
 const customerAuthRoutes = require('./routes/customerAuthRoutes');
+const customerAdminRoutes = require('./routes/customerAdminRoutes');
 const { pagesRouter, servicesRouter, blogRouter, caseStudiesRouter } = require('./routes/contentRoutes');
 
 const app = express();
@@ -65,6 +66,7 @@ app.use('/api/case-studies', caseStudiesRouter);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/ga4', ga4Routes); // self-serve GA4 OAuth + shareable client reports
 app.use('/api/customers', customerAuthRoutes); // dashboard account signup/login
+app.use('/api/admin/customers', customerAdminRoutes); // admin panel: manage dashboard signups
 app.use('/api', miscRoutes); // /api/testimonials, /api/faqs, /api/contact
 
 // Generic error handler

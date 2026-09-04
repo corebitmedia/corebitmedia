@@ -28,7 +28,15 @@ const SiteSettings = sequelize.define('SiteSettings', {
     type: DataTypes.STRING,
     defaultValue: "'Poppins', 'Segoe UI', system-ui, -apple-system, sans-serif"
   },
-  buttonRadius: { type: DataTypes.STRING, defaultValue: '6px' } // e.g. '0px' sharp, '999px' pill
+  buttonRadius: { type: DataTypes.STRING, defaultValue: '6px' }, // e.g. '0px' sharp, '999px' pill
+
+  // Tracking & third-party scripts, editable from the admin panel's
+  // Scripts page and injected client-side by ThemeLoader.jsx (same
+  // "no redeploy needed" pattern as the theme colors above).
+  gtmContainerId: { type: DataTypes.STRING, allowNull: true },        // e.g. "GTM-XXXXXXX"
+  googleSiteVerification: { type: DataTypes.STRING, allowNull: true }, // Search Console meta content value
+  cmpScript: { type: DataTypes.TEXT, allowNull: true },               // cookie-consent platform snippet
+  customHeadScript: { type: DataTypes.TEXT, allowNull: true }         // any other raw <script>/<meta> snippet
 }, {
   tableName: 'site_settings',
   timestamps: true
