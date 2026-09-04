@@ -25,11 +25,19 @@ export default function HeroAnimation({ maxWidth = 420 }) {
   }, []);
 
   return (
-    <div style={{ position: 'relative', display: 'flex', justifyContent: 'center' }}>
+    // Sized by width + aspect-ratio (the animation's own source is a 400x400
+    // square) rather than by its content, so this box reserves its final
+    // height immediately — before the player's custom element definition has
+    // even loaded, let alone rendered. Sizing from content instead caused a
+    // visible layout jump: near-zero height while loading, then the section
+    // suddenly growing once the real content popped in.
+    <div style={{ position: 'relative', width: '100%', maxWidth, aspectRatio: '1 / 1', margin: '0 auto' }}>
       <div
         aria-hidden="true"
         style={{
           position: 'absolute',
+          inset: 0,
+          margin: 'auto',
           width: '86%',
           aspectRatio: '1 / 1',
           borderRadius: '50%',
@@ -45,7 +53,7 @@ export default function HeroAnimation({ maxWidth = 420 }) {
           speed="1"
           loop
           autoplay
-          style={{ width: '100%', maxWidth, position: 'relative', zIndex: 1 }}
+          style={{ width: '100%', height: '100%', position: 'relative', zIndex: 1 }}
         />
       )}
     </div>
