@@ -190,7 +190,7 @@ export default async function HomePage() {
                 className="service-tile-stacked"
                 style={{ background: i % 2 === 0 ? '#F4EFF6' : '#E8EDF0' }}
               >
-                {s.iconUrl && <img src={s.iconUrl} alt={s.title} />}
+                {s.iconUrl && <img src={s.iconUrl} alt={s.title} loading="lazy" />}
                 <h3 style={{ fontSize: 20 }}>{s.title}</h3>
                 <p style={{ fontSize: 14, color: '#23242C' }}>{s.shortDescription}</p>
               </Link>
@@ -238,7 +238,7 @@ export default async function HomePage() {
               {caseStudies.map((cs) => (
                 <Link href={`/case-study/${cs.slug}/`} key={cs.slug} className="card" style={{ padding: 0, overflow: 'hidden' }}>
                   {cs.coverImageUrl && (
-                    <img src={cs.coverImageUrl} alt={cs.title} style={{ width: '100%', height: 180, objectFit: 'cover' }} />
+                    <img src={cs.coverImageUrl} alt={cs.title} loading="lazy" style={{ width: '100%', height: 180, objectFit: 'cover' }} />
                   )}
                   <div style={{ padding: 20 }}>
                     <h3>{cs.title}</h3>
@@ -285,7 +285,7 @@ export default async function HomePage() {
             <Carousel>
               {REAL_TESTIMONIALS.map((t) => (
                 <div className="card" key={t.name}>
-                  <img src={t.image} alt={t.name} style={{ width: 56, height: 56, borderRadius: '50%', objectFit: 'cover' }} />
+                  <img src={t.image} alt={t.name} loading="lazy" style={{ width: 56, height: 56, borderRadius: '50%', objectFit: 'cover' }} />
                   <p style={{ fontStyle: 'italic', marginTop: 16 }}>{t.quote}</p>
                   <div style={{ marginTop: 16, fontWeight: 700 }}>{t.name}</div>
                   <div className="text-muted" style={{ fontSize: 13 }}>{t.title}</div>
@@ -344,6 +344,7 @@ export default async function HomePage() {
                   <img
                     src={p.coverImageUrl}
                     alt={p.title}
+                    loading="lazy"
                     style={{ width: '100%', aspectRatio: '1 / 0.55', objectFit: 'cover', borderRadius: 8, marginBottom: 16 }}
                   />
                 )}

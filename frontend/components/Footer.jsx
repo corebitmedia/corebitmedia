@@ -73,6 +73,7 @@ export default function Footer() {
           <img
             src="https://www.corebitmedia.com/media/uploads/2025/07/logo-corebitmedia1-2.png"
             alt="Core Bit Media"
+            loading="lazy"
             style={{ height: 36, width: 'auto', borderRadius: 10 }}
           />
           <p style={{ marginTop: 16, fontSize: 14, fontFamily: "'Poppins', sans-serif", color: '#23242C' }}>

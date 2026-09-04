@@ -90,7 +90,7 @@ export default async function BlogPostPage({ params }) {
             </div>
           )}
 
-          {post.coverImageUrl && <img src={post.coverImageUrl} alt={post.title} style={{ width: '100%', borderRadius: 12, margin: '32px 0' }} />}
+          {post.coverImageUrl && <img src={post.coverImageUrl} alt={post.title} loading="lazy" style={{ width: '100%', borderRadius: 12, margin: '32px 0' }} />}
 
           <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.9, fontSize: 17 }}>{post.body}</div>
 
@@ -109,7 +109,7 @@ export default async function BlogPostPage({ params }) {
           <div className="container grid grid-3">
             {morePosts.map((p) => (
               <Link href={`/blogs/${p.slug}/`} key={p.slug} className="card">
-                {p.coverImageUrl && <img src={p.coverImageUrl} alt={p.title} style={{ borderRadius: 8, marginBottom: 16 }} />}
+                {p.coverImageUrl && <img src={p.coverImageUrl} alt={p.title} loading="lazy" style={{ borderRadius: 8, marginBottom: 16 }} />}
                 <h3>{p.title}</h3>
                 <p className="text-muted" style={{ marginTop: 10, fontSize: 14 }}>{p.excerpt}</p>
               </Link>

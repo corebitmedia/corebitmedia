@@ -134,6 +134,7 @@ export default async function ServicesPage() {
               <img
                 src="https://www.corebitmedia.com/media/uploads/2025/06/inner-hero2-img.png"
                 alt="Marketing analytics dashboard"
+                loading="lazy"
                 style={{ width: '100%', maxWidth: 380, margin: '0 auto', display: 'block' }}
               />
             </div>
@@ -168,7 +169,7 @@ export default async function ServicesPage() {
                 className="service-tile-stacked"
                 style={{ background: i % 2 === 0 ? '#F4EFF6' : '#E8EDF0' }}
               >
-                {s.iconUrl && <img src={s.iconUrl} alt={s.title} />}
+                {s.iconUrl && <img src={s.iconUrl} alt={s.title} loading="lazy" />}
                 <h3 style={{ fontSize: 20 }}>{s.title}</h3>
                 <p style={{ fontSize: 14, color: '#23242C' }}>{s.shortDescription}</p>
                 <span style={{ marginTop: 'auto', paddingTop: 12, fontSize: 13, fontWeight: 700, color: 'var(--teal)' }}>Read More &raquo;</span>
@@ -213,6 +214,7 @@ export default async function ServicesPage() {
               <img
                 src="https://www.corebitmedia.com/media/uploads/2025/06/digital-solutions-img.png"
                 alt="Digital solutions"
+                loading="lazy"
                 style={{ width: '100%', display: 'block' }}
               />
             </div>
@@ -312,7 +314,7 @@ export default async function ServicesPage() {
             <Carousel>
               {SERVICE_TESTIMONIALS.map((t) => (
                 <div className="card" key={t.name}>
-                  <img src={t.image} alt={t.name} style={{ width: 56, height: 56, borderRadius: '50%', objectFit: 'cover' }} />
+                  <img src={t.image} alt={t.name} loading="lazy" style={{ width: 56, height: 56, borderRadius: '50%', objectFit: 'cover' }} />
                   <p style={{ fontStyle: 'italic', marginTop: 16 }}>{t.quote}</p>
                   <div style={{ marginTop: 16, fontWeight: 700 }}>{t.name}</div>
                   <div className="text-muted" style={{ fontSize: 13 }}>{t.title}</div>

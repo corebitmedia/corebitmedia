@@ -34,6 +34,7 @@ export default async function CaseStudyListPage() {
               <img
                 src={cs.coverImageUrl}
                 alt={cs.title}
+                loading="lazy"
                 style={{ width: '100%', aspectRatio: '1 / 0.42', objectFit: 'cover', borderRadius: 8, marginBottom: 16 }}
               />
             )}

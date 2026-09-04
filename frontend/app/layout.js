@@ -1,7 +1,3 @@
-// Bootstrap first, then our own globals.css — that import order means any
-// class name our CSS shares with Bootstrap (e.g. .container) resolves in our
-// favor, since equal-specificity rules cascade by source order.
-import 'bootstrap/dist/css/bootstrap.min.css';
 import './globals.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';

@@ -23,6 +23,7 @@ export default async function BlogsPage() {
               <img
                 src={p.coverImageUrl}
                 alt={p.title}
+                loading="lazy"
                 style={{ width: '100%', aspectRatio: '1 / 0.48', objectFit: 'cover', borderRadius: 8, marginBottom: 16 }}
               />
             )}

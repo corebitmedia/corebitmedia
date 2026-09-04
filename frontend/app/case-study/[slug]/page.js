@@ -108,7 +108,7 @@ export default async function CaseStudyDetailPage({ params }) {
           <div className="container grid grid-3">
             {moreCaseStudies.map((c) => (
               <Link href={`/case-study/${c.slug}/`} key={c.slug} className="card" style={{ padding: 0, overflow: 'hidden' }}>
-                {c.coverImageUrl && <img src={c.coverImageUrl} alt={c.title} style={{ width: '100%', height: 160, objectFit: 'cover' }} />}
+                {c.coverImageUrl && <img src={c.coverImageUrl} alt={c.title} loading="lazy" style={{ width: '100%', height: 160, objectFit: 'cover' }} />}
                 <div style={{ padding: 20 }}>
                   <h3>{c.title}</h3>
                   {c.clientName && <p className="text-muted" style={{ marginTop: 6, fontSize: 13 }}>{c.clientName}</p>}
