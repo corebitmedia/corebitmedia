@@ -89,7 +89,11 @@ h3 { font-size: 20px; }
 @media (min-width: 576px) {
   .col-sm-6 { flex: 0 0 auto; width: 50%; }
 }
-@media (min-width: 992px) {
+/* 900px, not Bootstrap's real 992px lg breakpoint — matches every other
+   breakpoint already used sitewide (nav-desktop, grid-2/3/4, feature-split).
+   Using 992px here left a 900-991px gap where the nav switched to desktop
+   but these columns were still stacked full-width underneath each other. */
+@media (min-width: 900px) {
   .col-lg-3 { flex: 0 0 auto; width: 25%; }
   .col-lg-5 { flex: 0 0 auto; width: 41.66666667%; }
   .col-lg-7 { flex: 0 0 auto; width: 58.33333333%; }
