@@ -2,7 +2,7 @@ const express = require('express');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const rateLimit = require('express-rate-limit');
-const { Ga4Connection, Ga4Report, Ga4ChatMessage } = require('../models');
+const { Ga4Connection, Ga4Report, Ga4ChatMessage, Ga4CustomReport } = require('../models');
 const { encrypt } = require('../services/cryptoService');
 const ga4Service = require('../services/ga4Service');
 const { sendGa4LeadNotification } = require('../services/mailService');
@@ -20,6 +20,24 @@ const queryLimiter = rateLimit({ windowMs: 10 * 60 * 1000, max: 60, keyGenerator
 const chatLimiter = rateLimit({ windowMs: 60 * 60 * 1000, max: 20, keyGenerator: (req) => req.customer.id });
 
 const FRONTEND_URL = process.env.FRONTEND_URL || 'https://www.corebitmedia.com';
+
+const WIDGET_TYPES = ['line', 'bar', 'pie', 'table'];
+
+// Server-side gate on custom-report widgets — the builder UI already
+// restricts choices, but a request could bypass it, and this is what
+// actually decides which GA4 dimensions/metrics get queried.
+function validateWidgets(widgets) {
+  if (!Array.isArray(widgets) || widgets.length === 0) return 'At least one widget is required';
+  for (const w of widgets) {
+    if (!WIDGET_TYPES.includes(w.type)) return `Unsupported widget type: ${w.type}`;
+    if (w.dimension && !ga4Service.ALLOWED_DIMENSIONS.includes(w.dimension)) return `Unsupported dimension: ${w.dimension}`;
+    if (w.type === 'line' && w.dimension !== 'date') return 'Line widgets must use the "date" dimension';
+    if (!Array.isArray(w.metrics) || w.metrics.length === 0 || w.metrics.some((m) => !ga4Service.ALLOWED_METRICS.includes(m))) {
+      return 'Each widget needs at least one supported metric';
+    }
+  }
+  return null;
+}
 
 // Short-lived (10 min) token identifying a just-connected Ga4Connection
 // during the setup step, instead of passing its raw database id around in
@@ -188,6 +206,20 @@ router.get('/my/connections/:id', requireCustomerAuth, async (req, res) => {
   });
 });
 
+// Disconnects a property — no cascade is configured on the associations,
+// so dependent rows are removed explicitly before the connection itself.
+router.delete('/my/connections/:id', requireCustomerAuth, async (req, res) => {
+  const connection = await Ga4Connection.findOne({ where: { id: req.params.id, customerId: req.customer.id } });
+  if (!connection) return res.status(404).json({ error: 'Not found' });
+
+  await Ga4Report.destroy({ where: { connectionId: connection.id } });
+  await Ga4ChatMessage.destroy({ where: { connectionId: connection.id } });
+  await Ga4CustomReport.destroy({ where: { connectionId: connection.id } });
+  await connection.destroy();
+
+  res.json({ ok: true });
+});
+
 // Ad-hoc, live GA4 query for the interactive dashboard's date range +
 // filter controls. Deliberately does not touch Ga4Report.cachedData — the
 // share link keeps showing the original fixed snapshot regardless of what
@@ -268,6 +300,110 @@ router.post('/my/connections/:id/chat', requireCustomerAuth, chatLimiter, async 
   } catch (err) {
     console.error('[ga4] Chat failed:', err.message);
     res.status(500).json({ error: 'Could not get an answer right now.' });
+  }
+});
+
+router.get('/my/connections/:id/custom-reports', requireCustomerAuth, async (req, res) => {
+  const connection = await Ga4Connection.findOne({ where: { id: req.params.id, customerId: req.customer.id } });
+  if (!connection) return res.status(404).json({ error: 'Not found' });
+
+  const reports = await Ga4CustomReport.findAll({ where: { connectionId: connection.id }, order: [['createdAt', 'DESC']] });
+  res.json(reports.map((r) => ({ id: r.id, name: r.name, connectionId: r.connectionId, updatedAt: r.updatedAt })));
+});
+
+router.post('/my/connections/:id/custom-reports', requireCustomerAuth, async (req, res) => {
+  const connection = await Ga4Connection.findOne({ where: { id: req.params.id, customerId: req.customer.id } });
+  if (!connection) return res.status(404).json({ error: 'Not found' });
+
+  const { name, widgets, dateRangeStart, dateRangeEnd } = req.body || {};
+  if (!name) return res.status(400).json({ error: 'Report name is required' });
+  const widgetError = validateWidgets(widgets);
+  if (widgetError) return res.status(400).json({ error: widgetError });
+
+  const report = await Ga4CustomReport.create({
+    connectionId: connection.id,
+    name,
+    widgets,
+    dateRangeStart: dateRangeStart || '30daysAgo',
+    dateRangeEnd: dateRangeEnd || 'today'
+  });
+  res.status(201).json({ id: report.id });
+});
+
+// Addressed by report id alone (not nested under a connection id), so
+// ownership is enforced by joining through the owning connection.
+async function findOwnedReport(reportId, customerId) {
+  return Ga4CustomReport.findOne({
+    where: { id: reportId },
+    include: [{ association: 'connection', where: { customerId } }]
+  });
+}
+
+router.get('/custom-reports/:reportId', requireCustomerAuth, async (req, res) => {
+  const report = await findOwnedReport(req.params.reportId, req.customer.id);
+  if (!report) return res.status(404).json({ error: 'Not found' });
+
+  res.json({
+    id: report.id,
+    connectionId: report.connectionId,
+    name: report.name,
+    widgets: report.widgets,
+    dateRangeStart: report.dateRangeStart,
+    dateRangeEnd: report.dateRangeEnd
+  });
+});
+
+router.patch('/custom-reports/:reportId', requireCustomerAuth, async (req, res) => {
+  const report = await findOwnedReport(req.params.reportId, req.customer.id);
+  if (!report) return res.status(404).json({ error: 'Not found' });
+
+  const { name, widgets, dateRangeStart, dateRangeEnd } = req.body || {};
+  if (widgets) {
+    const widgetError = validateWidgets(widgets);
+    if (widgetError) return res.status(400).json({ error: widgetError });
+  }
+
+  await report.update({
+    ...(name ? { name } : {}),
+    ...(widgets ? { widgets } : {}),
+    ...(dateRangeStart ? { dateRangeStart } : {}),
+    ...(dateRangeEnd ? { dateRangeEnd } : {})
+  });
+  res.json({ ok: true });
+});
+
+router.delete('/custom-reports/:reportId', requireCustomerAuth, async (req, res) => {
+  const report = await findOwnedReport(req.params.reportId, req.customer.id);
+  if (!report) return res.status(404).json({ error: 'Not found' });
+
+  await report.destroy();
+  res.json({ ok: true });
+});
+
+router.post('/custom-reports/:reportId/run', requireCustomerAuth, queryLimiter, async (req, res) => {
+  try {
+    const report = await findOwnedReport(req.params.reportId, req.customer.id);
+    if (!report) return res.status(404).json({ error: 'Not found' });
+
+    const startDate = req.body?.startDate || report.dateRangeStart;
+    const endDate = req.body?.endDate || report.dateRangeEnd;
+    const connection = report.connection;
+
+    const widgets = await Promise.all(report.widgets.map(async (widget) => {
+      const rows = await ga4Service.runFlexibleReport(connection.encryptedRefreshToken, connection.propertyId, {
+        startDate,
+        endDate,
+        dimension: widget.dimension,
+        metrics: widget.metrics,
+        limit: widget.limit
+      });
+      return { ...widget, rows };
+    }));
+
+    res.json({ name: report.name, dateRange: { startDate, endDate }, widgets });
+  } catch (err) {
+    console.error('[ga4] Failed to run custom report:', err.message);
+    res.status(500).json({ error: 'Could not run this report right now.' });
   }
 });
 

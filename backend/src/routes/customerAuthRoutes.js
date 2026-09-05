@@ -20,7 +20,13 @@ function signCustomerToken(customer) {
 }
 
 function publicCustomer(customer) {
-  return { id: customer.id, name: customer.name, email: customer.email, avatarUrl: customer.avatarUrl };
+  return {
+    id: customer.id,
+    name: customer.name,
+    email: customer.email,
+    avatarUrl: customer.avatarUrl,
+    hasPassword: !!customer.passwordHash
+  };
 }
 
 router.post('/signup', authLimiter, async (req, res) => {
@@ -52,6 +58,38 @@ router.post('/login', authLimiter, async (req, res) => {
 
 router.get('/me', requireCustomerAuth, (req, res) => {
   res.json(publicCustomer(req.customer));
+});
+
+router.patch('/me', requireCustomerAuth, async (req, res) => {
+  const { name, email } = req.body || {};
+  if (!name || !email) return res.status(400).json({ error: 'Name and email required' });
+
+  if (email !== req.customer.email) {
+    const existing = await Customer.findOne({ where: { email } });
+    if (existing) return res.status(409).json({ error: 'An account with this email already exists' });
+  }
+
+  await req.customer.update({ name, email });
+  res.json(publicCustomer(req.customer));
+});
+
+router.post('/me/password', requireCustomerAuth, async (req, res) => {
+  const { currentPassword, newPassword } = req.body || {};
+  if (!newPassword || newPassword.length < 8) {
+    return res.status(400).json({ error: 'New password must be at least 8 characters' });
+  }
+
+  // A Google-only signup has no passwordHash yet — this doubles as the
+  // "set a password" flow for that account, so no current password is
+  // required in that case.
+  if (req.customer.passwordHash) {
+    const valid = currentPassword && await bcrypt.compare(currentPassword, req.customer.passwordHash);
+    if (!valid) return res.status(401).json({ error: 'Current password is incorrect' });
+  }
+
+  const passwordHash = await bcrypt.hash(newPassword, 10);
+  await req.customer.update({ passwordHash });
+  res.json({ ok: true });
 });
 
 // "Continue with Google" — a separate OAuth purpose/client-config from

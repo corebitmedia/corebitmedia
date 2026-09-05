@@ -9,7 +9,7 @@ import BarList from '../../../components/charts/BarList';
 import PieChart from '../../../components/charts/PieChart';
 import BarChart from '../../../components/charts/BarChart';
 import FilterBar from '../../../components/dashboard/FilterBar';
-import ChatBox from '../../../components/dashboard/ChatBox';
+import { resolveDateRange } from '../../../components/dashboard/DateRangePicker';
 
 function formatPercent(n) {
   return `${Math.round((n || 0) * 100)}%`;
@@ -47,15 +47,6 @@ function DashboardDetail() {
       })
       .catch(() => setStatus('notfound'));
   }, [id]);
-
-  // Resolves the filter bar's preset/custom date-range shape into the
-  // GA4-format startDate/endDate the backend expects.
-  function resolveDateRange(f) {
-    if (f.startDate === 'custom') {
-      return { startDate: f.customStart || '30daysAgo', endDate: f.customEnd || 'today' };
-    }
-    return { startDate: f.startDate, endDate: f.endDate };
-  }
 
   useEffect(() => {
     if (isFirstRun.current) {
@@ -177,10 +168,6 @@ function DashboardDetail() {
         </div>
       </div>
 
-      <div style={{ marginBottom: 24 }}>
-        <ChatBox connectionId={connection.id} />
-      </div>
-
       <div className="card">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
           <h3>AI Recommendations</h3>
@@ -208,12 +195,10 @@ function DashboardDetail() {
 
 export default function DashboardViewPage() {
   return (
-    <section className="section">
-      <div className="container" style={{ maxWidth: 900 }}>
-        <Suspense fallback={null}>
-          <DashboardDetail />
-        </Suspense>
-      </div>
-    </section>
+    <div style={{ maxWidth: 900 }}>
+      <Suspense fallback={null}>
+        <DashboardDetail />
+      </Suspense>
+    </div>
   );
 }

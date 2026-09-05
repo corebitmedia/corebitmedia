@@ -151,12 +151,10 @@ function McpSetupDetail() {
 
 export default function McpSetupPage() {
   return (
-    <section className="section">
-      <div className="container" style={{ maxWidth: 900 }}>
-        <Suspense fallback={null}>
-          <McpSetupDetail />
-        </Suspense>
-      </div>
-    </section>
+    <div style={{ maxWidth: 900 }}>
+      <Suspense fallback={null}>
+        <McpSetupDetail />
+      </Suspense>
+    </div>
   );
 }

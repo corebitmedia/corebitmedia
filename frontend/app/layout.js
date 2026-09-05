@@ -1,6 +1,5 @@
 import './globals.css';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
+import SiteChrome from '../components/SiteChrome';
 import ThemeLoader from '../components/ThemeLoader';
 import { getServices } from '../lib/api';
 
@@ -66,9 +65,7 @@ export default async function RootLayout({ children }) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
         />
         <ThemeLoader />
-        <Header services={services} />
-        {children}
-        <Footer />
+        <SiteChrome services={services}>{children}</SiteChrome>
       </body>
     </html>
   );

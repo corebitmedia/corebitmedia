@@ -39,10 +39,8 @@ export default function ChatBox({ connectionId }) {
   }
 
   return (
-    <div className="card">
-      <h3 style={{ marginBottom: 16 }}>Ask AI About Your Data</h3>
-
-      <div ref={listRef} style={{ maxHeight: 320, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 12 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      <div ref={listRef} style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 12 }}>
         {loaded && messages.length === 0 && (
           <p className="text-muted" style={{ fontSize: 13 }}>
             Ask a question about this property's traffic, e.g. "How many sessions came from organic search last week?"
