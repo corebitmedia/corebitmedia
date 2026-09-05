@@ -8,6 +8,7 @@ const SiteSettings = require('./SiteSettings');
 const { Testimonial, Faq, ContactSubmission } = require('./misc');
 const Ga4Connection = require('./Ga4Connection');
 const Ga4Report = require('./Ga4Report');
+const Ga4ChatMessage = require('./Ga4ChatMessage');
 const Customer = require('./Customer');
 
 module.exports = {
@@ -23,5 +24,6 @@ module.exports = {
   ContactSubmission,
   Ga4Connection,
   Ga4Report,
+  Ga4ChatMessage,
   Customer
 };

@@ -2,16 +2,22 @@ const express = require('express');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const rateLimit = require('express-rate-limit');
-const { Ga4Connection, Ga4Report } = require('../models');
+const { Ga4Connection, Ga4Report, Ga4ChatMessage } = require('../models');
 const { encrypt } = require('../services/cryptoService');
 const ga4Service = require('../services/ga4Service');
 const { sendGa4LeadNotification } = require('../services/mailService');
 const { requireCustomerAuth } = require('../middleware/customerAuth');
 const ga4AiService = require('../services/ga4AiService');
+const ga4ChatService = require('../services/ga4ChatService');
 
 const router = express.Router();
 
 const refreshLimiter = rateLimit({ windowMs: 60 * 60 * 1000, max: 1, keyGenerator: (req) => req.params.shareSlug });
+// Keyed by customer id (not IP) since these sit behind requireCustomerAuth —
+// bounds how hard the interactive filter UI / chat can hammer the Google API
+// and, for chat, the Anthropic API.
+const queryLimiter = rateLimit({ windowMs: 10 * 60 * 1000, max: 60, keyGenerator: (req) => req.customer.id });
+const chatLimiter = rateLimit({ windowMs: 60 * 60 * 1000, max: 20, keyGenerator: (req) => req.customer.id });
 
 const FRONTEND_URL = process.env.FRONTEND_URL || 'https://www.corebitmedia.com';
 
@@ -182,6 +188,28 @@ router.get('/my/connections/:id', requireCustomerAuth, async (req, res) => {
   });
 });
 
+// Ad-hoc, live GA4 query for the interactive dashboard's date range +
+// filter controls. Deliberately does not touch Ga4Report.cachedData — the
+// share link keeps showing the original fixed snapshot regardless of what
+// a customer is filtering to in their own live view.
+router.post('/my/connections/:id/query', requireCustomerAuth, queryLimiter, async (req, res) => {
+  try {
+    const connection = await Ga4Connection.findOne({ where: { id: req.params.id, customerId: req.customer.id } });
+    if (!connection) return res.status(404).json({ error: 'Not found' });
+
+    const { startDate, endDate, channel, device, country } = req.body || {};
+    const data = await ga4Service.runReport(connection.encryptedRefreshToken, connection.propertyId, {
+      startDate: startDate || '30daysAgo',
+      endDate: endDate || 'today',
+      filters: { channel, device, country }
+    });
+    res.json({ data });
+  } catch (err) {
+    console.error('[ga4] Failed to run live query:', err.message);
+    res.status(500).json({ error: 'Could not run that query right now.' });
+  }
+});
+
 router.post('/my/connections/:id/recommendations', requireCustomerAuth, async (req, res) => {
   try {
     const connection = await Ga4Connection.findOne({
@@ -197,6 +225,49 @@ router.post('/my/connections/:id/recommendations', requireCustomerAuth, async (r
   } catch (err) {
     console.error('[ga4] Failed to generate recommendations:', err.message);
     res.status(500).json({ error: 'Could not generate recommendations right now.' });
+  }
+});
+
+router.get('/my/connections/:id/chat', requireCustomerAuth, async (req, res) => {
+  const connection = await Ga4Connection.findOne({ where: { id: req.params.id, customerId: req.customer.id } });
+  if (!connection) return res.status(404).json({ error: 'Not found' });
+
+  const messages = await Ga4ChatMessage.findAll({
+    where: { connectionId: connection.id },
+    order: [['createdAt', 'ASC']]
+  });
+  res.json({ messages: messages.map((m) => ({ role: m.role, content: m.content, createdAt: m.createdAt })) });
+});
+
+router.post('/my/connections/:id/chat', requireCustomerAuth, chatLimiter, async (req, res) => {
+  try {
+    const connection = await Ga4Connection.findOne({ where: { id: req.params.id, customerId: req.customer.id } });
+    if (!connection) return res.status(404).json({ error: 'Not found' });
+
+    const message = (req.body?.message || '').trim();
+    if (!message) return res.status(400).json({ error: 'message required' });
+
+    // Only prior visible Q&A turns are replayed as context — the tool-call
+    // scaffolding of past turns is never persisted (see ga4ChatService.js),
+    // keeping stored history simple plain text.
+    const history = await Ga4ChatMessage.findAll({
+      where: { connectionId: connection.id },
+      order: [['createdAt', 'ASC']],
+      limit: 10
+    });
+    const priorMessages = history.map((m) => ({ role: m.role, content: m.content }));
+
+    const reply = await ga4ChatService.askQuestion(connection, priorMessages, message);
+
+    await Ga4ChatMessage.bulkCreate([
+      { connectionId: connection.id, role: 'user', content: message },
+      { connectionId: connection.id, role: 'assistant', content: reply }
+    ]);
+
+    res.json({ reply });
+  } catch (err) {
+    console.error('[ga4] Chat failed:', err.message);
+    res.status(500).json({ error: 'Could not get an answer right now.' });
   }
 });
 

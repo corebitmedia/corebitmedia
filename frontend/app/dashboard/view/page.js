@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { customerApi, isLoggedIn } from '../../../lib/customerApi';
 import StatCard from '../../../components/charts/StatCard';
@@ -8,6 +8,8 @@ import LineChart from '../../../components/charts/LineChart';
 import BarList from '../../../components/charts/BarList';
 import PieChart from '../../../components/charts/PieChart';
 import BarChart from '../../../components/charts/BarChart';
+import FilterBar from '../../../components/dashboard/FilterBar';
+import ChatBox from '../../../components/dashboard/ChatBox';
 
 function formatPercent(n) {
   return `${Math.round((n || 0) * 100)}%`;
@@ -22,6 +24,12 @@ function DashboardDetail() {
   const [recStatus, setRecStatus] = useState('idle'); // idle | loading | done
   const [shareCopied, setShareCopied] = useState(false);
 
+  const [liveData, setLiveData] = useState(null);
+  const [filters, setFilters] = useState({ startDate: '30daysAgo', endDate: 'today', channel: '', device: '', country: '' });
+  const [queryLoading, setQueryLoading] = useState(false);
+  const debounceRef = useRef(null);
+  const isFirstRun = useRef(true);
+
   useEffect(() => {
     if (!isLoggedIn()) {
       window.location.href = '/dashboard/login/';
@@ -34,10 +42,46 @@ function DashboardDetail() {
     customerApi.get(`/api/ga4/my/connections/${id}`)
       .then((data) => {
         setConnection(data);
+        setLiveData(data.report?.data || null);
         setStatus('ready');
       })
       .catch(() => setStatus('notfound'));
   }, [id]);
+
+  // Resolves the filter bar's preset/custom date-range shape into the
+  // GA4-format startDate/endDate the backend expects.
+  function resolveDateRange(f) {
+    if (f.startDate === 'custom') {
+      return { startDate: f.customStart || '30daysAgo', endDate: f.customEnd || 'today' };
+    }
+    return { startDate: f.startDate, endDate: f.endDate };
+  }
+
+  useEffect(() => {
+    if (isFirstRun.current) {
+      isFirstRun.current = false;
+      return;
+    }
+    if (!id) return;
+
+    clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      setQueryLoading(true);
+      const { startDate, endDate } = resolveDateRange(filters);
+      customerApi.post(`/api/ga4/my/connections/${id}/query`, {
+        startDate,
+        endDate,
+        channel: filters.channel || undefined,
+        device: filters.device || undefined,
+        country: filters.country || undefined
+      })
+        .then(({ data }) => setLiveData(data))
+        .finally(() => setQueryLoading(false));
+    }, 400);
+
+    return () => clearTimeout(debounceRef.current);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters, id]);
 
   async function generateRecommendations() {
     setRecStatus('loading');
@@ -69,23 +113,29 @@ function DashboardDetail() {
     );
   }
 
-  const { data, aiRecommendations, lastRefreshedAt, shareSlug } = connection.report;
+  const { data: baseData, aiRecommendations, lastRefreshedAt, shareSlug } = connection.report;
+  const data = liveData || baseData;
 
   return (
     <>
       <a href="/dashboard/" className="text-muted" style={{ fontSize: 14, display: 'inline-block', marginBottom: 16 }}>&larr; All Properties</a>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12, marginBottom: 24 }}>
         <div>
-          <div className="eyebrow">Last 30 days</div>
+          <div className="eyebrow">Interactive Dashboard</div>
           <h1>{connection.propertyDisplayName}</h1>
           <p className="text-muted" style={{ fontSize: 13, marginTop: 4 }}>
-            Last updated {new Date(lastRefreshedAt).toLocaleString()}
+            Snapshot last refreshed {new Date(lastRefreshedAt).toLocaleString()}
           </p>
         </div>
-        <button type="button" onClick={copyShareLink} className="btn btn-outline btn-sm">
-          {shareCopied ? 'Link Copied!' : 'Share Report'}
-        </button>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <a href={`/dashboard/mcp-setup/?id=${connection.id}`} className="btn btn-outline btn-sm">Connect to Claude Desktop</a>
+          <button type="button" onClick={copyShareLink} className="btn btn-outline btn-sm">
+            {shareCopied ? 'Link Copied!' : 'Share Report'}
+          </button>
+        </div>
       </div>
+
+      <FilterBar filters={filters} onChange={setFilters} baseData={baseData} loading={queryLoading} />
 
       <div className="grid grid-4" style={{ marginBottom: 24 }}>
         <StatCard label="Sessions" value={data.totals.sessions.toLocaleString()} />
@@ -125,6 +175,10 @@ function DashboardDetail() {
           <h3 style={{ marginBottom: 16 }}>Top Pages</h3>
           <BarList items={data.topPages} labelKey="path" valueKey="views" />
         </div>
+      </div>
+
+      <div style={{ marginBottom: 24 }}>
+        <ChatBox connectionId={connection.id} />
       </div>
 
       <div className="card">

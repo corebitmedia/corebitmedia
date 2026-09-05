@@ -82,20 +82,47 @@ async function listProperties(encryptedRefreshToken) {
   return properties;
 }
 
-// One consistent, sensible default report: traffic trend over the last 30
-// days plus top channels and top pages — enough for a genuinely useful
-// first dashboard without needing a custom report builder for the MVP.
-async function runReport(encryptedRefreshToken, propertyId) {
+// Maps our filter keys to the GA4 dimension they filter on, for building a
+// dimensionFilter shared by every sub-report below.
+const FILTER_DIMENSIONS = {
+  channel: 'sessionDefaultChannelGroup',
+  device: 'deviceCategory',
+  country: 'country'
+};
+
+function buildDimensionFilter(filters = {}) {
+  const expressions = Object.entries(filters)
+    .filter(([key, value]) => FILTER_DIMENSIONS[key] && value)
+    .map(([key, value]) => ({
+      filter: {
+        fieldName: FILTER_DIMENSIONS[key],
+        stringFilter: { matchType: 'EXACT', value }
+      }
+    }));
+  if (expressions.length === 0) return undefined;
+  return expressions.length === 1 ? expressions[0] : { andGroup: { expressions } };
+}
+
+// One consistent, sensible default report: traffic trend plus top channels
+// and top pages — enough for a genuinely useful dashboard without needing a
+// custom report builder for the MVP. `options` lets callers override the
+// default "last 30 days, no filters" (the interactive dashboard's date
+// range + channel/device/country filters) without changing any of the
+// existing call sites that don't pass it.
+async function runReport(encryptedRefreshToken, propertyId, options = {}) {
+  const { startDate = '30daysAgo', endDate = 'today', filters = {} } = options;
   const auth = clientFromRefreshToken(encryptedRefreshToken);
   const analyticsData = google.analyticsdata({ version: 'v1beta', auth });
   const property = `properties/${propertyId}`;
-  const dateRanges = [{ startDate: '30daysAgo', endDate: 'today' }];
+  const dateRanges = [{ startDate, endDate }];
+  const dimensionFilter = buildDimensionFilter(filters);
 
   const [trend, channels, pages, totals, devices, countries] = await Promise.all([
     analyticsData.properties.runReport({
       property,
       requestBody: {
         dateRanges,
+        dimensionFilter,
         dimensions: [{ name: 'date' }],
         metrics: [{ name: 'sessions' }, { name: 'activeUsers' }],
         orderBys: [{ dimension: { dimensionName: 'date' } }]
@@ -105,6 +132,7 @@ async function runReport(encryptedRefreshToken, propertyId) {
       property,
       requestBody: {
         dateRanges,
+        dimensionFilter,
         dimensions: [{ name: 'sessionDefaultChannelGroup' }],
         metrics: [{ name: 'sessions' }],
         orderBys: [{ metric: { metricName: 'sessions' }, desc: true }],
@@ -115,6 +143,7 @@ async function runReport(encryptedRefreshToken, propertyId) {
       property,
       requestBody: {
         dateRanges,
+        dimensionFilter,
         dimensions: [{ name: 'pagePath' }],
         metrics: [{ name: 'screenPageViews' }],
         orderBys: [{ metric: { metricName: 'screenPageViews' }, desc: true }],
@@ -125,6 +154,7 @@ async function runReport(encryptedRefreshToken, propertyId) {
       property,
       requestBody: {
         dateRanges,
+        dimensionFilter,
         metrics: [
           { name: 'sessions' },
           { name: 'activeUsers' },
@@ -137,6 +167,7 @@ async function runReport(encryptedRefreshToken, propertyId) {
       property,
       requestBody: {
         dateRanges,
+        dimensionFilter,
         dimensions: [{ name: 'deviceCategory' }],
         metrics: [{ name: 'sessions' }],
         orderBys: [{ metric: { metricName: 'sessions' }, desc: true }]
@@ -146,6 +177,7 @@ async function runReport(encryptedRefreshToken, propertyId) {
       property,
       requestBody: {
         dateRanges,
+        dimensionFilter,
         dimensions: [{ name: 'country' }],
         metrics: [{ name: 'sessions' }],
         orderBys: [{ metric: { metricName: 'sessions' }, desc: true }],
@@ -191,4 +223,55 @@ async function runReport(encryptedRefreshToken, propertyId) {
   };
 }
 
-module.exports = { getAuthUrl, exchangeCode, listProperties, runReport };
+// Whitelisted dimensions/metrics for runFlexibleReport — the AI chat tool
+// passes these straight through from the model's tool call, so this list is
+// the actual security/cost boundary on what a customer's question can ask
+// the Data API for, not just documentation.
+const ALLOWED_DIMENSIONS = ['date', 'sessionDefaultChannelGroup', 'deviceCategory', 'country', 'pagePath'];
+const ALLOWED_METRICS = ['sessions', 'activeUsers', 'engagementRate', 'conversions', 'screenPageViews'];
+
+// A single, arbitrary-ish (dimension, metrics[]) report — the primitive the
+// AI chat's `run_ga4_report` tool calls with whatever the model decides it
+// needs to answer a question, as opposed to runReport()'s fixed bundle of
+// six specific sub-reports for the dashboard UI.
+async function runFlexibleReport(encryptedRefreshToken, propertyId, options = {}) {
+  const { startDate = '30daysAgo', endDate = 'today', dimension, metrics, limit } = options;
+
+  if (dimension && !ALLOWED_DIMENSIONS.includes(dimension)) {
+    throw new Error(`Unsupported dimension: ${dimension}`);
+  }
+  const metricNames = (Array.isArray(metrics) && metrics.length ? metrics : ['sessions']).filter((m) => ALLOWED_METRICS.includes(m));
+  if (metricNames.length === 0) throw new Error('No supported metrics requested');
+
+  const auth = clientFromRefreshToken(encryptedRefreshToken);
+  const analyticsData = google.analyticsdata({ version: 'v1beta', auth });
+
+  const requestBody = {
+    dateRanges: [{ startDate, endDate }],
+    metrics: metricNames.map((name) => ({ name }))
+  };
+  if (dimension) {
+    requestBody.dimensions = [{ name: dimension }];
+    requestBody.orderBys = [{ metric: { metricName: metricNames[0] }, desc: true }];
+    requestBody.limit = Math.min(Math.max(Number(limit) || 10, 1), 50);
+  }
+
+  const { data } = await analyticsData.properties.runReport({ property: `properties/${propertyId}`, requestBody });
+
+  return (data.rows || []).map((r) => {
+    const row = {};
+    if (dimension) row[dimension] = r.dimensionValues[0].value;
+    metricNames.forEach((name, i) => { row[name] = Number(r.metricValues[i].value); });
+    return row;
+  });
+}
+
+module.exports = {
+  getAuthUrl,
+  exchangeCode,
+  listProperties,
+  runReport,
+  runFlexibleReport,
+  ALLOWED_DIMENSIONS,
+  ALLOWED_METRICS
+};
