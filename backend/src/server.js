@@ -15,6 +15,7 @@ const ga4Routes = require('./routes/ga4Routes');
 const customerAuthRoutes = require('./routes/customerAuthRoutes');
 const customerAdminRoutes = require('./routes/customerAdminRoutes');
 const { pagesRouter, servicesRouter, blogRouter, caseStudiesRouter } = require('./routes/contentRoutes');
+const { startCredsSweeper } = require('./services/mcpGa4Client');
 
 const app = express();
 
@@ -82,6 +83,7 @@ sequelize
   .then(() => sequelize.sync()) // for production, prefer migrations over sync()
   .then(() => {
     app.listen(PORT, () => console.log(`Core Bit Media API running on port ${PORT}`));
+    startCredsSweeper();
   })
   .catch((err) => {
     console.error('Unable to connect to the database:', err);

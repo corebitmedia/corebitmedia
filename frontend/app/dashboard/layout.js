@@ -3,25 +3,65 @@
 import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams, usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { customerApi, isLoggedIn, clearToken } from '../../lib/customerApi';
+import { customerApi, isLoggedIn, clearToken, getToken } from '../../lib/customerApi';
 import Sidebar from '../../components/dashboard/Sidebar';
 import ChatBox from '../../components/dashboard/ChatBox';
+
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 // Reads `?id=` (the connection currently in view, if any) to decide what
 // the chat panel talks about — a hook-based read rather than a prop, since
 // layout.js has no access to the page's searchParams in the App Router.
+// When no page has one in context (e.g. the Reports list or Account page),
+// this fetches the customer's own connections and lets them pick one right
+// here, or connect a first property if they have none yet.
 function ChatPanel() {
   const params = useSearchParams();
-  const id = params.get('id');
+  const urlId = params.get('id');
 
-  if (!id) {
+  const [connections, setConnections] = useState(null);
+  const [pickedId, setPickedId] = useState('');
+
+  useEffect(() => {
+    if (urlId) return;
+    customerApi.get('/api/ga4/my/connections').then(setConnections).catch(() => setConnections([]));
+  }, [urlId]);
+
+  const activeId = urlId || pickedId;
+  if (activeId) return <ChatBox connectionId={activeId} />;
+
+  if (connections === null) {
+    return <p className="text-muted" style={{ fontSize: 13, padding: 16 }}>Loading…</p>;
+  }
+
+  if (connections.length === 0) {
     return (
-      <p className="text-muted" style={{ fontSize: 13, padding: 16 }}>
-        Open a property from "My Properties" to ask AI about its data.
-      </p>
+      <div style={{ padding: 16 }}>
+        <p className="text-muted" style={{ fontSize: 13, marginBottom: 12 }}>
+          Connect a Google Analytics property to ask AI about your data.
+        </p>
+        <a href={`${API_BASE}/api/ga4/oauth/start?customerToken=${encodeURIComponent(getToken())}`} className="btn btn-sm">
+          Connect Google Analytics
+        </a>
+      </div>
     );
   }
-  return <ChatBox connectionId={id} />;
+
+  return (
+    <div style={{ padding: 16 }}>
+      <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>Ask AI about which property?</label>
+      <select
+        defaultValue=""
+        onChange={(e) => setPickedId(e.target.value)}
+        style={{ width: '100%', padding: 8, border: '1px solid var(--border)', borderRadius: 6 }}
+      >
+        <option value="" disabled>Choose a property…</option>
+        {connections.map((c) => (
+          <option key={c.id} value={c.id}>{c.propertyDisplayName || c.googleEmail}</option>
+        ))}
+      </select>
+    </div>
+  );
 }
 
 const LOGIN_PATHS = ['/dashboard/login/', '/dashboard/signup/', '/dashboard/auth-callback/'];
