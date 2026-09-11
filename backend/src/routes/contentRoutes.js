@@ -1,5 +1,5 @@
 const express = require('express');
-const { Page, Service, BlogPost, CaseStudy } = require('../models');
+const { Page, Service, BlogPost, CaseStudy, Industry } = require('../models');
 const crudFactory = require('../controllers/crudFactory');
 const { requireAuth, requireRole, requireOwnerOrRole } = require('../middleware/auth');
 
@@ -39,5 +39,6 @@ const pagesRouter = buildRoutes(Page, { hasWorkflow: true, hasOwner: false });
 const servicesRouter = buildRoutes(Service, { hasWorkflow: true, hasOwner: false });
 const blogRouter = buildRoutes(BlogPost, { hasWorkflow: true, hasOwner: true });
 const caseStudiesRouter = buildRoutes(CaseStudy, { hasWorkflow: true, hasOwner: false });
+const industriesRouter = buildRoutes(Industry, { hasWorkflow: true, hasOwner: false });
 
-module.exports = { pagesRouter, servicesRouter, blogRouter, caseStudiesRouter };
+module.exports = { pagesRouter, servicesRouter, blogRouter, caseStudiesRouter, industriesRouter };

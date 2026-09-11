@@ -20,18 +20,18 @@ export async function generateMetadata({ params }) {
   return {
     title: post.metaTitle || post.title,
     description: post.metaDescription || post.excerpt,
-    alternates: { canonical: `/blogs/${post.slug}/` },
+    alternates: { canonical: `/resources/${post.slug}/` },
     openGraph: {
       title: post.metaTitle || post.title,
       description: post.metaDescription || post.excerpt,
-      url: `/blogs/${post.slug}/`,
+      url: `/resources/${post.slug}/`,
       type: 'article',
       images: post.coverImageUrl ? [post.coverImageUrl] : []
     }
   };
 }
 
-export default async function BlogPostPage({ params }) {
+export default async function ResourcePostPage({ params }) {
   const post = await getBlogPost(params.slug);
   if (!post) notFound();
 
@@ -43,8 +43,8 @@ export default async function BlogPostPage({ params }) {
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.corebitmedia.com/' },
-      { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://www.corebitmedia.com/blogs/' },
-      { '@type': 'ListItem', position: 3, name: post.title, item: `https://www.corebitmedia.com/blogs/${post.slug}/` }
+      { '@type': 'ListItem', position: 2, name: 'Resources', item: 'https://www.corebitmedia.com/resources/' },
+      { '@type': 'ListItem', position: 3, name: post.title, item: `https://www.corebitmedia.com/resources/${post.slug}/` }
     ]
   };
 
@@ -66,7 +66,7 @@ export default async function BlogPostPage({ params }) {
       name: 'Core Bit Media',
       logo: { '@type': 'ImageObject', url: 'https://www.corebitmedia.com/media/uploads/2025/07/logo-corebitmedia1-2.png' }
     },
-    mainEntityOfPage: { '@type': 'WebPage', '@id': `https://www.corebitmedia.com/blogs/${post.slug}/` }
+    mainEntityOfPage: { '@type': 'WebPage', '@id': `https://www.corebitmedia.com/resources/${post.slug}/` }
   };
 
   return (
@@ -75,8 +75,8 @@ export default async function BlogPostPage({ params }) {
       <StructuredData data={breadcrumbSchema} />
       <article className="section">
         <div className="container" style={{ maxWidth: 780 }}>
-          <Link href="/blogs/" className="text-muted" style={{ fontSize: 14, display: 'inline-block', marginBottom: 16 }}>&larr; All Blogs</Link>
-          <div className="eyebrow">{post.category || 'Blog'}</div>
+          <Link href="/resources/" className="text-muted" style={{ fontSize: 14, display: 'inline-block', marginBottom: 16 }}>&larr; All Resources</Link>
+          <div className="eyebrow">{post.category || 'Resources'}</div>
           <h1>{post.title}</h1>
           <p className="text-muted" style={{ marginTop: 8 }}>
             {post.author?.name ? `By ${post.author.name} · ` : ''}
@@ -104,11 +104,11 @@ export default async function BlogPostPage({ params }) {
         <section className="section section-alt">
           <div className="container" style={{ maxWidth: 720, margin: '0 auto 32px', textAlign: 'center' }}>
             <div className="eyebrow">Keep Reading</div>
-            <h2>More From The Blog</h2>
+            <h2>More Resources</h2>
           </div>
           <div className="container grid grid-3">
             {morePosts.map((p) => (
-              <Link href={`/blogs/${p.slug}/`} key={p.slug} className="card">
+              <Link href={`/resources/${p.slug}/`} key={p.slug} className="card">
                 {p.coverImageUrl && <img src={p.coverImageUrl} alt={p.title} loading="lazy" style={{ borderRadius: 8, marginBottom: 16 }} />}
                 <h3>{p.title}</h3>
                 <p className="text-muted" style={{ marginTop: 10, fontSize: 14 }}>{p.excerpt}</p>

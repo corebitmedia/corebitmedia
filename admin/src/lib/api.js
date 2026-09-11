@@ -58,5 +58,6 @@ export const CONTENT_TYPES = {
   pages: { label: 'Pages', path: '/api/pages', hasOwner: false },
   services: { label: 'Services', path: '/api/services', hasOwner: false },
   blog: { label: 'Blog Posts', path: '/api/blog', hasOwner: true },
-  'case-studies': { label: 'Case Studies', path: '/api/case-studies', hasOwner: false }
+  'case-studies': { label: 'Case Studies', path: '/api/case-studies', hasOwner: false },
+  industries: { label: 'Industries', path: '/api/industries', hasOwner: false }
 };

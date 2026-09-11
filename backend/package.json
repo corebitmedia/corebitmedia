@@ -9,6 +9,7 @@
     "dev": "nodemon src/server.js",
     "migrate": "node src/scripts/migrate.js",
     "seed": "node src/scripts/seed.js",
+    "restructure-nav": "node src/scripts/restructureNav.js",
     "resetdb": "node src/scripts/resetDb.js"
   },
   "dependencies": {

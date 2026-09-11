@@ -16,6 +16,13 @@ function scoreClass(score) {
   return 'score-low';
 }
 
+const NAV_GROUPS = [
+  { value: '', label: 'None' },
+  { value: 'analytics', label: 'Analytics' },
+  { value: 'experimentation', label: 'Experimentation & CRO' },
+  { value: 'marketing', label: 'Marketing' }
+];
+
 export default function ContentEditor() {
   const { type, id } = useParams();
   const cfg = CONTENT_TYPES[type];
@@ -27,12 +34,21 @@ export default function ContentEditor() {
   const [saving, setSaving] = useState(false);
   const [optimizing, setOptimizing] = useState(false);
   const [error, setError] = useState('');
+  // For the services parentId picker — every other service, so a new/edited
+  // one can be assigned under a pillar (or left top-level).
+  const [allServices, setAllServices] = useState([]);
 
   useEffect(() => {
     if (!isNew) {
       api.get(`${cfg.path}/admin/${id}`).then(setItem).finally(() => setLoading(false));
     }
   }, [id, type]);
+
+  useEffect(() => {
+    if (type === 'services') {
+      api.get('/api/services/admin/all').then(setAllServices).catch(() => {});
+    }
+  }, [type]);
 
   function update(field, value) {
     setItem((prev) => ({ ...prev, [field]: value }));
@@ -147,6 +163,35 @@ export default function ContentEditor() {
               <option value="published">Published</option>
             </select>
           </div>
+
+          {type === 'services' && (
+            <div className="card">
+              <label>Nav Group</label>
+              <select value={item.navGroup || ''} onChange={(e) => update('navGroup', e.target.value || null)}>
+                {NAV_GROUPS.map((g) => <option key={g.value} value={g.value}>{g.label}</option>)}
+              </select>
+
+              <label>Parent (pillar)</label>
+              <select value={item.parentId || ''} onChange={(e) => update('parentId', e.target.value ? Number(e.target.value) : null)}>
+                <option value="">None (top-level)</option>
+                {allServices.filter((s) => s.id !== item.id).map((s) => (
+                  <option key={s.id} value={s.id}>{s.title}</option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {type === 'case-studies' && (
+            <div className="card">
+              <label>Category</label>
+              <select value={item.category || ''} onChange={(e) => update('category', e.target.value || null)}>
+                <option value="">None</option>
+                <option value="analytics">Analytics</option>
+                <option value="experimentation">Experimentation & CRO</option>
+                <option value="marketing">Marketing</option>
+              </select>
+            </div>
+          )}
 
           <div className="card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>

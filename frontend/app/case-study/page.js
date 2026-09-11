@@ -18,8 +18,36 @@ function excerptOf(text, wordLimit = 15) {
   return `${words.slice(0, wordLimit).join(' ')}…`;
 }
 
+const CATEGORY_LABELS = {
+  analytics: 'Analytics',
+  experimentation: 'Experimentation & CRO',
+  marketing: 'Marketing'
+};
+
+function CaseStudyCard({ cs }) {
+  return (
+    <Link href={`/case-study/${cs.slug}/`} className="card" style={{ padding: 15 }}>
+      {cs.coverImageUrl && (
+        <img
+          src={cs.coverImageUrl}
+          alt={cs.title}
+          loading="lazy"
+          style={{ width: '100%', aspectRatio: '1 / 0.42', objectFit: 'cover', borderRadius: 8, marginBottom: 16 }}
+        />
+      )}
+      <h3 style={{ fontSize: 18, color: '#232358' }}>{cs.title}</h3>
+      <p style={{ marginTop: 10, fontSize: 15, color: '#23242C' }}>{excerptOf(cs.challenge)}</p>
+      <span style={{ marginTop: 10, display: 'inline-block', fontSize: 16, fontWeight: 600, color: '#232358' }}>Read More &raquo;</span>
+    </Link>
+  );
+}
+
 export default async function CaseStudyListPage() {
   const caseStudies = await getCaseStudies();
+  const uncategorized = caseStudies.filter((cs) => !cs.category);
+  const groups = Object.entries(CATEGORY_LABELS)
+    .map(([key, label]) => ({ key, label, items: caseStudies.filter((cs) => cs.category === key) }))
+    .filter((g) => g.items.length > 0);
 
   return (
     <section className="section">
@@ -27,24 +55,30 @@ export default async function CaseStudyListPage() {
         <div className="eyebrow">How We Make Businesses Boom</div>
         <h1>Core Bit Media Case Studies</h1>
       </div>
-      <div className="container grid grid-3">
-        {caseStudies.map((cs) => (
-          <Link href={`/case-study/${cs.slug}/`} key={cs.slug} className="card" style={{ padding: 15 }}>
-            {cs.coverImageUrl && (
-              <img
-                src={cs.coverImageUrl}
-                alt={cs.title}
-                loading="lazy"
-                style={{ width: '100%', aspectRatio: '1 / 0.42', objectFit: 'cover', borderRadius: 8, marginBottom: 16 }}
-              />
-            )}
-            <h3 style={{ fontSize: 18, color: '#232358' }}>{cs.title}</h3>
-            <p style={{ marginTop: 10, fontSize: 15, color: '#23242C' }}>{excerptOf(cs.challenge)}</p>
-            <span style={{ marginTop: 10, display: 'inline-block', fontSize: 16, fontWeight: 600, color: '#232358' }}>Read More &raquo;</span>
-          </Link>
-        ))}
-        {caseStudies.length === 0 && <p className="text-muted">Case studies will appear here once published from the admin panel.</p>}
-      </div>
+
+      {caseStudies.length === 0 && (
+        <div className="container">
+          <p className="text-muted">Case studies will appear here once published from the admin panel.</p>
+        </div>
+      )}
+
+      {groups.map((g) => (
+        <div key={g.key} className="container" style={{ marginBottom: 40 }}>
+          <h3 style={{ marginBottom: 20 }}>{g.label}</h3>
+          <div className="grid grid-3">
+            {g.items.map((cs) => <CaseStudyCard key={cs.slug} cs={cs} />)}
+          </div>
+        </div>
+      ))}
+
+      {uncategorized.length > 0 && (
+        <div className="container">
+          {groups.length > 0 && <h3 style={{ marginBottom: 20 }}>More Case Studies</h3>}
+          <div className="grid grid-3">
+            {uncategorized.map((cs) => <CaseStudyCard key={cs.slug} cs={cs} />)}
+          </div>
+        </div>
+      )}
     </section>
   );
 }

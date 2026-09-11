@@ -102,21 +102,21 @@ export default function Footer() {
         <div>
           <h4 style={{ color: 'white', marginBottom: 16, fontSize: 20, fontFamily: "'Poppins', sans-serif", fontWeight: 600 }}>Quick Links</h4>
           <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10, fontSize: 16, fontFamily: "'Poppins', sans-serif" }}>
-            <li><Link href="/about-us/">About Us</Link></li>
-            <li><Link href="/blogs/">Blogs</Link></li>
-            <li><Link href="/case-study/">Case Study</Link></li>
-            <li><Link href="/contact-us/">Contact Us</Link></li>
+            <li><Link href="/about-us/">About</Link></li>
+            <li><Link href="/industries/">Industries</Link></li>
+            <li><Link href="/resources/">Resources</Link></li>
+            <li><Link href="/case-study/">Case Studies</Link></li>
+            <li><Link href="/contact-us/">Contact</Link></li>
           </ul>
         </div>
 
         <div>
           <h4 style={{ color: 'white', marginBottom: 16, fontSize: 20, fontFamily: "'Poppins', sans-serif", fontWeight: 600 }}>Main Services</h4>
           <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10, fontSize: 16, fontFamily: "'Poppins', sans-serif" }}>
-            <li><Link href="/services/">Services</Link></li>
-            <li><Link href="/services/digital-marketing/">Digital Marketing</Link></li>
-            <li><Link href="/services/reporting-and-dashboards/">Reporting &amp; Dashboards</Link></li>
-            <li><Link href="/services/analytics-tms/">Analytics &amp; TMS</Link></li>
-            <li><Link href="/services/crm-marketing/">CRM &amp; Marketing</Link></li>
+            <li><Link href="/services/">All Services</Link></li>
+            <li><Link href="/services/paid-media/">Paid Media</Link></li>
+            <li><Link href="/services/seo-organic-growth/">SEO &amp; Organic Growth</Link></li>
+            <li><Link href="/services/measurement-attribution/">Measurement &amp; Attribution</Link></li>
           </ul>
         </div>
 

@@ -1,4 +1,10 @@
-import { getServices, getBlogPosts, getCaseStudies } from '../../lib/api';
+import { getServices, getBlogPosts, getCaseStudies, getIndustries } from '../../lib/api';
+
+const NAV_GROUP_LABELS = {
+  analytics: 'Analytics',
+  experimentation: 'Experimentation & CRO',
+  marketing: 'Marketing'
+};
 
 // llms.txt (see llmstxt.org) — a plain-text index of the site written for
 // LLMs/AI crawlers (ChatGPT, Perplexity, Claude, etc.) rather than humans:
@@ -7,31 +13,40 @@ import { getServices, getBlogPosts, getCaseStudies } from '../../lib/api';
 // from the same CMS data as sitemap.xml, so it never drifts out of sync.
 export async function GET() {
   const base = 'https://www.corebitmedia.com';
-  const [services, posts, caseStudies] = await Promise.all([
+  const [services, posts, caseStudies, industries] = await Promise.all([
     getServices(),
     getBlogPosts(),
-    getCaseStudies()
+    getCaseStudies(),
+    getIndustries()
   ]);
-
-  const topLevel = services.filter((s) => !s.parentId);
 
   const lines = [
     '# Core Bit Media',
     '',
-    '> Core Bit Media is a digital marketing agency offering SEO, PPC, analytics ' +
-      '& tag management, reporting dashboards, and CRM marketing automation — plus ' +
-      'AEO/GEO (AI search) optimization to help brands get cited by ChatGPT, ' +
-      'Perplexity, and Google AI Overviews. 10+ years delivering measurable, ' +
+    '> Core Bit Media is a digital marketing agency built around Analytics (GA4, Adobe ' +
+      'Analytics, AEP/CJA, tag management) and Experimentation & CRO (Adobe Target, VWO, ' +
+      'A/B testing), plus Marketing services spanning paid media, SEO/AEO/GEO organic ' +
+      'growth, and measurement & attribution. 10+ years delivering measurable, ' +
       'data-driven growth for startups through mid-market businesses.',
-    '',
-    '## Services'
   ];
 
-  for (const s of topLevel) {
-    lines.push(`- [${s.title}](${base}/services/${s.slug}/): ${s.shortDescription || ''}`.trim());
-    const children = services.filter((c) => c.parentId === s.id);
-    for (const c of children) {
-      lines.push(`  - [${c.title}](${base}/services/${c.slug}/): ${c.shortDescription || ''}`.trim());
+  for (const [group, label] of Object.entries(NAV_GROUP_LABELS)) {
+    const pillars = services.filter((s) => s.navGroup === group && !s.parentId);
+    if (pillars.length === 0) continue;
+    lines.push('', `## ${label}`);
+    for (const s of pillars) {
+      lines.push(`- [${s.title}](${base}/services/${s.slug}/): ${s.shortDescription || ''}`.trim());
+      const children = services.filter((c) => c.navGroup === group && c.parentId === s.id);
+      for (const c of children) {
+        lines.push(`  - [${c.title}](${base}/services/${c.slug}/): ${c.shortDescription || ''}`.trim());
+      }
+    }
+  }
+
+  if (industries.length > 0) {
+    lines.push('', '## Industries');
+    for (const i of industries) {
+      lines.push(`- [${i.title}](${base}/industries/${i.slug}/): ${i.shortDescription || ''}`.trim());
     }
   }
 
@@ -44,18 +59,19 @@ export async function GET() {
   }
 
   if (posts.length > 0) {
-    lines.push('', '## Blog');
+    lines.push('', '## Resources');
     for (const p of posts) {
-      lines.push(`- [${p.title}](${base}/blogs/${p.slug}/): ${p.excerpt || p.aiAnswerSummary || ''}`.trim());
+      lines.push(`- [${p.title}](${base}/resources/${p.slug}/): ${p.excerpt || p.aiAnswerSummary || ''}`.trim());
     }
   }
 
   lines.push(
     '',
     '## Company',
-    `- [About Us](${base}/about-us/)`,
-    `- [Contact Us](${base}/contact-us/)`,
-    `- [All Services](${base}/services/)`
+    `- [About](${base}/about-us/)`,
+    `- [Contact](${base}/contact-us/)`,
+    `- [All Services](${base}/services/)`,
+    `- [All Industries](${base}/industries/)`
   );
 
   return new Response(lines.join('\n') + '\n', {

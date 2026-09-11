@@ -1,4 +1,4 @@
-import { getServices, getBlogPosts, getCaseStudies } from '../lib/api';
+import { getServices, getBlogPosts, getCaseStudies, getIndustries } from '../lib/api';
 
 // changeFrequency/priority are hints, not guarantees, but they cost nothing
 // and help crawlers prioritize the pages that actually move the needle —
@@ -6,9 +6,10 @@ import { getServices, getBlogPosts, getCaseStudies } from '../lib/api';
 const STATIC_ROUTES = [
   { path: '', changeFrequency: 'weekly', priority: 1.0 },
   { path: 'services', changeFrequency: 'weekly', priority: 0.9 },
+  { path: 'industries', changeFrequency: 'weekly', priority: 0.8 },
   { path: 'about-us', changeFrequency: 'monthly', priority: 0.7 },
   { path: 'case-study', changeFrequency: 'weekly', priority: 0.7 },
-  { path: 'blogs', changeFrequency: 'daily', priority: 0.7 },
+  { path: 'resources', changeFrequency: 'daily', priority: 0.7 },
   { path: 'contact-us', changeFrequency: 'monthly', priority: 0.6 },
   { path: 'privacy-policy', changeFrequency: 'yearly', priority: 0.2 },
   { path: 'terms-of-service', changeFrequency: 'yearly', priority: 0.2 }
@@ -23,7 +24,9 @@ export default async function sitemap() {
     priority
   }));
 
-  const [services, posts, caseStudies] = await Promise.all([getServices(), getBlogPosts(), getCaseStudies()]);
+  const [services, posts, caseStudies, industries] = await Promise.all([
+    getServices(), getBlogPosts(), getCaseStudies(), getIndustries()
+  ]);
 
   const dynamicRoutes = [
     ...services.map((s) => ({
@@ -33,7 +36,7 @@ export default async function sitemap() {
       priority: s.parentId ? 0.6 : 0.8
     })),
     ...posts.map((p) => ({
-      url: `${base}/blogs/${p.slug}/`,
+      url: `${base}/resources/${p.slug}/`,
       lastModified: p.updatedAt,
       changeFrequency: 'monthly',
       priority: 0.6
@@ -41,6 +44,12 @@ export default async function sitemap() {
     ...caseStudies.map((c) => ({
       url: `${base}/case-study/${c.slug}/`,
       lastModified: c.updatedAt,
+      changeFrequency: 'monthly',
+      priority: 0.6
+    })),
+    ...industries.map((i) => ({
+      url: `${base}/industries/${i.slug}/`,
+      lastModified: i.updatedAt,
       changeFrequency: 'monthly',
       priority: 0.6
     }))

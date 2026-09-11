@@ -4,6 +4,7 @@ const Page = require('./Page');
 const Service = require('./Service');
 const BlogPost = require('./BlogPost');
 const CaseStudy = require('./CaseStudy');
+const Industry = require('./Industry');
 const SiteSettings = require('./SiteSettings');
 const { Testimonial, Faq, ContactSubmission } = require('./misc');
 const Ga4Connection = require('./Ga4Connection');
@@ -19,6 +20,7 @@ module.exports = {
   Service,
   BlogPost,
   CaseStudy,
+  Industry,
   SiteSettings,
   Testimonial,
   Faq,

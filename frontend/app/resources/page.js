@@ -2,23 +2,23 @@ import Link from 'next/link';
 import { getBlogPosts } from '../../lib/api';
 
 export const metadata = {
-  title: 'Blogs',
+  title: 'Resources',
   description: 'Insights on SEO, analytics, and digital marketing from the Core Bit Media team.',
-  alternates: { canonical: '/blogs/' }
+  alternates: { canonical: '/resources/' }
 };
 
-export default async function BlogsPage() {
+export default async function ResourcesPage() {
   const posts = await getBlogPosts();
 
   return (
     <section className="section">
       <div className="container" style={{ textAlign: 'center', maxWidth: 720, margin: '0 auto 48px' }}>
-        <div className="eyebrow">Check Our Latest Blogs</div>
-        <h1>Latest Blogs</h1>
+        <div className="eyebrow">Guides, Insights & Updates</div>
+        <h1>Resources</h1>
       </div>
       <div className="container grid grid-4">
         {posts.map((p) => (
-          <Link href={`/blogs/${p.slug}/`} key={p.slug} className="card" style={{ padding: 15 }}>
+          <Link href={`/resources/${p.slug}/`} key={p.slug} className="card" style={{ padding: 15 }}>
             {p.coverImageUrl && (
               <img
                 src={p.coverImageUrl}
@@ -31,7 +31,7 @@ export default async function BlogsPage() {
             <span style={{ marginTop: 10, display: 'inline-block', fontSize: 16, fontWeight: 600, color: '#232358' }}>Read More &raquo;</span>
           </Link>
         ))}
-        {posts.length === 0 && <p className="text-muted">Blog posts will appear here once published from the admin panel.</p>}
+        {posts.length === 0 && <p className="text-muted">Resources will appear here once published from the admin panel.</p>}
       </div>
     </section>
   );

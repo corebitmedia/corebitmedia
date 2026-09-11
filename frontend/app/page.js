@@ -55,14 +55,16 @@ const STEPS = ['Discover & Validate', 'Design & Build', 'Launch & Promote', 'Mea
 
 // Real fixed order from the live site's own service-tile slider (dm-img.jpg,
 // s2.jpg, s4.jpg, s3.jpg → Digital Marketing, Dashboards, Analytics & TMS,
-// CRM & Marketing) — confirmed from the WordPress export's nested-carousel
-// widget, not the DB's default listing order.
-const IMPACT_SERVICE_ORDER = ['digital-marketing', 'reporting-and-dashboards', 'analytics-tms', 'crm-marketing'];
+// One flagship page per top-level nav group (Analytics + Experimentation
+// are the two starred/differentiating groups, plus the two biggest
+// Marketing pillars) — replaces the old 4 pillar slugs from the pre-navGroup
+// taxonomy, which no longer exist (see backend/src/scripts/restructureNav.js).
+const IMPACT_SERVICE_ORDER = ['ga4-implementation-migration', 'adobe-target', 'paid-media', 'seo-organic-growth'];
 const IMPACT_SERVICE_FALLBACK = [
-  { slug: 'digital-marketing', title: 'Digital Marketing', shortDescription: 'End-to-end omnichannel services to promote businesses online.', iconUrl: 'https://www.corebitmedia.com/media/uploads/2025/07/dm-img.jpg' },
-  { slug: 'reporting-and-dashboards', title: 'Dashboards', shortDescription: 'Interactive dashboards with real-time KPI insights.', iconUrl: 'https://www.corebitmedia.com/media/uploads/2025/06/s2.jpg' },
-  { slug: 'analytics-tms', title: 'Analytics & TMS', shortDescription: 'Manage all your digital marketing apps from one location.', iconUrl: 'https://www.corebitmedia.com/media/uploads/2025/06/s4.jpg' },
-  { slug: 'crm-marketing', title: 'CRM & Marketing', shortDescription: 'Expert CRM and campaigns across every major platform.', iconUrl: 'https://www.corebitmedia.com/media/uploads/2025/06/s3.jpg' }
+  { slug: 'ga4-implementation-migration', title: 'Analytics', shortDescription: 'GA4, Adobe Analytics, AEP/CJA, and tag management done right.', iconUrl: 'https://www.corebitmedia.com/media/uploads/2025/07/dm-img.jpg' },
+  { slug: 'adobe-target', title: 'Experimentation & CRO', shortDescription: 'A/B testing and personalization that actually moves conversion.', iconUrl: 'https://www.corebitmedia.com/media/uploads/2025/06/s2.jpg' },
+  { slug: 'paid-media', title: 'Paid Media', shortDescription: 'Full-funnel paid advertising across every platform that matters.', iconUrl: 'https://www.corebitmedia.com/media/uploads/2025/06/s4.jpg' },
+  { slug: 'seo-organic-growth', title: 'SEO & Organic Growth', shortDescription: 'SEO plus AEO/GEO to stay visible as search itself changes.', iconUrl: 'https://www.corebitmedia.com/media/uploads/2025/06/s3.jpg' }
 ];
 
 // Real values + alternating card backgrounds from the live site's 4 counter
@@ -334,12 +336,12 @@ export default async function HomePage() {
       {blogPosts.length > 0 && (
         <section className="section">
           <div className="container" style={{ textAlign: 'center', maxWidth: 720, margin: '0 auto 48px' }}>
-            <h2>Latest <span style={{ color: 'var(--teal)' }}>Blogs</span></h2>
-            <p className="eyebrow" style={{ marginTop: 10 }}>Check our latest blogs</p>
+            <h2>Latest <span style={{ color: 'var(--teal)' }}>Resources</span></h2>
+            <p className="eyebrow" style={{ marginTop: 10 }}>Check our latest resources</p>
           </div>
           <div className="container grid grid-3">
             {blogPosts.slice(0, 3).map((p) => (
-              <Link href={`/blogs/${p.slug}/`} key={p.slug} className="card" style={{ padding: 15 }}>
+              <Link href={`/resources/${p.slug}/`} key={p.slug} className="card" style={{ padding: 15 }}>
                 {p.coverImageUrl && (
                   <img
                     src={p.coverImageUrl}
@@ -354,7 +356,7 @@ export default async function HomePage() {
             ))}
           </div>
           <div className="container" style={{ textAlign: 'center', marginTop: 32 }}>
-            <Link href="/blogs/" className="btn">View All</Link>
+            <Link href="/resources/" className="btn">View All</Link>
           </div>
         </section>
       )}

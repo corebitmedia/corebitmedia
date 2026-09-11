@@ -27,6 +27,8 @@ export const getBlogPosts = () => safeFetch('/api/blog', []);
 export const getBlogPost = (slug) => safeFetch(`/api/blog/${slug}`, null);
 export const getCaseStudies = () => safeFetch('/api/case-studies', []);
 export const getCaseStudy = (slug) => safeFetch(`/api/case-studies/${slug}`, null);
+export const getIndustries = () => safeFetch('/api/industries', []);
+export const getIndustry = (slug) => safeFetch(`/api/industries/${slug}`, null);
 export const getTestimonials = () => safeFetch('/api/testimonials', []);
 export const getFaqs = (scope) => safeFetch(`/api/faqs${scope ? `?scope=${scope}` : ''}`, []);
 export const getPage = (slug) => safeFetch(`/api/pages/${slug}`, null);

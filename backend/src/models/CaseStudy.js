@@ -13,6 +13,9 @@ const CaseStudy = sequelize.define('CaseStudy', {
   solution: { type: DataTypes.TEXT, allowNull: true },
   results: { type: DataTypes.TEXT, allowNull: true },
   metrics: { type: DataTypes.JSON, defaultValue: [] }, // e.g. [{label:"ROAS", value:"9x"}]
+  // Groups the case-studies listing page to match the site nav's
+  // Analytics/Experimentation/Marketing taxonomy.
+  category: { type: DataTypes.ENUM('analytics', 'experimentation', 'marketing'), allowNull: true },
   status: { type: DataTypes.ENUM('draft', 'pending_review', 'published'), defaultValue: 'draft' },
   ...seoFields()
 }, {

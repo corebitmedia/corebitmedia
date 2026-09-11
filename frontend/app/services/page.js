@@ -94,9 +94,23 @@ const STATS = [
   { value: 4251, title: 'Lines of Perfect Code', sub: 'Peaceful Code', bg: '#E8EDF0' }
 ];
 
+const NAV_GROUPS = [
+  { key: 'analytics', label: 'Analytics' },
+  { key: 'experimentation', label: 'Experimentation & CRO' },
+  { key: 'marketing', label: 'Marketing' }
+];
+
 export default async function ServicesPage() {
   const [services, faqs] = await Promise.all([getServices(), getFaqs('global')]);
-  const topLevel = services.filter((s) => !s.parentId);
+  // Every service now carries a navGroup (see Header.jsx) — this overview
+  // page groups by that instead of the old single flat pillar list, so it
+  // stays a coherent "all services" index even though it's no longer
+  // directly linked from the main nav (Analytics/Experimentation/Marketing
+  // are their own top-level items now).
+  const groups = NAV_GROUPS.map((g) => ({
+    ...g,
+    items: services.filter((s) => s.navGroup === g.key && !s.parentId)
+  })).filter((g) => g.items.length > 0);
 
   return (
     <>
@@ -157,26 +171,26 @@ export default async function ServicesPage() {
           <div className="eyebrow">Tailored Solutions for Your Digital Growth</div>
           <h2>Impact-Driven Services</h2>
         </div>
-        <div className="container">
-          {/* Live site renders this as a real Elementor slider (nested-carousel,
-              4 slides visible with arrows + pagination), each slide a
-              vertical image-on-top card, matching the same section on Home. */}
-          <Carousel>
-            {topLevel.map((s, i) => (
-              <Link
-                key={s.slug}
-                href={`/services/${s.slug}/`}
-                className="service-tile-stacked"
-                style={{ background: i % 2 === 0 ? '#F4EFF6' : '#E8EDF0' }}
-              >
-                {s.iconUrl && <img src={s.iconUrl} alt={s.title} loading="lazy" />}
-                <h3 style={{ fontSize: 20 }}>{s.title}</h3>
-                <p style={{ fontSize: 14, color: '#23242C' }}>{s.shortDescription}</p>
-                <span style={{ marginTop: 'auto', paddingTop: 12, fontSize: 13, fontWeight: 700, color: 'var(--teal)' }}>Read More &raquo;</span>
-              </Link>
-            ))}
-          </Carousel>
-        </div>
+        {groups.map((g) => (
+          <div key={g.key} className="container" style={{ marginBottom: 40 }}>
+            <h3 style={{ marginBottom: 20 }}>{g.label}</h3>
+            <Carousel>
+              {g.items.map((s, i) => (
+                <Link
+                  key={s.slug}
+                  href={`/services/${s.slug}/`}
+                  className="service-tile-stacked"
+                  style={{ background: i % 2 === 0 ? '#F4EFF6' : '#E8EDF0' }}
+                >
+                  {s.iconUrl && <img src={s.iconUrl} alt={s.title} loading="lazy" />}
+                  <h3 style={{ fontSize: 20 }}>{s.title}</h3>
+                  <p style={{ fontSize: 14, color: '#23242C' }}>{s.shortDescription}</p>
+                  <span style={{ marginTop: 'auto', paddingTop: 12, fontSize: 13, fontWeight: 700, color: 'var(--teal)' }}>Read More &raquo;</span>
+                </Link>
+              ))}
+            </Carousel>
+          </div>
+        ))}
       </section>
 
       <section className="section gradient-purple" style={{ color: 'white', textAlign: 'center' }}>

@@ -11,6 +11,10 @@ const Service = sequelize.define('Service', {
   iconUrl: { type: DataTypes.STRING, allowNull: true },
   heroImageUrl: { type: DataTypes.STRING, allowNull: true },
   parentId: { type: DataTypes.INTEGER, allowNull: true }, // self-ref for sub-services (e.g. Paid Ads under Digital Marketing)
+  // Which top-level nav column this service (pillar or child) belongs
+  // under — orthogonal to parentId, which only says "which pillar within
+  // this group". Nullable for anything not yet assigned to the new nav.
+  navGroup: { type: DataTypes.ENUM('analytics', 'experimentation', 'marketing'), allowNull: true },
   sortOrder: { type: DataTypes.INTEGER, defaultValue: 0 },
   status: { type: DataTypes.ENUM('draft', 'pending_review', 'published'), defaultValue: 'draft' },
   ...seoFields()

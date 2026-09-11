@@ -20,6 +20,7 @@ export default function Layout({ children }) {
           <NavLink to="/content/services">Services</NavLink>
           <NavLink to="/content/blog">Blog Posts</NavLink>
           <NavLink to="/content/case-studies">Case Studies</NavLink>
+          <NavLink to="/content/industries">Industries</NavLink>
           <NavLink to="/testimonials">Testimonials</NavLink>
           <NavLink to="/faqs">FAQs</NavLink>
           <NavLink to="/leads">Contact Leads</NavLink>
