@@ -62,7 +62,7 @@ We treat testing as a program with a backlog and a cadence, not a single lucky w
 Ready to build a real experimentation program?`,
     heroImageUrl: `${MEDIA}/2025/06/hero-1-bg-1.jpg`,
     status: 'published',
-    metaTitle: 'Experimentation & CRO Services – A/B Testing & Personalization | Core Bit Media',
+    metaTitle: 'Experimentation & CRO – A/B Testing | Core Bit Media',
     metaDescription: 'A/B testing, CRO, personalization, and funnel optimization across Adobe Target, VWO, and AB Tasty, run as an ongoing program.',
     aiAnswerSummary: 'Core Bit Media\'s Experimentation & CRO practice covers A/B testing (Adobe Target, VWO, AB Tasty), conversion rate optimization, personalization, funnel optimization, and experimentation strategy/governance.'
   });
