@@ -81,9 +81,36 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 4000;
 
+// sequelize.sync() (no {alter: true}) only CREATEs tables that don't exist
+// yet — it silently does NOT add new columns to tables that already have
+// rows in production. navGroup (Service) and category (CaseStudy) were
+// added to those models without a real migration, so on an existing
+// database every single query against those two tables was crashing with
+// "Unknown column" (ER_BAD_FIELD_ERROR) — which, left uncaught, was taking
+// the whole server down repeatedly. This adds those two columns directly
+// via raw SQL if they're missing, swallowing the "column already exists"
+// case so it's safe to run on every boot.
+async function ensureColumnsExist() {
+  const statements = [
+    "ALTER TABLE `services` ADD COLUMN `navGroup` ENUM('analytics','experimentation','marketing') NULL",
+    "ALTER TABLE `case_studies` ADD COLUMN `category` ENUM('analytics','experimentation','marketing') NULL"
+  ];
+  for (const sql of statements) {
+    try {
+      await sequelize.query(sql);
+      console.log('[migrate] Added column:', sql);
+    } catch (err) {
+      if (err.original?.code !== 'ER_DUP_FIELDNAME') {
+        console.error('[migrate] Failed:', sql, err.message);
+      }
+    }
+  }
+}
+
 sequelize
   .authenticate()
   .then(() => sequelize.sync()) // for production, prefer migrations over sync()
+  .then(() => ensureColumnsExist())
   .then(() => {
     app.listen(PORT, () => console.log(`Core Bit Media API running on port ${PORT}`));
     startCredsSweeper();
