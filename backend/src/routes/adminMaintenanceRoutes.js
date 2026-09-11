@@ -1,35 +1,40 @@
 // TEMPORARY — a one-off trigger for src/scripts/restructureNav.js, added
 // only because Render's free tier has no Shell access to run one-off
-// scripts directly. Runs the script as a child process (so its own
-// process.exit() calls only end the child, never this server) using
-// whatever DB/env config this very server is already running with — no
-// credentials need to be typed in or shared anywhere. Admin panel gets a
-// one-click button for it (see admin/src/pages/Dashboard.jsx); trigger it
-// once, confirm the result, then delete this whole file + its mount in
-// server.js + the button.
+// scripts directly. Admin panel gets a one-click button for it (see
+// admin/src/pages/Dashboard.jsx); trigger it once, confirm the result, then
+// delete this whole file + its mount in server.js + the button.
+//
+// Runs the migration IN-PROCESS (awaiting the same restructureNav()
+// function the CLI script uses) rather than spawning it as a child
+// process — an earlier version used child_process.execFile, which doubles
+// memory usage (a second full Node process + its own DB connection pool)
+// on top of the already-running server, and on the free tier's limited RAM
+// that was enough to crash-loop the whole service. In-process, the
+// migration's DB calls are all async/await and don't block the event loop,
+// so the rest of the server keeps serving requests while it runs.
 
 const express = require('express');
-const path = require('path');
-const { execFile } = require('child_process');
 const { requireAuth, requireRole } = require('../middleware/auth');
+const { restructureNav } = require('../scripts/restructureNav');
 
 const router = express.Router();
 
-router.post('/restructure-nav', requireAuth, requireRole('admin'), (req, res) => {
-  const scriptPath = path.join(__dirname, '..', 'scripts', 'restructureNav.js');
+router.post('/restructure-nav', requireAuth, requireRole('admin'), async (req, res) => {
+  // Captures console.log output from restructureNav() so the admin UI can
+  // show a summary, without changing that script's own logging.
+  const logs = [];
+  const originalLog = console.log;
+  console.log = (...args) => { logs.push(args.map(String).join(' ')); originalLog(...args); };
 
-  execFile(
-    process.execPath,
-    [scriptPath],
-    { cwd: path.join(__dirname, '..', '..'), timeout: 5 * 60 * 1000, maxBuffer: 10 * 1024 * 1024 },
-    (err, stdout, stderr) => {
-      if (err) {
-        console.error('[restructure-nav] Failed:', err.message);
-        return res.status(500).json({ error: err.message, stdout, stderr });
-      }
-      res.json({ ok: true, stdout, stderr });
-    }
-  );
+  try {
+    const summary = await restructureNav();
+    res.json({ ok: true, stdout: [...logs, summary].join('\n') });
+  } catch (err) {
+    console.error('[restructure-nav] Failed:', err);
+    res.status(500).json({ error: err.message, stdout: logs.join('\n') });
+  } finally {
+    console.log = originalLog;
+  }
 });
 
 module.exports = router;

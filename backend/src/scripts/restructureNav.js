@@ -1029,11 +1029,23 @@ We help consumer brands prove that brand investment and performance marketing ar
   ];
   const deleted = await Service.destroy({ where: { slug: obsoleteServiceSlugs } });
 
-  console.log(`Nav restructure complete. Deleted ${deleted} obsolete services. Created/updated ${industries.length} industries.`);
-  process.exit(0);
+  const summary = `Nav restructure complete. Deleted ${deleted} obsolete services. Created/updated ${industries.length} industries.`;
+  console.log(summary);
+  return summary;
 }
 
-restructureNav().catch((err) => {
-  console.error('Nav restructure failed:', err);
-  process.exit(1);
-});
+module.exports = { restructureNav };
+
+// Only run immediately (and exit the process) when invoked directly as a
+// CLI script (`npm run restructure-nav`) — NOT when required from
+// adminMaintenanceRoutes.js, which awaits `restructureNav()` in-process
+// inside the already-running server and must never have that server's own
+// process torn down by a stray process.exit().
+if (require.main === module) {
+  restructureNav()
+    .then(() => process.exit(0))
+    .catch((err) => {
+      console.error('Nav restructure failed:', err);
+      process.exit(1);
+    });
+}
