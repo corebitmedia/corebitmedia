@@ -7,11 +7,13 @@ import ContactForm from './ContactForm';
 // Every service carries a `navGroup` ('analytics'|'experimentation'|'marketing')
 // deciding which top-level mega-menu it belongs under, and `parentId`
 // deciding which pillar within that group (see backend/src/models/Service.js).
-// Analytics and Experimentation are flat lists (every service in the group
-// has no parent, so `children` comes back empty and the dropdown just lists
-// them as a single column) — Marketing has 3 real pillars (Paid Media, SEO &
-// Organic Growth, Measurement & Attribution) each with their own children,
-// rendered as a multi-column mega-menu exactly like the old "Services" menu.
+// Analytics and Experimentation each have exactly one real pillar page
+// ("Analytics", "Experimentation & CRO") with every service in the group as
+// its child, so the nav label is a real clickable landing page with a
+// sub-service grid, not just a dropdown trigger — Marketing has 3 such
+// pillars (Paid Media, SEO & Organic Growth, Measurement & Attribution).
+// All three render with the same multi-column pillar mega-menu; it just
+// happens to be one wide column for Analytics/Experimentation.
 function groupByNavGroup(services, navGroup) {
   const inGroup = services.filter((s) => s.navGroup === navGroup);
   const pillars = inGroup.filter((s) => !s.parentId);
@@ -52,7 +54,7 @@ function CategoryCrossLinks({ current }) {
   );
 }
 
-// Analytics/Experimentation/Industries: a single flat column of links.
+// Industries: a single flat column of links (no pillar/children structure).
 function FlatMenu({ items, hrefFor, crossLinkKey }) {
   if (items.length === 0) return null;
   return (
@@ -69,8 +71,10 @@ function FlatMenu({ items, hrefFor, crossLinkKey }) {
   );
 }
 
-// Marketing: multi-column pillar -> children mega-menu (same layout the
-// old single "Services" dropdown used).
+// Analytics/Experimentation/Marketing: multi-column pillar -> children
+// mega-menu (same layout the old single "Services" dropdown used) — one
+// wide column for Analytics/Experimentation's single pillar, 3 columns for
+// Marketing's 3 pillars.
 function PillarMenu({ pillars, viewAllHref, crossLinkKey }) {
   if (pillars.length === 0) return null;
   return (
@@ -164,10 +168,10 @@ export default function Header({ services = [], industries = [] }) {
   const marketingPillars = useMemo(() => groupByNavGroup(services, 'marketing'), [services]);
 
   const megaMenus = [
-    { key: 'analytics', label: 'Analytics', items: analyticsItems, mode: 'flat', hrefFor: (i) => `/services/${i.slug}/` },
-    { key: 'experimentation', label: 'Experimentation', items: experimentationItems, mode: 'flat', hrefFor: (i) => `/services/${i.slug}/` },
-    { key: 'marketing', label: 'Marketing', items: marketingPillars, mode: 'pillar' },
-    { key: 'industries', label: 'Industries', items: industries, mode: 'flat', hrefFor: (i) => `/industries/${i.slug}/`, viewAllHref: '/industries/', allLabel: 'All Industries' }
+    { key: 'analytics', label: 'Analytics', items: analyticsItems, mode: 'pillar', href: '/services/analytics/', allLabel: 'Analytics Overview' },
+    { key: 'experimentation', label: 'Experimentation', items: experimentationItems, mode: 'pillar', href: '/services/experimentation-cro/', allLabel: 'Experimentation Overview' },
+    { key: 'marketing', label: 'Marketing', items: marketingPillars, mode: 'pillar', href: '/services/', allLabel: 'All Services' },
+    { key: 'industries', label: 'Industries', items: industries, mode: 'flat', hrefFor: (i) => `/industries/${i.slug}/`, href: '/industries/', allLabel: 'All Industries' }
   ];
 
   function openAudit(e) {
@@ -198,17 +202,16 @@ export default function Header({ services = [], industries = [] }) {
               onMouseLeave={() => setOpenMenu(null)}
             >
               <Link
-                href={menu.mode === 'pillar' ? '/services/' : (menu.viewAllHref || '#')}
+                href={menu.href}
                 className="nav-link"
                 style={{ fontSize: 15, fontWeight: 500, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4 }}
-                onClick={(e) => { if (menu.mode !== 'pillar' && !menu.viewAllHref) e.preventDefault(); }}
               >
                 {menu.label}
                 <span style={{ fontSize: 10, marginTop: 2 }}>▾</span>
               </Link>
               {openMenu === menu.key && (
                 menu.mode === 'flat'
-                  ? <FlatMenu items={menu.items} hrefFor={menu.hrefFor} crossLinkKey={menu.key === 'industries' ? null : menu.key} />
+                  ? <FlatMenu items={menu.items} hrefFor={menu.hrefFor} />
                   : <PillarMenu pillars={menu.items} viewAllHref="/services/" crossLinkKey={menu.key} />
               )}
             </div>
@@ -258,11 +261,9 @@ export default function Header({ services = [], industries = [] }) {
               </button>
               {mobileSection === menu.key && (
                 <div style={{ paddingLeft: 12, display: 'flex', flexDirection: 'column' }}>
-                  {(menu.mode === 'pillar' || menu.viewAllHref) && (
-                    <Link href={menu.viewAllHref || '/services/'} onClick={() => setMobileOpen(false)} style={{ padding: '10px 8px', fontSize: 14, fontWeight: 700, color: 'var(--teal)' }}>
-                      {menu.allLabel || 'All Services'}
-                    </Link>
-                  )}
+                  <Link href={menu.href} onClick={() => setMobileOpen(false)} style={{ padding: '10px 8px', fontSize: 14, fontWeight: 700, color: 'var(--teal)' }}>
+                    {menu.allLabel}
+                  </Link>
                   {menu.items.map((item) => (
                     <div key={item.slug}>
                       <Link

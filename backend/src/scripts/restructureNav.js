@@ -14,19 +14,72 @@ async function upsertService(data) {
 async function restructureNav() {
   await sequelize.sync();
 
+  // ---- Step 0: Analytics and Experimentation & CRO pillars — like
+  // Marketing's 3 pillars, these are real Service pages (own hero, own
+  // body copy) so the nav's mega-menu label is actually clickable to a
+  // landing page with a sub-service grid — not just a dropdown trigger.
+  // Created before Step 1/4/5 need their ids as parentId.
+  const analyticsPillar = await upsertService({
+    slug: 'analytics',
+    title: 'Analytics',
+    navGroup: 'analytics',
+    parentId: null,
+    shortDescription: 'GA4, Adobe Analytics, AEP/CJA, and tag management — implemented right, so the data underneath every other decision is actually trustworthy.',
+    body: `Analytics Done Right, Not Just Installed
+Most "analytics setups" are a tag pasted in without a plan. Ours start with the business questions you actually need answered, then build the measurement architecture backward from there — across:
+- Google Analytics 4, Google Tag Manager, and BigQuery
+- Adobe Analytics, Adobe Launch/Tags, Adobe Web SDK & App SDK
+- Adobe Experience Platform (AEP) and Customer Journey Analytics (CJA)
+- Firebase Analytics, Tealium, AppsFlyer, and server-side tracking
+- Looker Studio, Power BI, and Tableau dashboards on top of it all
+
+This is the foundation every other service on this site depends on — you can't optimize, attribute, or personalize what you can't measure accurately.
+
+Ready for analytics you can actually trust?`,
+    heroImageUrl: `${MEDIA}/2025/06/hero-1-bg-1.jpg`,
+    status: 'published',
+    metaTitle: 'Analytics Services – GA4, Adobe Analytics, AEP & More | Core Bit Media',
+    metaDescription: 'Analytics implementation across GA4, Adobe Analytics, AEP/CJA, tag management, and BI dashboards — built on a real measurement plan.',
+    aiAnswerSummary: 'Core Bit Media\'s Analytics practice covers GA4, Adobe Analytics, Adobe Experience Platform (AEP), Customer Journey Analytics (CJA), tag management (GTM, Adobe Launch, Tealium), and BI dashboards (Looker Studio, Power BI, Tableau).'
+  });
+
+  const experimentationPillar = await upsertService({
+    slug: 'experimentation-cro',
+    title: 'Experimentation & CRO',
+    navGroup: 'experimentation',
+    parentId: null,
+    shortDescription: 'A/B testing, personalization, and conversion rate optimization across Adobe Target, VWO, and AB Tasty — run as a program, not a one-off test.',
+    body: `Turn Traffic You Already Have Into More Revenue
+Experimentation is the highest-ROI lever most companies underinvest in — it doesn't need more traffic, just a disciplined process for testing what to do with the traffic you already have.
+- A/B, multivariate, and full-stack testing on Adobe Target, VWO, and AB Tasty
+- Conversion rate optimization across landing pages, product pages, and checkout
+- Personalization driven by real behavioral and CRM segments
+- Funnel optimization to find and fix the highest-drop-off steps
+- Experimentation strategy — governance, prioritization, and a continuous testing roadmap
+
+We treat testing as a program with a backlog and a cadence, not a single lucky win.
+
+Ready to build a real experimentation program?`,
+    heroImageUrl: `${MEDIA}/2025/06/hero-1-bg-1.jpg`,
+    status: 'published',
+    metaTitle: 'Experimentation & CRO Services – A/B Testing & Personalization | Core Bit Media',
+    metaDescription: 'A/B testing, CRO, personalization, and funnel optimization across Adobe Target, VWO, and AB Tasty, run as an ongoing program.',
+    aiAnswerSummary: 'Core Bit Media\'s Experimentation & CRO practice covers A/B testing (Adobe Target, VWO, AB Tasty), conversion rate optimization, personalization, funnel optimization, and experimentation strategy/governance.'
+  });
+
   // ---- Step 1: reassign navGroup (+ a couple of title tweaks) on services
   // that are kept from the old taxonomy, before anything gets deleted ----
   const keepAndMove = [
-    ['ga4-implementation-migration', { navGroup: 'analytics', parentId: null }],
-    ['adobe-analytics-services', { navGroup: 'analytics', parentId: null }],
-    ['google-tag-manager', { navGroup: 'analytics', parentId: null }],
-    ['adobe-launch', { navGroup: 'analytics', parentId: null, title: 'Adobe Launch / Tags' }],
-    ['tealium-tag-management', { navGroup: 'analytics', parentId: null }],
-    ['bigquery-for-marketing', { navGroup: 'analytics', parentId: null }],
-    ['looker-studio-dashboards', { navGroup: 'analytics', parentId: null }],
-    ['power-bi-dashboards', { navGroup: 'analytics', parentId: null }],
-    ['tableau-dashboards', { navGroup: 'analytics', parentId: null }],
-    ['cro-conversion-rate-optimization', { navGroup: 'experimentation', parentId: null, title: 'Conversion Rate Optimization (CRO)' }]
+    ['ga4-implementation-migration', { navGroup: 'analytics', parentId: analyticsPillar.id }],
+    ['adobe-analytics-services', { navGroup: 'analytics', parentId: analyticsPillar.id }],
+    ['google-tag-manager', { navGroup: 'analytics', parentId: analyticsPillar.id }],
+    ['adobe-launch', { navGroup: 'analytics', parentId: analyticsPillar.id, title: 'Adobe Launch / Tags' }],
+    ['tealium-tag-management', { navGroup: 'analytics', parentId: analyticsPillar.id }],
+    ['bigquery-for-marketing', { navGroup: 'analytics', parentId: analyticsPillar.id }],
+    ['looker-studio-dashboards', { navGroup: 'analytics', parentId: analyticsPillar.id }],
+    ['power-bi-dashboards', { navGroup: 'analytics', parentId: analyticsPillar.id }],
+    ['tableau-dashboards', { navGroup: 'analytics', parentId: analyticsPillar.id }],
+    ['cro-conversion-rate-optimization', { navGroup: 'experimentation', parentId: experimentationPillar.id, title: 'Conversion Rate Optimization (CRO)' }]
   ];
   for (const [slug, changes] of keepAndMove) {
     const rec = await Service.findOne({ where: { slug } });
@@ -134,7 +187,7 @@ Talk to us about closing your attribution gaps.`,
     slug: 'adobe-web-app-sdk',
     title: 'Adobe Web SDK & App SDK',
     navGroup: 'analytics',
-    parentId: null,
+    parentId: analyticsPillar.id,
     shortDescription: 'Migrate to Adobe\'s unified Web SDK / App SDK for future-proof, first-party data collection across web and mobile.',
     body: `One SDK, Every Adobe Experience Cloud Product
 Adobe Web SDK (and its mobile counterpart, App SDK) is the modern, unified way to send data into Analytics, Target, AEP, and CJA — replacing the older, fragmented Analytics/Target/AEP libraries with one lightweight implementation.
@@ -157,7 +210,7 @@ Ready to consolidate onto Adobe's modern SDK?`,
     slug: 'adobe-experience-platform-aep',
     title: 'Adobe Experience Platform (AEP)',
     navGroup: 'analytics',
-    parentId: null,
+    parentId: analyticsPillar.id,
     shortDescription: 'Unify every customer data source into one real-time profile with Adobe Experience Platform — and actually activate it.',
     body: `A Real-Time Customer Profile, Not Another Data Silo
 AEP is powerful and famously complex to stand up correctly. We design and implement AEP so it becomes the system your marketing and analytics teams actually use, not a project that stalls after the initial ingestion.
@@ -179,7 +232,7 @@ Let's turn your fragmented customer data into one activatable profile.`,
     slug: 'customer-journey-analytics-cja',
     title: 'Customer Journey Analytics (CJA)',
     navGroup: 'analytics',
-    parentId: null,
+    parentId: analyticsPillar.id,
     shortDescription: 'Analyze every cross-channel touchpoint in one workspace — CJA connects the data AEP unifies into a single analytical view.',
     body: `See the Whole Journey, Not Just the Web Session
 Customer Journey Analytics is Adobe's cross-channel analysis layer on top of AEP's unified profile — letting you analyze web, app, call center, and offline data together, without the data-warehouse gymnastics.
@@ -200,7 +253,7 @@ If your customers cross channels but your reporting doesn't, CJA is the fix.`,
     slug: 'firebase-analytics',
     title: 'Firebase Analytics',
     navGroup: 'analytics',
-    parentId: null,
+    parentId: analyticsPillar.id,
     shortDescription: 'Google\'s free, event-based analytics for mobile apps — implemented correctly from day one, and connected to BigQuery for real analysis.',
     body: `Mobile Analytics That Actually Answers Product Questions
 Firebase Analytics ships with every app, but most teams only use a fraction of it. We implement it properly so it tells you what's actually happening in your product:
@@ -222,7 +275,7 @@ Let's make sure your app's data can actually answer your product team's question
     slug: 'server-side-tracking',
     title: 'Server-Side Tracking',
     navGroup: 'analytics',
-    parentId: null,
+    parentId: analyticsPillar.id,
     shortDescription: 'Move your tracking off the browser and onto a server-side container for better accuracy, speed, and resilience to ad blockers.',
     body: `First-Party Tracking That Survives Browser Restrictions
 Ad blockers, Safari's ITP, and third-party cookie deprecation have made client-side-only tracking unreliable. Server-side tracking (via a server-side GTM container or a similar first-party endpoint) fixes that:
@@ -244,7 +297,7 @@ If your reported conversions look lower than reality, this is usually why — an
     slug: 'appsflyer',
     title: 'AppsFlyer',
     navGroup: 'analytics',
-    parentId: null,
+    parentId: analyticsPillar.id,
     shortDescription: 'Mobile measurement partner (MMP) setup for accurate install attribution and fraud protection across every UA channel.',
     body: `Know Which UA Channel Actually Drives Installs
 AppsFlyer sits between your app and every ad network to give you independent, cross-network attribution for user acquisition. We handle:
@@ -267,7 +320,7 @@ Accurate attribution is the difference between scaling the channels that work an
     slug: 'adobe-target',
     title: 'Adobe Target',
     navGroup: 'experimentation',
-    parentId: null,
+    parentId: experimentationPillar.id,
     shortDescription: 'Enterprise-grade A/B testing and 1:1 personalization, integrated with your Adobe Experience Cloud stack.',
     body: `Testing and Personalization at Enterprise Scale
 Adobe Target is built for organizations that need testing and personalization tied directly into Analytics, AEP, and CJA. Our Adobe Target services include:
@@ -289,7 +342,7 @@ Let's put your Adobe stack's personalization capability to actual use.`,
     slug: 'vwo',
     title: 'VWO',
     navGroup: 'experimentation',
-    parentId: null,
+    parentId: experimentationPillar.id,
     shortDescription: 'Fast, flexible A/B testing and behavior analytics on VWO — a great fit for teams that want to move quickly without a full Adobe stack.',
     body: `Experimentation Without the Enterprise Overhead
 VWO pairs well with teams that want a fast-moving testing program without standing up a full Adobe Experience Cloud implementation.
@@ -310,7 +363,7 @@ We run the full loop: research what to test, build it, ship it, and read the res
     slug: 'ab-tasty',
     title: 'AB Tasty',
     navGroup: 'experimentation',
-    parentId: null,
+    parentId: experimentationPillar.id,
     shortDescription: 'AI-assisted experimentation and personalization on AB Tasty — including its Flagship feature-experimentation capability for product teams.',
     body: `Experimentation That Reaches Into Your Product, Not Just Your Marketing Site
 AB Tasty combines classic web A/B testing with Flagship, its feature-flag-based experimentation layer for engineering and product teams.
@@ -331,7 +384,7 @@ If your roadmap needs product-level experiments, not just landing-page tests, th
     slug: 'ab-testing',
     title: 'A/B Testing',
     navGroup: 'experimentation',
-    parentId: null,
+    parentId: experimentationPillar.id,
     shortDescription: 'Platform-agnostic A/B testing strategy — hypothesis design, statistical rigor, and a prioritized testing roadmap, whichever tool you run it on.',
     body: `Good Experimentation Is a Process, Not a Tool
 The platform matters less than the discipline behind it. We build the process that makes every test worth running:
@@ -353,7 +406,7 @@ Whether you're on Adobe Target, VWO, AB Tasty, or Google Optimize's successors, 
     slug: 'personalization',
     title: 'Personalization',
     navGroup: 'experimentation',
-    parentId: null,
+    parentId: experimentationPillar.id,
     shortDescription: '1:1 and segment-based personalization across your site and app, driven by real behavioral and CRM data — not just "welcome back" banners.',
     body: `Personalization Built on Real Segments, Not Guesswork
 Effective personalization starts with knowing who's actually on your site — not generic rules. Our approach:
@@ -374,7 +427,7 @@ Done right, personalization measurably lifts conversion — done wrong, it's jus
     slug: 'funnel-optimization',
     title: 'Funnel Optimization',
     navGroup: 'experimentation',
-    parentId: null,
+    parentId: experimentationPillar.id,
     shortDescription: 'Find and fix the exact steps where prospects drop off — from ad click to checkout — using data, not opinions.',
     body: `Every Funnel Leaks Somewhere. We Find Where.
 Funnel optimization is detective work: find the highest-drop-off step, form a hypothesis for why, then test the fix.
@@ -396,7 +449,7 @@ Let's find out exactly where your funnel is leaking, and fix it.`,
     slug: 'experimentation-strategy',
     title: 'Experimentation Strategy',
     navGroup: 'experimentation',
-    parentId: null,
+    parentId: experimentationPillar.id,
     shortDescription: 'Build a durable testing culture and roadmap — governance, prioritization, and tooling decisions that outlast any single campaign.',
     body: `Turn One-Off Tests Into a Real Experimentation Program
 Most companies run tests. Few run an experimentation program. We help build the latter:
