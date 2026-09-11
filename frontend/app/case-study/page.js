@@ -24,6 +24,14 @@ const CATEGORY_LABELS = {
   marketing: 'Marketing'
 };
 
+// The shared `.grid-3` class always reserves 3 columns, leaving a visibly
+// empty one whenever a category has fewer cards (only 2 each, right now).
+// `repeat(auto-fit, minmax(280px, 1fr))` sizes tracks by how many actually
+// fit, collapsing any with no content to 0 width so populated cards expand
+// to fill the row instead — while still wrapping to fewer columns (and
+// eventually 1) as the viewport narrows, so mobile stays responsive too.
+const cardGridStyle = { display: 'grid', gap: 24, gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' };
+
 function CaseStudyCard({ cs }) {
   return (
     <Link href={`/case-study/${cs.slug}/`} className="card" style={{ padding: 15 }}>
@@ -65,7 +73,7 @@ export default async function CaseStudyListPage() {
       {groups.map((g) => (
         <div key={g.key} className="container" style={{ marginBottom: 40 }}>
           <h3 style={{ marginBottom: 20 }}>{g.label}</h3>
-          <div className="grid grid-3">
+          <div style={cardGridStyle}>
             {g.items.map((cs) => <CaseStudyCard key={cs.slug} cs={cs} />)}
           </div>
         </div>
@@ -74,7 +82,7 @@ export default async function CaseStudyListPage() {
       {uncategorized.length > 0 && (
         <div className="container">
           {groups.length > 0 && <h3 style={{ marginBottom: 20 }}>More Case Studies</h3>}
-          <div className="grid grid-3">
+          <div style={cardGridStyle}>
             {uncategorized.map((cs) => <CaseStudyCard key={cs.slug} cs={cs} />)}
           </div>
         </div>
