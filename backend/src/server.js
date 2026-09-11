@@ -16,6 +16,7 @@ const customerAuthRoutes = require('./routes/customerAuthRoutes');
 const customerAdminRoutes = require('./routes/customerAdminRoutes');
 const { pagesRouter, servicesRouter, blogRouter, caseStudiesRouter, industriesRouter } = require('./routes/contentRoutes');
 const { startCredsSweeper } = require('./services/mcpGa4Client');
+const adminMaintenanceRoutes = require('./routes/adminMaintenanceRoutes'); // TEMPORARY — see that file's header comment
 
 const app = express();
 
@@ -65,6 +66,7 @@ app.use('/api/services', servicesRouter);
 app.use('/api/blog', blogRouter);
 app.use('/api/case-studies', caseStudiesRouter);
 app.use('/api/industries', industriesRouter);
+app.use('/api/admin', adminMaintenanceRoutes); // TEMPORARY — see that file's header comment
 app.use('/api/settings', settingsRoutes);
 app.use('/api/ga4', ga4Routes); // self-serve GA4 OAuth + shareable client reports
 app.use('/api/customers', customerAuthRoutes); // dashboard account signup/login
