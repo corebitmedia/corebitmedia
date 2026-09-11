@@ -172,7 +172,7 @@ export default async function ServicesPage() {
           <h2>Impact-Driven Services</h2>
         </div>
         {groups.map((g) => (
-          <div key={g.key} className="container" style={{ marginBottom: 40 }}>
+          <div key={g.key} id={g.key} className="container" style={{ marginBottom: 40, scrollMarginTop: 96 }}>
             <h3 style={{ marginBottom: 20 }}>{g.label}</h3>
             <Carousel>
               {g.items.map((s, i) => (

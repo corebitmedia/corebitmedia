@@ -6,7 +6,7 @@ import Script from 'next/script';
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
 const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
 
-export default function ContactForm() {
+export default function ContactForm({ source = 'contact-us-page' }) {
   const [form, setForm] = useState({
     firstName: '', lastName: '', email: '', phone: '', company: '', website: '', message: ''
   });
@@ -40,7 +40,7 @@ export default function ContactForm() {
       const res = await fetch(`${API_BASE}/api/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email: form.email, phone: form.phone, message, source: 'contact-us-page', recaptchaToken })
+        body: JSON.stringify({ name, email: form.email, phone: form.phone, message, source, recaptchaToken })
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));

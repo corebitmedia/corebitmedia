@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
+import ContactForm from './ContactForm';
 
 // Every service carries a `navGroup` ('analytics'|'experimentation'|'marketing')
 // deciding which top-level mega-menu it belongs under, and `parentId`
@@ -26,25 +27,51 @@ const dropdownWrapStyle = {
   zIndex: 60
 };
 
-// Analytics/Experimentation: a single flat column of links.
-function FlatMenu({ items }) {
+// Cross-links to the other two service mega-menus, shown at the bottom of
+// every Analytics/Experimentation/Marketing dropdown so a visitor browsing
+// one category can jump straight to another without leaving the menu.
+const CATEGORY_LINKS = [
+  { key: 'analytics', label: 'Analytics', href: '/services/#analytics' },
+  { key: 'experimentation', label: 'Experimentation & CRO', href: '/services/#experimentation' },
+  { key: 'marketing', label: 'Marketing', href: '/services/#marketing' }
+];
+
+function CategoryCrossLinks({ current }) {
+  return (
+    <div style={{ borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'center', gap: 24, padding: '12px 24px', flexWrap: 'wrap' }}>
+      {CATEGORY_LINKS.map((c) => (
+        <Link
+          key={c.key}
+          href={c.href}
+          style={{ fontSize: 13, fontWeight: 700, color: c.key === current ? 'var(--navy)' : 'var(--teal)' }}
+        >
+          {c.label}
+        </Link>
+      ))}
+    </div>
+  );
+}
+
+// Analytics/Experimentation/Industries: a single flat column of links.
+function FlatMenu({ items, hrefFor, crossLinkKey }) {
   if (items.length === 0) return null;
   return (
     <div style={dropdownWrapStyle}>
       <div className="container" style={{ display: 'flex', flexDirection: 'column', gap: 4, padding: '20px 24px', maxWidth: 320 }}>
         {items.map((item) => (
-          <Link key={item.slug} href={`/services/${item.slug}/`} style={{ fontSize: 14, color: 'var(--text)', padding: '6px 0' }}>
+          <Link key={item.slug} href={hrefFor(item)} style={{ fontSize: 14, color: 'var(--text)', padding: '6px 0' }}>
             {item.title}
           </Link>
         ))}
       </div>
+      {crossLinkKey && <CategoryCrossLinks current={crossLinkKey} />}
     </div>
   );
 }
 
 // Marketing: multi-column pillar -> children mega-menu (same layout the
 // old single "Services" dropdown used).
-function PillarMenu({ pillars, viewAllHref }) {
+function PillarMenu({ pillars, viewAllHref, crossLinkKey }) {
   if (pillars.length === 0) return null;
   return (
     <div style={dropdownWrapStyle}>
@@ -78,32 +105,76 @@ function PillarMenu({ pillars, viewAllHref }) {
           </Link>
         </div>
       )}
+      {crossLinkKey && <CategoryCrossLinks current={crossLinkKey} />}
     </div>
   );
 }
 
 const PLAIN_LINKS = [
-  { label: 'Industries', href: '/industries/' },
   { label: 'Case Studies', href: '/case-study/' },
   { label: 'Resources', href: '/resources/' },
   { label: 'About', href: '/about-us/' },
   { label: 'Contact', href: '/contact-us/' }
 ];
 
-export default function Header({ services = [] }) {
-  const [openMenu, setOpenMenu] = useState(null); // 'analytics' | 'experimentation' | 'marketing' | null
+// A lightweight lead-capture form reachable from every marketing page (the
+// header renders everywhere except /dashboard/*) instead of only from
+// /contact-us/ — same ContactForm/`/api/contact` pipeline, tagged with a
+// distinct `source` so these submissions are identifiable in the leads list.
+function FreeAuditModal({ onClose }) {
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      style={{ position: 'fixed', inset: 0, background: 'rgba(35,35,88,0.55)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}
+      onClick={onClose}
+    >
+      <div
+        style={{ background: 'white', borderRadius: 12, maxWidth: 480, width: '100%', maxHeight: '90vh', overflowY: 'auto', padding: 28, position: 'relative' }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close"
+          style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: 'var(--muted)' }}
+        >
+          ✕
+        </button>
+        <div className="eyebrow">Free Audit</div>
+        <h2 style={{ marginBottom: 16 }}>Get Your Free Marketing Audit</h2>
+        <ContactForm source="free-audit-modal" />
+      </div>
+    </div>
+  );
+}
+
+// Builds the two-level menu (pillar -> its sub-services) from the flat
+// services list fetched once in the root layout, rather than hardcoding
+// links here — new services created in the admin automatically show up in
+// the nav without a code change.
+export default function Header({ services = [], industries = [] }) {
+  const [openMenu, setOpenMenu] = useState(null); // 'analytics' | 'experimentation' | 'marketing' | 'industries' | null
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileSection, setMobileSection] = useState(null);
+  const [auditOpen, setAuditOpen] = useState(false);
 
   const analyticsItems = useMemo(() => groupByNavGroup(services, 'analytics'), [services]);
   const experimentationItems = useMemo(() => groupByNavGroup(services, 'experimentation'), [services]);
   const marketingPillars = useMemo(() => groupByNavGroup(services, 'marketing'), [services]);
 
   const megaMenus = [
-    { key: 'analytics', label: 'Analytics', items: analyticsItems, mode: 'flat' },
-    { key: 'experimentation', label: 'Experimentation', items: experimentationItems, mode: 'flat' },
-    { key: 'marketing', label: 'Marketing', items: marketingPillars, mode: 'pillar' }
+    { key: 'analytics', label: 'Analytics', items: analyticsItems, mode: 'flat', hrefFor: (i) => `/services/${i.slug}/` },
+    { key: 'experimentation', label: 'Experimentation', items: experimentationItems, mode: 'flat', hrefFor: (i) => `/services/${i.slug}/` },
+    { key: 'marketing', label: 'Marketing', items: marketingPillars, mode: 'pillar' },
+    { key: 'industries', label: 'Industries', items: industries, mode: 'flat', hrefFor: (i) => `/industries/${i.slug}/`, viewAllHref: '/industries/', allLabel: 'All Industries' }
   ];
+
+  function openAudit(e) {
+    e.preventDefault();
+    setMobileOpen(false);
+    setAuditOpen(true);
+  }
 
   return (
     <header style={{ borderBottom: '1px solid #e2e8f0', position: 'sticky', top: 0, background: 'white', zIndex: 50 }}>
@@ -127,18 +198,18 @@ export default function Header({ services = [] }) {
               onMouseLeave={() => setOpenMenu(null)}
             >
               <Link
-                href={menu.mode === 'pillar' ? '/services/' : '#'}
+                href={menu.mode === 'pillar' ? '/services/' : (menu.viewAllHref || '#')}
                 className="nav-link"
                 style={{ fontSize: 15, fontWeight: 500, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 4 }}
-                onClick={(e) => { if (menu.mode !== 'pillar') e.preventDefault(); }}
+                onClick={(e) => { if (menu.mode !== 'pillar' && !menu.viewAllHref) e.preventDefault(); }}
               >
                 {menu.label}
                 <span style={{ fontSize: 10, marginTop: 2 }}>▾</span>
               </Link>
               {openMenu === menu.key && (
                 menu.mode === 'flat'
-                  ? <FlatMenu items={menu.items} />
-                  : <PillarMenu pillars={menu.items} viewAllHref="/services/" />
+                  ? <FlatMenu items={menu.items} hrefFor={menu.hrefFor} crossLinkKey={menu.key === 'industries' ? null : menu.key} />
+                  : <PillarMenu pillars={menu.items} viewAllHref="/services/" crossLinkKey={menu.key} />
               )}
             </div>
           ))}
@@ -150,7 +221,7 @@ export default function Header({ services = [] }) {
           ))}
         </nav>
 
-        <Link href="/contact-us/" className="btn btn-secondary header-cta-desktop" style={{ fontSize: 16 }}>Get Free Audit</Link>
+        <a href="/contact-us/" onClick={openAudit} className="btn btn-secondary header-cta-desktop" style={{ fontSize: 16 }}>Get Free Audit</a>
 
         <button
           type="button"
@@ -187,15 +258,15 @@ export default function Header({ services = [] }) {
               </button>
               {mobileSection === menu.key && (
                 <div style={{ paddingLeft: 12, display: 'flex', flexDirection: 'column' }}>
-                  {menu.mode === 'pillar' && (
-                    <Link href="/services/" onClick={() => setMobileOpen(false)} style={{ padding: '10px 8px', fontSize: 14, fontWeight: 700, color: 'var(--teal)' }}>
-                      All Services
+                  {(menu.mode === 'pillar' || menu.viewAllHref) && (
+                    <Link href={menu.viewAllHref || '/services/'} onClick={() => setMobileOpen(false)} style={{ padding: '10px 8px', fontSize: 14, fontWeight: 700, color: 'var(--teal)' }}>
+                      {menu.allLabel || 'All Services'}
                     </Link>
                   )}
                   {menu.items.map((item) => (
                     <div key={item.slug}>
                       <Link
-                        href={`/services/${item.slug}/`}
+                        href={menu.hrefFor ? menu.hrefFor(item) : `/services/${item.slug}/`}
                         onClick={() => setMobileOpen(false)}
                         style={{ padding: '10px 8px', fontSize: 14, fontWeight: item.children?.length ? 600 : 400, color: 'var(--text)', display: 'block' }}
                       >
@@ -228,16 +299,18 @@ export default function Header({ services = [] }) {
             </Link>
           ))}
 
-          <Link
+          <a
             href="/contact-us/"
-            onClick={() => setMobileOpen(false)}
+            onClick={openAudit}
             className="btn btn-secondary"
             style={{ marginTop: 12, textAlign: 'center', fontSize: 16 }}
           >
             Get Free Audit
-          </Link>
+          </a>
         </div>
       </div>
+
+      {auditOpen && <FreeAuditModal onClose={() => setAuditOpen(false)} />}
     </header>
   );
 }

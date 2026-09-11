@@ -1,7 +1,7 @@
 import './globals.css';
 import SiteChrome from '../components/SiteChrome';
 import ThemeLoader from '../components/ThemeLoader';
-import { getServices } from '../lib/api';
+import { getServices, getIndustries } from '../lib/api';
 
 export const metadata = {
   metadataBase: new URL('https://www.corebitmedia.com'),
@@ -55,7 +55,7 @@ const orgSchema = {
 };
 
 export default async function RootLayout({ children }) {
-  const services = await getServices();
+  const [services, industries] = await Promise.all([getServices(), getIndustries()]);
 
   return (
     <html lang="en">
@@ -65,7 +65,7 @@ export default async function RootLayout({ children }) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
         />
         <ThemeLoader />
-        <SiteChrome services={services}>{children}</SiteChrome>
+        <SiteChrome services={services} industries={industries}>{children}</SiteChrome>
       </body>
     </html>
   );

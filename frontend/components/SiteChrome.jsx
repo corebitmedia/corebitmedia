@@ -9,7 +9,7 @@ import Footer from './Footer';
 // would just be double chrome there, so this is the one place that decides
 // whether they render at all, keeping Header.jsx/Footer.jsx themselves
 // untouched.
-export default function SiteChrome({ services, children }) {
+export default function SiteChrome({ services, industries, children }) {
   const pathname = usePathname();
   const isDashboard = pathname?.startsWith('/dashboard');
 
@@ -17,7 +17,7 @@ export default function SiteChrome({ services, children }) {
 
   return (
     <>
-      <Header services={services} />
+      <Header services={services} industries={industries} />
       {children}
       <Footer />
     </>
