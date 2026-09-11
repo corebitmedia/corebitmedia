@@ -23,14 +23,29 @@ export default function Dashboard() {
     });
   }, []);
 
+  // The migration does ~150 sequential DB writes — long enough that Render's
+  // own proxy can drop the connection before it finishes even though the
+  // job itself completes fine server-side. So the POST just starts it and
+  // returns immediately; this polls a status endpoint instead of awaiting
+  // the job directly.
+  function pollRestructureStatus() {
+    api.get('/api/admin/restructure-nav/status').then((state) => {
+      setRestructureResult({ stdout: state.log?.join('\n'), error: state.error });
+      if (state.status === 'running') {
+        setTimeout(pollRestructureStatus, 3000);
+      } else {
+        setRestructureStatus(state.status);
+      }
+    }).catch(() => setTimeout(pollRestructureStatus, 5000));
+  }
+
   async function runRestructureNav() {
     if (!window.confirm('This deletes the CRM & Marketing pillar (and a few other superseded pages) and creates ~35 new service/industry pages. Run it now?')) return;
     setRestructureStatus('running');
     setRestructureResult(null);
     try {
-      const result = await api.post('/api/admin/restructure-nav');
-      setRestructureResult(result);
-      setRestructureStatus('done');
+      await api.post('/api/admin/restructure-nav');
+      pollRestructureStatus();
     } catch (err) {
       setRestructureResult({ error: err.message });
       setRestructureStatus('error');

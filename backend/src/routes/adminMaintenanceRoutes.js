@@ -4,14 +4,12 @@
 // admin/src/pages/Dashboard.jsx); trigger it once, confirm the result, then
 // delete this whole file + its mount in server.js + the button.
 //
-// Runs the migration IN-PROCESS (awaiting the same restructureNav()
-// function the CLI script uses) rather than spawning it as a child
-// process — an earlier version used child_process.execFile, which doubles
-// memory usage (a second full Node process + its own DB connection pool)
-// on top of the already-running server, and on the free tier's limited RAM
-// that was enough to crash-loop the whole service. In-process, the
-// migration's DB calls are all async/await and don't block the event loop,
-// so the rest of the server keeps serving requests while it runs.
+// Fire-and-forget: the migration does ~150 sequential DB writes, which took
+// longer than Render's own proxy will hold an HTTP request open (an
+// earlier in-process-but-awaited version still returned "Request failed"
+// from the client even though nothing crashed server-side). So POST here
+// starts the job and returns immediately; GET the status endpoint (no auth
+// — it reveals no sensitive data, just progress) to poll for completion.
 
 const express = require('express');
 const { requireAuth, requireRole } = require('../middleware/auth');
@@ -19,22 +17,38 @@ const { restructureNav } = require('../scripts/restructureNav');
 
 const router = express.Router();
 
-router.post('/restructure-nav', requireAuth, requireRole('admin'), async (req, res) => {
-  // Captures console.log output from restructureNav() so the admin UI can
-  // show a summary, without changing that script's own logging.
-  const logs = [];
-  const originalLog = console.log;
-  console.log = (...args) => { logs.push(args.map(String).join(' ')); originalLog(...args); };
+let state = { status: 'idle', log: [], error: null, startedAt: null, finishedAt: null };
 
-  try {
-    const summary = await restructureNav();
-    res.json({ ok: true, stdout: [...logs, summary].join('\n') });
-  } catch (err) {
-    console.error('[restructure-nav] Failed:', err);
-    res.status(500).json({ error: err.message, stdout: logs.join('\n') });
-  } finally {
-    console.log = originalLog;
-  }
+function runInBackground() {
+  state = { status: 'running', log: [], error: null, startedAt: new Date().toISOString(), finishedAt: null };
+
+  const originalLog = console.log;
+  console.log = (...args) => { state.log.push(args.map(String).join(' ')); originalLog(...args); };
+
+  restructureNav()
+    .then((summary) => {
+      state.log.push(summary);
+      state.status = 'done';
+    })
+    .catch((err) => {
+      console.error('[restructure-nav] Failed:', err);
+      state.status = 'error';
+      state.error = err.message;
+    })
+    .finally(() => {
+      console.log = originalLog;
+      state.finishedAt = new Date().toISOString();
+    });
+}
+
+router.post('/restructure-nav', requireAuth, requireRole('admin'), (req, res) => {
+  if (state.status === 'running') return res.status(409).json({ error: 'Already running', state });
+  runInBackground();
+  res.json({ ok: true, started: true });
+});
+
+router.get('/restructure-nav/status', (req, res) => {
+  res.json(state);
 });
 
 module.exports = router;
