@@ -129,17 +129,19 @@ export default async function HomePage() {
           <h2>Why Choose <span style={{ color: 'var(--teal)' }}>Core Bit Media</span></h2>
           <p className="eyebrow" style={{ marginTop: 10 }}>Let&rsquo;s focus on the outside elements to boost your business sales.</p>
         </div>
-        <div className="container row align-items-center g-5">
-          <div className="col-lg-5">
-            <HeroAnimation maxWidth={320} />
-          </div>
-          <div className="col-lg-7">
-            <h2>Time-Saving and Hassle-Free <span style={{ color: 'var(--teal)' }}>Digital Marketing Services</span></h2>
-            <p className="text-muted" style={{ marginTop: 16 }}>
-              Core Bit Media has an experienced team of digital marketing professionals with specializations across domains.
-              We work with startups, small businesses, and medium-sized organizations to gain more visibility in competitive markets.
-            </p>
-            <h3 style={{ marginTop: 20, fontSize: 18 }}>Let&rsquo;s pin your <span style={{ color: 'var(--teal)' }}>success story</span> next!</h3>
+        <div className="container">
+          <div className="row align-items-center g-5">
+            <div className="col-lg-5">
+              <HeroAnimation maxWidth={320} />
+            </div>
+            <div className="col-lg-7">
+              <h2>Time-Saving and Hassle-Free <span style={{ color: 'var(--teal)' }}>Digital Marketing Services</span></h2>
+              <p className="text-muted" style={{ marginTop: 16 }}>
+                Core Bit Media has an experienced team of digital marketing professionals with specializations across domains.
+                We work with startups, small businesses, and medium-sized organizations to gain more visibility in competitive markets.
+              </p>
+              <h3 style={{ marginTop: 20, fontSize: 18 }}>Let&rsquo;s pin your <span style={{ color: 'var(--teal)' }}>success story</span> next!</h3>
+            </div>
           </div>
         </div>
       </section>
@@ -274,26 +276,28 @@ export default async function HomePage() {
           <h2>Genuine Reviews from our <span style={{ color: 'var(--teal)' }}>Partners</span></h2>
           <p className="eyebrow" style={{ marginTop: 10 }}>Our Clients are Happy!</p>
         </div>
-        <div className="container row g-4 align-items-stretch">
-          <div className="col-lg-3">
-            <div style={{ background: 'var(--navy)', color: 'white', borderRadius: 12, padding: 28, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', textAlign: 'center' }}>
-              <div style={{ fontSize: 40, fontWeight: 700 }}>4.9</div>
-              <div style={{ color: 'var(--gold)', letterSpacing: 2, marginTop: 6 }}>★★★★★</div>
-              <div style={{ marginTop: 8, opacity: 0.85, fontSize: 14 }}>80 Reviews</div>
-              <div style={{ marginTop: 16, fontWeight: 600 }}>Customer experiences that speak for themselves</div>
+        <div className="container">
+          <div className="row g-4 align-items-stretch">
+            <div className="col-lg-3">
+              <div style={{ background: 'var(--navy)', color: 'white', borderRadius: 12, padding: 28, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', textAlign: 'center' }}>
+                <div style={{ fontSize: 40, fontWeight: 700 }}>4.9</div>
+                <div style={{ color: 'var(--gold)', letterSpacing: 2, marginTop: 6 }}>★★★★★</div>
+                <div style={{ marginTop: 8, opacity: 0.85, fontSize: 14 }}>80 Reviews</div>
+                <div style={{ marginTop: 16, fontWeight: 600 }}>Customer experiences that speak for themselves</div>
+              </div>
             </div>
-          </div>
-          <div className="col-lg-9">
-            <Carousel>
-              {REAL_TESTIMONIALS.map((t) => (
-                <div className="card" key={t.name}>
-                  <img src={t.image} alt={t.name} loading="lazy" style={{ width: 56, height: 56, borderRadius: '50%', objectFit: 'cover' }} />
-                  <p style={{ fontStyle: 'italic', marginTop: 16 }}>{t.quote}</p>
-                  <div style={{ marginTop: 16, fontWeight: 700 }}>{t.name}</div>
-                  <div className="text-muted" style={{ fontSize: 13 }}>{t.title}</div>
-                </div>
-              ))}
-            </Carousel>
+            <div className="col-lg-9">
+              <Carousel>
+                {REAL_TESTIMONIALS.map((t) => (
+                  <div className="card" key={t.name}>
+                    <img src={t.image} alt={t.name} loading="lazy" style={{ width: 56, height: 56, borderRadius: '50%', objectFit: 'cover' }} />
+                    <p style={{ fontStyle: 'italic', marginTop: 16 }}>{t.quote}</p>
+                    <div style={{ marginTop: 16, fontWeight: 700 }}>{t.name}</div>
+                    <div className="text-muted" style={{ fontSize: 13 }}>{t.title}</div>
+                  </div>
+                ))}
+              </Carousel>
+            </div>
           </div>
         </div>
       </section>
