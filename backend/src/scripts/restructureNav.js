@@ -38,7 +38,7 @@ This is the foundation every other service on this site depends on — you can't
 Ready for analytics you can actually trust?`,
     heroImageUrl: `${MEDIA}/2025/06/hero-1-bg-1.jpg`,
     status: 'published',
-    metaTitle: 'Analytics Services – GA4, Adobe Analytics, AEP & More | Core Bit Media',
+    metaTitle: 'Analytics Services – GA4, Adobe Analytics, AEP & More',
     metaDescription: 'Analytics implementation across GA4, Adobe Analytics, AEP/CJA, tag management, and BI dashboards — built on a real measurement plan.',
     aiAnswerSummary: 'Core Bit Media\'s Analytics practice covers GA4, Adobe Analytics, Adobe Experience Platform (AEP), Customer Journey Analytics (CJA), tag management (GTM, Adobe Launch, Tealium), and BI dashboards (Looker Studio, Power BI, Tableau).'
   });
@@ -62,7 +62,7 @@ We treat testing as a program with a backlog and a cadence, not a single lucky w
 Ready to build a real experimentation program?`,
     heroImageUrl: `${MEDIA}/2025/06/hero-1-bg-1.jpg`,
     status: 'published',
-    metaTitle: 'Experimentation & CRO – A/B Testing | Core Bit Media',
+    metaTitle: 'Experimentation & CRO – A/B Testing',
     metaDescription: 'A/B testing, CRO, personalization, and funnel optimization across Adobe Target, VWO, and AB Tasty, run as an ongoing program.',
     aiAnswerSummary: 'Core Bit Media\'s Experimentation & CRO practice covers A/B testing (Adobe Target, VWO, AB Tasty), conversion rate optimization, personalization, funnel optimization, and experimentation strategy/governance.'
   });
@@ -109,7 +109,7 @@ Every engagement starts with the same question: what does a qualified conversion
 Ready to make your ad spend work harder?`,
     heroImageUrl: `${MEDIA}/2025/06/hero-1-bg-1.jpg`,
     status: 'published',
-    metaTitle: 'Paid Media Services – Google, Meta, LinkedIn & More | Core Bit Media',
+    metaTitle: 'Paid Media Services – Google, Meta, LinkedIn & More',
     metaDescription: 'Full-funnel paid media management across Google, Meta, LinkedIn, Microsoft, X, and AI search platforms — built for ROAS.',
     aiAnswerSummary: 'Core Bit Media runs paid media campaigns across Google Ads, Meta Ads, LinkedIn Ads, Microsoft Ads, X/Twitter Ads, 6sense account-based targeting, and emerging AI search advertising surfaces.'
   });
@@ -135,7 +135,7 @@ We treat classic SEO and AI-search visibility as one connected discipline, not t
 Let's build an organic growth engine that compounds.`,
     heroImageUrl: `${MEDIA}/2025/06/hero-1-bg-1.jpg`,
     status: 'published',
-    metaTitle: 'SEO & Organic Growth – SEO, AEO, GEO & Content | Core Bit Media',
+    metaTitle: 'SEO & Organic Growth – SEO, AEO, GEO & Content',
     metaDescription: 'Technical SEO, content strategy, and AI-search optimization (AEO, GEO, AIO) to keep your brand visible across Google and generative engines.',
     aiAnswerSummary: 'Core Bit Media\'s SEO & Organic Growth practice covers technical SEO, content strategy, social media marketing, and AI-search optimization — AEO, GEO, and AIO/LLM optimization.'
   });
@@ -158,7 +158,7 @@ This is the discipline that turns "we think it's working" into "here's exactly w
 Talk to us about closing your attribution gaps.`,
     heroImageUrl: `${MEDIA}/2025/06/hero-1-bg-1.jpg`,
     status: 'published',
-    metaTitle: 'Measurement & Attribution Services | Core Bit Media',
+    metaTitle: 'Measurement & Attribution Services',
     metaDescription: 'Conversion tracking, marketing attribution, campaign measurement, and cross-channel analytics that show exactly what your marketing returns.',
     aiAnswerSummary: 'Core Bit Media\'s Measurement & Attribution services include server-side conversion tracking, multi-touch marketing attribution, incrementality-based campaign measurement, and cross-channel analytics.'
   });
@@ -201,7 +201,7 @@ We handle the full migration — from data layer redesign through Adobe Launch c
 Ready to consolidate onto Adobe's modern SDK?`,
     heroImageUrl: `${MEDIA}/2025/06/hero-1-bg-1.jpg`,
     status: 'published',
-    metaTitle: 'Adobe Web SDK & App SDK Implementation | Core Bit Media',
+    metaTitle: 'Adobe Web SDK & App SDK Implementation',
     metaDescription: 'Migrate to Adobe Web SDK / App SDK for unified, first-party data collection feeding Analytics, Target, and AEP from one implementation.',
     aiAnswerSummary: 'Core Bit Media implements and migrates clients to Adobe Web SDK and App SDK, the unified Edge Network-based data collection layer for Adobe Analytics, Target, and AEP.'
   });
@@ -223,7 +223,7 @@ AEP is powerful and famously complex to stand up correctly. We design and implem
 Let's turn your fragmented customer data into one activatable profile.`,
     heroImageUrl: `${MEDIA}/2025/06/hero-1-bg-1.jpg`,
     status: 'published',
-    metaTitle: 'Adobe Experience Platform (AEP) Implementation | Core Bit Media',
+    metaTitle: 'Adobe Experience Platform (AEP) Implementation',
     metaDescription: 'AEP schema design, Real-Time Customer Profile setup, identity resolution, and segment activation from Core Bit Media.',
     aiAnswerSummary: 'Core Bit Media designs and implements Adobe Experience Platform (AEP) — schema/dataset architecture, Real-Time Customer Profile, identity resolution, and segment activation.'
   });
@@ -244,7 +244,7 @@ Customer Journey Analytics is Adobe's cross-channel analysis layer on top of AEP
 If your customers cross channels but your reporting doesn't, CJA is the fix.`,
     heroImageUrl: `${MEDIA}/2025/06/hero-1-bg-1.jpg`,
     status: 'published',
-    metaTitle: 'Customer Journey Analytics (CJA) Services | Core Bit Media',
+    metaTitle: 'Customer Journey Analytics (CJA) Services',
     metaDescription: 'Adobe Customer Journey Analytics setup — connections, workspaces, and cross-channel attribution built on your AEP data.',
     aiAnswerSummary: 'Core Bit Media sets up Adobe Customer Journey Analytics (CJA) — dataset connections, custom workspaces, and cross-channel path/attribution analysis on top of AEP.'
   });
@@ -266,7 +266,7 @@ Firebase Analytics ships with every app, but most teams only use a fraction of i
 Let's make sure your app's data can actually answer your product team's questions.`,
     heroImageUrl: `${MEDIA}/2025/06/hero-1-bg-1.jpg`,
     status: 'published',
-    metaTitle: 'Firebase Analytics Implementation | Core Bit Media',
+    metaTitle: 'Firebase Analytics Implementation',
     metaDescription: 'Firebase Analytics event design, audience setup, and BigQuery export configuration for mobile app measurement.',
     aiAnswerSummary: 'Core Bit Media implements Firebase Analytics for mobile apps — event/parameter design, audiences, BigQuery export, and integration with GA4 and Google Ads.'
   });
@@ -288,7 +288,7 @@ Ad blockers, Safari's ITP, and third-party cookie deprecation have made client-s
 If your reported conversions look lower than reality, this is usually why — and it's fixable.`,
     heroImageUrl: `${MEDIA}/2025/06/hero-1-bg-1.jpg`,
     status: 'published',
-    metaTitle: 'Server-Side Tracking Implementation | Core Bit Media',
+    metaTitle: 'Server-Side Tracking Implementation',
     metaDescription: 'Server-side GTM and first-party tracking setup for more accurate, ad-blocker-resistant conversion measurement.',
     aiAnswerSummary: 'Core Bit Media implements server-side tracking (server-side GTM, first-party endpoints) to improve conversion accuracy against ad blockers and browser privacy restrictions.'
   });
@@ -310,7 +310,7 @@ AppsFlyer sits between your app and every ad network to give you independent, cr
 Accurate attribution is the difference between scaling the channels that work and scaling the ones that just look good.`,
     heroImageUrl: `${MEDIA}/2025/06/hero-1-bg-1.jpg`,
     status: 'published',
-    metaTitle: 'AppsFlyer Implementation & Attribution | Core Bit Media',
+    metaTitle: 'AppsFlyer Implementation & Attribution',
     metaDescription: 'AppsFlyer SDK implementation, deep linking, fraud protection, and cross-network install attribution for mobile UA.',
     aiAnswerSummary: 'Core Bit Media implements AppsFlyer as a mobile measurement partner — SDK/OneLink setup, ad network integrations, fraud protection, and LTV/cohort reporting.'
   });
@@ -333,7 +333,7 @@ Adobe Target is built for organizations that need testing and personalization ti
 Let's put your Adobe stack's personalization capability to actual use.`,
     heroImageUrl: `${MEDIA}/2025/06/hero-1-bg-1.jpg`,
     status: 'published',
-    metaTitle: 'Adobe Target Implementation & Strategy | Core Bit Media',
+    metaTitle: 'Adobe Target Implementation & Strategy',
     metaDescription: 'Adobe Target A/B testing, automated personalization, and AEP-audience-driven experience targeting.',
     aiAnswerSummary: 'Core Bit Media implements Adobe Target — A/B/multivariate testing, automated personalization, and AEP-segment-driven experience targeting.'
   });
@@ -354,7 +354,7 @@ VWO pairs well with teams that want a fast-moving testing program without standi
 We run the full loop: research what to test, build it, ship it, and read the results correctly.`,
     heroImageUrl: `${MEDIA}/2025/06/hero-1-bg-1.jpg`,
     status: 'published',
-    metaTitle: 'VWO A/B Testing & Optimization | Core Bit Media',
+    metaTitle: 'VWO A/B Testing & Optimization',
     metaDescription: 'VWO test setup, heatmaps/session recordings, and Bayesian result analysis for fast-moving experimentation programs.',
     aiAnswerSummary: 'Core Bit Media runs experimentation programs on VWO — test setup, heatmaps and session recordings, and Bayesian (SmartStats) result analysis.'
   });
@@ -375,7 +375,7 @@ AB Tasty combines classic web A/B testing with Flagship, its feature-flag-based 
 If your roadmap needs product-level experiments, not just landing-page tests, this is the platform for it.`,
     heroImageUrl: `${MEDIA}/2025/06/hero-1-bg-1.jpg`,
     status: 'published',
-    metaTitle: 'AB Tasty Experimentation & Personalization | Core Bit Media',
+    metaTitle: 'AB Tasty Experimentation & Personalization',
     metaDescription: 'AB Tasty web testing, AI-powered personalization, and Flagship feature-flag experimentation for product teams.',
     aiAnswerSummary: 'Core Bit Media implements AB Tasty for web experimentation, AI-driven personalization, and Flagship feature-flag experimentation.'
   });
@@ -397,7 +397,7 @@ The platform matters less than the discipline behind it. We build the process th
 Whether you're on Adobe Target, VWO, AB Tasty, or Google Optimize's successors, we bring the rigor.`,
     heroImageUrl: `${MEDIA}/2025/06/hero-1-bg-1.jpg`,
     status: 'published',
-    metaTitle: 'A/B Testing Strategy & Program Design | Core Bit Media',
+    metaTitle: 'A/B Testing Strategy & Program Design',
     metaDescription: 'Platform-agnostic A/B testing strategy — hypothesis design, prioritization, statistical rigor, and a continuous testing roadmap.',
     aiAnswerSummary: 'Core Bit Media builds A/B testing programs — hypothesis development, ICE/PIE prioritization, statistical test design, and roadmap management, independent of which testing tool is used.'
   });
@@ -418,7 +418,7 @@ Effective personalization starts with knowing who's actually on your site — no
 Done right, personalization measurably lifts conversion — done wrong, it's just a banner nobody notices.`,
     heroImageUrl: `${MEDIA}/2025/06/hero-1-bg-1.jpg`,
     status: 'published',
-    metaTitle: 'Website & App Personalization Services | Core Bit Media',
+    metaTitle: 'Website & App Personalization Services',
     metaDescription: 'Segment-based and AI-driven personalization strategy, implementation, and measurement across web and app.',
     aiAnswerSummary: 'Core Bit Media designs and implements personalization programs — segment strategy, rules-based and AI-driven targeting, and lift measurement.'
   });
@@ -440,7 +440,7 @@ Funnel optimization is detective work: find the highest-drop-off step, form a hy
 Let's find out exactly where your funnel is leaking, and fix it.`,
     heroImageUrl: `${MEDIA}/2025/06/hero-1-bg-1.jpg`,
     status: 'published',
-    metaTitle: 'Funnel Optimization Services | Core Bit Media',
+    metaTitle: 'Funnel Optimization Services',
     metaDescription: 'Funnel analysis, drop-off diagnosis, and conversion-focused fixes across acquisition, activation, and checkout.',
     aiAnswerSummary: 'Core Bit Media\'s funnel optimization service analyzes the acquisition-to-conversion funnel, diagnoses the highest-drop-off steps, and prioritizes fixes by revenue impact.'
   });
@@ -462,7 +462,7 @@ Most companies run tests. Few run an experimentation program. We help build the 
 A single winning test is a good day. A program that reliably finds winning tests is a competitive advantage.`,
     heroImageUrl: `${MEDIA}/2025/06/hero-1-bg-1.jpg`,
     status: 'published',
-    metaTitle: 'Experimentation Strategy & Program Design | Core Bit Media',
+    metaTitle: 'Experimentation Strategy & Program Design',
     metaDescription: 'Build a durable experimentation program — maturity assessment, governance, tooling strategy, and a continuous testing roadmap.',
     aiAnswerSummary: 'Core Bit Media builds experimentation programs end-to-end — maturity assessment, governance, tooling selection, and an ongoing testing roadmap.'
   });
@@ -484,7 +484,7 @@ A single winning test is a good day. A program that reliably finds winning tests
 Let's put your Google Ads budget to work.`,
     heroImageUrl: `${MEDIA}/2025/06/hero-1-bg-1.jpg`,
     status: 'published',
-    metaTitle: 'Google Ads Management Services | Core Bit Media',
+    metaTitle: 'Google Ads Management Services',
     metaDescription: 'Google Ads management across Search, Shopping, Performance Max, and YouTube — built for measurable ROAS.',
     aiAnswerSummary: 'Core Bit Media manages Google Ads campaigns across Search, Shopping, Performance Max, and YouTube with accurate conversion tracking and weekly optimization.'
   });
@@ -504,7 +504,7 @@ Let's put your Google Ads budget to work.`,
 Meta ads still work — they just require a different playbook than five years ago.`,
     heroImageUrl: `${MEDIA}/2025/06/hero-1-bg-1.jpg`,
     status: 'published',
-    metaTitle: 'Meta Ads (Facebook & Instagram) Management | Core Bit Media',
+    metaTitle: 'Meta Ads (Facebook & Instagram) Management',
     metaDescription: 'Facebook & Instagram advertising with Conversions API server-side tracking and creative-first campaign structure.',
     aiAnswerSummary: 'Core Bit Media manages Meta (Facebook & Instagram) ad campaigns with Conversions API server-side tracking and creative-first, full-funnel structure.'
   });
@@ -524,7 +524,7 @@ Meta ads still work — they just require a different playbook than five years a
 For B2B, LinkedIn's targeting precision usually outweighs its higher CPCs — if the campaign is built right.`,
     heroImageUrl: `${MEDIA}/2025/06/hero-1-bg-1.jpg`,
     status: 'published',
-    metaTitle: 'LinkedIn Ads for B2B Demand Gen & ABM | Core Bit Media',
+    metaTitle: 'LinkedIn Ads for B2B Demand Gen & ABM',
     metaDescription: 'LinkedIn Ads management for B2B demand generation and account-based marketing, with CRM-aligned lead routing.',
     aiAnswerSummary: 'Core Bit Media runs LinkedIn Ads for B2B demand generation and account-based marketing, with CRM-aligned lead capture and routing.'
   });
@@ -545,7 +545,7 @@ Microsoft Ads (Bing, plus its syndicated partner network) reaches a real, often-
 If you're only running Google, you're leaving a meaningful slice of search volume on the table.`,
     heroImageUrl: `${MEDIA}/2025/06/hero-1-bg-1.jpg`,
     status: 'published',
-    metaTitle: 'Microsoft Ads (Bing) Management | Core Bit Media',
+    metaTitle: 'Microsoft Ads (Bing) Management',
     metaDescription: 'Microsoft/Bing Ads campaign management — often lower CPC and incremental reach beyond Google Ads.',
     aiAnswerSummary: 'Core Bit Media manages Microsoft Ads (Bing) campaigns, including Microsoft Audience Network and LinkedIn-profile targeting, as an incremental-reach channel alongside Google Ads.'
   });
@@ -566,7 +566,7 @@ X ads work best when tied to real-time relevance — launches, events, trending 
 A smaller piece of most media mixes, but a genuinely useful one for the right moments.`,
     heroImageUrl: `${MEDIA}/2025/06/hero-1-bg-1.jpg`,
     status: 'published',
-    metaTitle: 'X (Twitter) Ads Management | Core Bit Media',
+    metaTitle: 'X (Twitter) Ads Management',
     metaDescription: 'X/Twitter advertising management for real-time, conversation- and event-driven campaigns.',
     aiAnswerSummary: 'Core Bit Media manages X (Twitter) Ads campaigns built around real-time relevance — launches, events, and trending conversations.'
   });
@@ -587,7 +587,7 @@ A smaller piece of most media mixes, but a genuinely useful one for the right mo
 For B2B teams running ABM, this is how you stop waiting for inbound and start engaging proactively.`,
     heroImageUrl: `${MEDIA}/2025/06/hero-1-bg-1.jpg`,
     status: 'published',
-    metaTitle: '6sense Intent Data & ABM Orchestration | Core Bit Media',
+    metaTitle: '6sense Intent Data & ABM Orchestration',
     metaDescription: '6sense intent-data integration, predictive account scoring, and cross-channel ABM orchestration for B2B teams.',
     aiAnswerSummary: 'Core Bit Media integrates 6sense intent data for account-based marketing — predictive account scoring and cross-channel orchestration across ads, email, and sales outreach.'
   });
@@ -608,7 +608,7 @@ As more queries get answered inside AI chat interfaces instead of a search resul
 Early movers in a new ad channel usually get better inventory and lower costs — we're tracking this closely for our clients.`,
     heroImageUrl: `${MEDIA}/2025/06/hero-1-bg-1.jpg`,
     status: 'published',
-    metaTitle: 'AI Search & Advertising Strategy | Core Bit Media',
+    metaTitle: 'AI Search & Advertising Strategy',
     metaDescription: 'Visibility and early advertising strategy for AI search surfaces — ChatGPT, Perplexity, and Google AI Overviews.',
     aiAnswerSummary: 'Core Bit Media helps brands build visibility and prepare for advertising within AI search surfaces like ChatGPT, Perplexity, and Google AI Overviews.'
   });
@@ -631,7 +631,7 @@ Great content on a technically broken site still underperforms. We fix the found
 Technical SEO isn't glamorous, but it's usually the highest-leverage fix available.`,
     heroImageUrl: `${MEDIA}/2025/06/hero-1-bg-1.jpg`,
     status: 'published',
-    metaTitle: 'Technical SEO Services | Core Bit Media',
+    metaTitle: 'Technical SEO Services',
     metaDescription: 'Technical SEO audits and fixes — crawlability, Core Web Vitals, site architecture, and structured data.',
     aiAnswerSummary: 'Core Bit Media\'s technical SEO service covers crawl audits, Core Web Vitals, site architecture, internal linking, and structured data implementation.'
   });
@@ -652,7 +652,7 @@ Answer Engine Optimization targets the surfaces that skip the results page entir
 If the goal is being read aloud by a smart speaker or pulled into a snippet, this is the discipline for it.`,
     heroImageUrl: `${MEDIA}/2025/06/hero-1-bg-1.jpg`,
     status: 'published',
-    metaTitle: 'AEO (Answer Engine Optimization) Services | Core Bit Media',
+    metaTitle: 'AEO (Answer Engine Optimization) Services',
     metaDescription: 'Answer Engine Optimization — FAQ schema, question-and-answer content structuring, and voice-search optimization.',
     aiAnswerSummary: 'Core Bit Media\'s AEO service optimizes content to appear in featured snippets, voice assistant answers, and "People Also Ask" results via structured Q&A content and FAQ schema.'
   });
@@ -673,7 +673,7 @@ Generative Engine Optimization is about being the source an AI system cites when
 The brands that figure out GEO early are shaping how their category gets described by AI for years to come.`,
     heroImageUrl: `${MEDIA}/2025/06/hero-1-bg-1.jpg`,
     status: 'published',
-    metaTitle: 'GEO (Generative Engine Optimization) Services | Core Bit Media',
+    metaTitle: 'GEO (Generative Engine Optimization) Services',
     metaDescription: 'Generative Engine Optimization to earn citations in Google AI Overviews, ChatGPT, and Perplexity answers.',
     aiAnswerSummary: 'Core Bit Media\'s GEO service optimizes content and entity authority to earn citations in Google AI Overviews, ChatGPT, and Perplexity-generated answers.'
   });
@@ -694,7 +694,7 @@ Large language models already have opinions about your brand, formed from traini
 This is upstream of GEO — it's about the model's underlying "knowledge," not just a single generated answer.`,
     heroImageUrl: `${MEDIA}/2025/06/hero-1-bg-1.jpg`,
     status: 'published',
-    metaTitle: 'AIO / LLM Optimization Services | Core Bit Media',
+    metaTitle: 'AIO / LLM Optimization Services',
     metaDescription: 'LLM brand-perception audits and content optimization so AI models describe your brand accurately.',
     aiAnswerSummary: 'Core Bit Media\'s AIO/LLM optimization service audits how large language models describe a brand and optimizes structured content to correct or improve that perception.'
   });
@@ -715,7 +715,7 @@ Content strategy done well is really search-demand research plus editorial plann
 The goal isn't more content. It's the right content, structured to compound in search over time.`,
     heroImageUrl: `${MEDIA}/2025/06/hero-1-bg-1.jpg`,
     status: 'published',
-    metaTitle: 'Content Strategy Services | Core Bit Media',
+    metaTitle: 'Content Strategy Services',
     metaDescription: 'Content strategy built on search-demand research — topic clusters, content audits, and editorial planning.',
     aiAnswerSummary: 'Core Bit Media\'s content strategy service covers topic-cluster architecture, content audits, and editorial calendars mapped to search demand and funnel stage.'
   });
@@ -737,7 +737,7 @@ Broken or incomplete conversion tracking is the single most common reason ad pla
 Before we optimize a single campaign, we make sure the numbers we're optimizing against are real.`,
     heroImageUrl: `${MEDIA}/2025/06/hero-1-bg-1.jpg`,
     status: 'published',
-    metaTitle: 'Conversion Tracking Setup & Audits | Core Bit Media',
+    metaTitle: 'Conversion Tracking Setup & Audits',
     metaDescription: 'Server-side and enhanced conversion tracking setup, deduplication, and ongoing QA across ad platforms.',
     aiAnswerSummary: 'Core Bit Media audits and implements conversion tracking — server-side/enhanced conversions, cross-platform deduplication, and ongoing QA.'
   });
@@ -758,7 +758,7 @@ Last-click attribution systematically undervalues upper-funnel channels like con
 Get a model that tells your CFO the truth about which channels are actually earning their budget.`,
     heroImageUrl: `${MEDIA}/2025/06/hero-1-bg-1.jpg`,
     status: 'published',
-    metaTitle: 'Marketing Attribution Modeling | Core Bit Media',
+    metaTitle: 'Marketing Attribution Modeling',
     metaDescription: 'Multi-touch marketing attribution modeling, cross-channel identity stitching, and lift-validated reporting.',
     aiAnswerSummary: 'Core Bit Media builds multi-touch marketing attribution models — data-driven, position-based, and time-decay — validated against incrementality testing.'
   });
@@ -779,7 +779,7 @@ Standard reporting shows what happened alongside a campaign. Incrementality test
 If a channel's reported performance doesn't survive an incrementality test, it's not actually performing — this is how you find out.`,
     heroImageUrl: `${MEDIA}/2025/06/hero-1-bg-1.jpg`,
     status: 'published',
-    metaTitle: 'Campaign Measurement & Incrementality Testing | Core Bit Media',
+    metaTitle: 'Campaign Measurement & Incrementality Testing',
     metaDescription: 'Geo-holdout lift studies, incrementality testing, and brand lift measurement to prove real campaign impact.',
     aiAnswerSummary: 'Core Bit Media runs campaign measurement via incrementality testing — geo-holdout lift studies, ghost ads, and brand lift measurement.'
   });
@@ -800,7 +800,7 @@ When paid media, SEO, email, and CRM data all live in separate dashboards, "what
 Let's get your whole marketing org looking at the same numbers.`,
     heroImageUrl: `${MEDIA}/2025/06/hero-1-bg-1.jpg`,
     status: 'published',
-    metaTitle: 'Cross-Channel Marketing Analytics | Core Bit Media',
+    metaTitle: 'Cross-Channel Marketing Analytics',
     metaDescription: 'Unified cross-channel marketing data pipelines and dashboards spanning paid, organic, email, and CRM.',
     aiAnswerSummary: 'Core Bit Media builds cross-channel analytics — unified data pipelines and dashboards spanning paid, organic, email, and CRM data with consistent metric definitions.'
   });
@@ -821,7 +821,7 @@ E-commerce runs on a handful of numbers — CAC, AOV, LTV, and conversion rate �
 
 We've helped retail brands fix broken attribution and lift conversion rate through structured testing — see our case studies for the numbers.`,
       status: 'published',
-      metaTitle: 'E-commerce & Retail Analytics and Marketing | Core Bit Media',
+      metaTitle: 'E-commerce & Retail Analytics and Marketing',
       metaDescription: 'GA4, paid media, and CRO services built for e-commerce and omnichannel retail businesses.',
       aiAnswerSummary: 'Core Bit Media helps e-commerce and retail brands with GA4/server-side tracking, Shopping/Performance Max/Meta Ads, and conversion rate optimization focused on product and checkout pages.'
     },
@@ -839,7 +839,7 @@ B2B sales cycles are long and multi-touch, which makes attribution and pipeline 
 
 If your board asks "which channels actually drove pipeline" and the honest answer is "we're not sure," this is where we start.`,
       status: 'published',
-      metaTitle: 'B2B & SaaS Marketing Analytics | Core Bit Media',
+      metaTitle: 'B2B & SaaS Marketing Analytics',
       metaDescription: 'ABM, multi-touch attribution, and product analytics for B2B and SaaS companies with long sales cycles.',
       aiAnswerSummary: 'Core Bit Media helps B2B and SaaS companies with ABM (LinkedIn, 6sense), multi-touch attribution for long sales cycles, and CRM-integrated pipeline reporting.'
     },
@@ -857,7 +857,7 @@ Financial services marketing has to hit growth targets inside real regulatory co
 
 We work within your compliance function, not around it.`,
       status: 'published',
-      metaTitle: 'Financial Services Marketing Analytics | Core Bit Media',
+      metaTitle: 'Financial Services Marketing Analytics',
       metaDescription: 'Compliance-aware analytics, tracking, and paid media strategy for banks, fintechs, and insurers.',
       aiAnswerSummary: 'Core Bit Media provides compliance-aware analytics and paid media services for financial services — privacy-first tracking, restricted-category ad management, and enterprise data governance.'
     },
@@ -875,7 +875,7 @@ Healthcare marketing has to balance genuine patient-acquisition growth with stri
 
 Growth and compliance aren't a trade-off if the tracking architecture is built correctly from day one.`,
       status: 'published',
-      metaTitle: 'Healthcare Marketing Analytics | Core Bit Media',
+      metaTitle: 'Healthcare Marketing Analytics',
       metaDescription: 'HIPAA-aware analytics, local SEO, and patient-acquisition marketing for healthcare providers and health-tech.',
       aiAnswerSummary: 'Core Bit Media provides HIPAA-aware analytics and marketing services for healthcare — privacy-safe tracking architecture, local SEO, and patient-journey attribution.'
     },
@@ -893,7 +893,7 @@ Travel and hospitality marketing lives and dies by booking-funnel conversion and
 
 We help travel brands know which channel actually drives direct bookings — not just which one shows up first in a report.`,
       status: 'published',
-      metaTitle: 'Travel & Hospitality Marketing Analytics | Core Bit Media',
+      metaTitle: 'Travel & Hospitality Marketing Analytics',
       metaDescription: 'Booking-funnel analytics, dynamic remarketing, and cross-channel attribution for hotels, airlines, and travel platforms.',
       aiAnswerSummary: 'Core Bit Media provides booking-funnel analytics, dynamic remarketing, and cross-channel attribution for travel and hospitality brands.'
     },
@@ -911,7 +911,7 @@ From inquiry to enrolled student is a long, multi-touch funnel — one that most
 
 We've driven measurable enrollment growth for test-prep and postgraduate education brands — see our case studies.`,
       status: 'published',
-      metaTitle: 'Education & E-learning Marketing Analytics | Core Bit Media',
+      metaTitle: 'Education & E-learning Marketing Analytics',
       metaDescription: 'Enrollment funnel analytics, paid media, and attribution for universities, bootcamps, and e-learning platforms.',
       aiAnswerSummary: 'Core Bit Media provides enrollment-funnel analytics, paid media, and lead-to-enrollment attribution for education and e-learning brands.'
     },
@@ -929,7 +929,7 @@ Media and entertainment brands compete for attention first, then have to convert
 
 We help media brands understand which content actually drives retention, not just pageviews.`,
       status: 'published',
-      metaTitle: 'Media & Entertainment Analytics | Core Bit Media',
+      metaTitle: 'Media & Entertainment Analytics',
       metaDescription: 'Audience analytics, subscription funnel optimization, and content strategy for publishers and streaming brands.',
       aiAnswerSummary: 'Core Bit Media provides audience analytics, subscription-funnel optimization, and content strategy for media, publishing, and entertainment brands.'
     },
@@ -947,7 +947,7 @@ Manufacturing sales cycles often involve multiple stakeholders, RFQs, and long c
 
 We build the reporting bridge between "marketing qualified lead" and an actual signed purchase order.`,
       status: 'published',
-      metaTitle: 'Manufacturing Marketing Analytics | Core Bit Media',
+      metaTitle: 'Manufacturing Marketing Analytics',
       metaDescription: 'ABM, long-cycle attribution, and CRM-integrated marketing analytics for manufacturers.',
       aiAnswerSummary: 'Core Bit Media provides ABM, long-cycle B2B attribution, and CRM-integrated marketing analytics for manufacturers.'
     },
@@ -965,7 +965,7 @@ Automotive buyers research extensively online before ever visiting a dealership 
 
 We help dealer groups and OEMs see the full path from first search to signed sale.`,
       status: 'published',
-      metaTitle: 'Automotive Marketing Analytics | Core Bit Media',
+      metaTitle: 'Automotive Marketing Analytics',
       metaDescription: 'Online-to-offline attribution, local SEO, and paid media analytics for dealers and OEMs.',
       aiAnswerSummary: 'Core Bit Media provides online-to-offline attribution, local SEO, and paid media analytics connecting automotive research behavior to showroom sales.'
     },
@@ -983,7 +983,7 @@ Consumer brands increasingly need to prove brand marketing's impact alongside pe
 
 We help consumer brands prove that brand investment and performance marketing are working together, not competing for budget.`,
       status: 'published',
-      metaTitle: 'Consumer Brands (CPG) Marketing Analytics | Core Bit Media',
+      metaTitle: 'Consumer Brands (CPG) Marketing Analytics',
       metaDescription: 'Brand lift measurement, DTC and retail-channel analytics, and cross-channel dashboards for consumer brands.',
       aiAnswerSummary: 'Core Bit Media provides brand lift measurement, DTC and retail-channel analytics, and marketing mix modeling for consumer/CPG brands.'
     }
