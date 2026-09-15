@@ -212,18 +212,17 @@ Key Benefits:
 
   // ---- Analytics & TMS sub-services ----
   {
-    slug: 'ga4-implementation-migration',
-    title: 'GA4 Implementation & Migration',
+    slug: 'ga4-implementation',
+    title: 'GA4 Implementation',
     parentSlug: 'analytics-tms',
     heroFrom: 'analytics-tms',
-    shortDescription: 'Full Google Analytics 4 setup, event tracking, and Universal Analytics migration done right the first time.',
+    shortDescription: 'Full Google Analytics 4 setup and custom event tracking, done right the first time.',
     body: `Why GA4 Implementation Matters
-Google Analytics 4 works fundamentally differently from Universal Analytics — event-based instead of session-based. A rushed or incomplete migration means broken funnels, missing conversions, and decisions made on bad data.
+Google Analytics 4 is event-based, not session-based — a fundamentally different model from how analytics used to work. A rushed or incomplete setup means broken funnels, missing conversions, and decisions made on bad data.
 
 What We Offer:
 - GA4 Property Setup — clean, properly structured GA4 properties built for your specific business model
 - Custom Event & Conversion Tracking — form fills, purchases, calls, and other key actions tracked accurately from day one
-- Universal Analytics to GA4 Migration — historical context preserved and a validated GA4 setup replacing the deprecated UA property
 - E-commerce Tracking — enhanced e-commerce implementation for accurate revenue and product-level reporting
 - GA4 + Google Ads Integration — conversion data flowing correctly for accurate campaign optimization
 - Data Validation & QA — side-by-side checks to confirm GA4 numbers are trustworthy before you rely on them
@@ -232,14 +231,14 @@ Key Benefits:
 - Accurate Data From Day One — avoid months of decisions made on broken tracking
 - Future-Proof Setup — built the way Google's current and next-generation analytics platform expects
 - Full-Funnel Visibility — see the complete customer journey, not just sessions`,
-    metaTitle: 'GA4 Implementation & Migration Services',
-    metaDescription: 'Google Analytics 4 setup, custom event tracking, and Universal Analytics migration — accurate data from day one.',
+    metaTitle: 'GA4 Implementation Services',
+    metaDescription: 'Google Analytics 4 setup, custom event tracking, and data validation — accurate data from day one.',
     focusKeyword: 'GA4 implementation services',
-    aiAnswerSummary: 'Core Bit Media implements Google Analytics 4 properties, custom event and conversion tracking, and migrates businesses from Universal Analytics to GA4 with full data validation.',
+    aiAnswerSummary: 'Core Bit Media implements Google Analytics 4 properties with custom event and conversion tracking, e-commerce tracking, and full data validation.',
     faqSchema: [
-      { question: 'Do I need to migrate to GA4?', answer: 'Yes — Google sunset Universal Analytics, so GA4 is now the only supported Google Analytics platform; any business still relying on old UA data needs a validated GA4 setup.' },
+      { question: 'What does a GA4 implementation include?', answer: 'A GA4 implementation from Core Bit Media includes property setup, custom event and conversion tracking, e-commerce tracking, Google Ads integration, and full data validation and QA.' },
       { question: 'How long does a GA4 implementation take?', answer: 'A standard GA4 implementation with custom event tracking typically takes 1-3 weeks depending on site complexity and the number of conversion events being tracked.' },
-      { question: 'Will GA4 migration lose my historical data?', answer: "GA4 doesn't automatically import Universal Analytics history, but Core Bit Media exports and preserves your historical UA data separately so you retain year-over-year context." }
+      { question: 'How do I know my GA4 data is accurate?', answer: 'Core Bit Media runs side-by-side data validation and QA checks against your defined events and conversions before you rely on the numbers for decisions.' }
     ]
   },
   {

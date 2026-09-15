@@ -59,9 +59,9 @@ const STEPS = ['Discover & Validate', 'Design & Build', 'Launch & Promote', 'Mea
 // are the two starred/differentiating groups, plus the two biggest
 // Marketing pillars) — replaces the old 4 pillar slugs from the pre-navGroup
 // taxonomy, which no longer exist (see backend/src/scripts/restructureNav.js).
-const IMPACT_SERVICE_ORDER = ['ga4-implementation-migration', 'adobe-target', 'paid-media', 'seo-organic-growth'];
+const IMPACT_SERVICE_ORDER = ['ga4-implementation', 'adobe-target', 'paid-media', 'seo-organic-growth'];
 const IMPACT_SERVICE_FALLBACK = [
-  { slug: 'ga4-implementation-migration', title: 'Analytics', shortDescription: 'GA4, Adobe Analytics, AEP/CJA, and tag management done right.', iconUrl: 'https://www.corebitmedia.com/media/uploads/2025/07/dm-img.jpg' },
+  { slug: 'ga4-implementation', title: 'Analytics', shortDescription: 'GA4, Adobe Analytics, AEP/CJA, and tag management done right.', iconUrl: 'https://www.corebitmedia.com/media/uploads/2025/07/dm-img.jpg' },
   { slug: 'adobe-target', title: 'Experimentation & CRO', shortDescription: 'A/B testing and personalization that actually moves conversion.', iconUrl: 'https://www.corebitmedia.com/media/uploads/2025/06/s2.jpg' },
   { slug: 'paid-media', title: 'Paid Media', shortDescription: 'Full-funnel paid advertising across every platform that matters.', iconUrl: 'https://www.corebitmedia.com/media/uploads/2025/06/s4.jpg' },
   { slug: 'seo-organic-growth', title: 'SEO & Organic Growth', shortDescription: 'SEO plus AEO/GEO to stay visible as search itself changes.', iconUrl: 'https://www.corebitmedia.com/media/uploads/2025/06/s3.jpg' }

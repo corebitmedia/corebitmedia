@@ -70,7 +70,7 @@ Ready to build a real experimentation program?`,
   // ---- Step 1: reassign navGroup (+ a couple of title tweaks) on services
   // that are kept from the old taxonomy, before anything gets deleted ----
   const keepAndMove = [
-    ['ga4-implementation-migration', { navGroup: 'analytics', parentId: analyticsPillar.id }],
+    ['ga4-implementation', { navGroup: 'analytics', parentId: analyticsPillar.id }],
     ['adobe-analytics-services', { navGroup: 'analytics', parentId: analyticsPillar.id }],
     ['google-tag-manager', { navGroup: 'analytics', parentId: analyticsPillar.id }],
     ['adobe-launch', { navGroup: 'analytics', parentId: analyticsPillar.id, title: 'Adobe Launch / Tags' }],
