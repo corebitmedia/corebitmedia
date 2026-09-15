@@ -7,7 +7,7 @@
   "redirects": [
     { "source": "/blogs", "destination": "/resources", "permanent": true },
     { "source": "/blogs/:path*", "destination": "/resources/:path*", "permanent": true },
-    { "source": "/services/ga4-implementation-migration", "destination": "/services/ga4-implementation", "permanent": true },
-    { "source": "/services/ga4-implementation-migration/:path*", "destination": "/services/ga4-implementation/:path*", "permanent": true }
+    { "source": "/services/ga4-implementation-migration", "destination": "/services/ga4-implementation/", "permanent": true },
+    { "source": "/services/ga4-implementation-migration/", "destination": "/services/ga4-implementation/", "permanent": true }
   ]
 }
