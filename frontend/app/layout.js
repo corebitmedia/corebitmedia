@@ -1,31 +1,43 @@
 import './globals.css';
 import SiteChrome from '../components/SiteChrome';
 import ThemeLoader from '../components/ThemeLoader';
-import { getServices, getIndustries } from '../lib/api';
+import { getServices, getIndustries, getSiteSettings } from '../lib/api';
 
-export const metadata = {
-  metadataBase: new URL('https://www.corebitmedia.com'),
-  title: {
-    default: 'Core Bit Media | Where Marketing Meets Intelligence',
-    template: '%s | Core Bit Media'
-  },
-  description: 'Strategic digital marketing for scalable growth — SEO, PPC, analytics, dashboards, and CRM marketing from Core Bit Media.',
-  alternates: {
-    canonical: '/'
-  },
-  icons: {
-    icon: 'https://www.corebitmedia.com/media/uploads/2025/06/favicon.png',
-    apple: 'https://www.corebitmedia.com/media/uploads/2025/06/favicon.png'
-  },
-  openGraph: {
-    siteName: 'Core Bit Media',
-    type: 'website',
-    images: ['https://www.corebitmedia.com/media/uploads/2025/07/logo-corebitmedia1-2.png']
-  },
-  twitter: {
-    card: 'summary_large_image'
-  }
-};
+// Search Console's HTML-tag ownership check fetches the page's raw HTML —
+// it does not execute JavaScript — so the verification meta tag has to be
+// baked into the static export at build time, not injected client-side
+// like the theme colors/GTM/CMP scripts ThemeLoader.jsx handles (those are
+// fine client-side; nothing external re-fetches raw HTML looking for them).
+// This means changing the code in the admin panel's Scripts page requires a
+// fresh Vercel build to actually take effect, unlike everything else there.
+export async function generateMetadata() {
+  const settings = await getSiteSettings();
+
+  return {
+    metadataBase: new URL('https://www.corebitmedia.com'),
+    title: {
+      default: 'Core Bit Media | Where Marketing Meets Intelligence',
+      template: '%s | Core Bit Media'
+    },
+    description: 'Strategic digital marketing for scalable growth — SEO, PPC, analytics, dashboards, and CRM marketing from Core Bit Media.',
+    alternates: {
+      canonical: '/'
+    },
+    icons: {
+      icon: 'https://www.corebitmedia.com/media/uploads/2025/06/favicon.png',
+      apple: 'https://www.corebitmedia.com/media/uploads/2025/06/favicon.png'
+    },
+    openGraph: {
+      siteName: 'Core Bit Media',
+      type: 'website',
+      images: ['https://www.corebitmedia.com/media/uploads/2025/07/logo-corebitmedia1-2.png']
+    },
+    twitter: {
+      card: 'summary_large_image'
+    },
+    ...(settings?.googleSiteVerification ? { verification: { google: settings.googleSiteVerification } } : {})
+  };
+}
 
 const orgSchema = {
   '@context': 'https://schema.org',

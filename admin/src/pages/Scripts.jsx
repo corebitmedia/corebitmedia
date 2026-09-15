@@ -42,7 +42,7 @@ export default function Scripts() {
         </button>
       </div>
       <p style={{ color: '#64748b', fontSize: 14, marginTop: -12, marginBottom: 20 }}>
-        Applies live on the public site within a few seconds — no redeploy needed.
+        Most of these apply live on the public site within a few seconds — no redeploy needed.
       </p>
 
       <div className="card" style={{ maxWidth: 640 }}>
@@ -61,6 +61,11 @@ export default function Scripts() {
           value={settings.googleSiteVerification || ''}
           onChange={(e) => update('googleSiteVerification', e.target.value)}
         />
+        <p style={{ color: '#92400e', fontSize: 13, marginTop: 6 }}>
+          Unlike everything else on this page, Search Console checks the page's raw HTML, not
+          what JavaScript renders — this needs a fresh site build to actually appear. Save here,
+          then ask for a rebuild before clicking "Verify" in Search Console.
+        </p>
 
         <label style={{ marginTop: 16 }}>CMP / Cookie Consent Script</label>
         <textarea

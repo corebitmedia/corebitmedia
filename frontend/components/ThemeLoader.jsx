@@ -57,13 +57,6 @@ export default function ThemeLoader() {
         if (scriptsInjected) return; // static export navigations don't remount this component, but guard anyway
         scriptsInjected = true;
 
-        if (theme.googleSiteVerification) {
-          const meta = document.createElement('meta');
-          meta.name = 'google-site-verification';
-          meta.content = theme.googleSiteVerification;
-          document.head.appendChild(meta);
-        }
-
         if (theme.gtmContainerId) {
           const id = theme.gtmContainerId;
           const gtmScript = document.createElement('script');

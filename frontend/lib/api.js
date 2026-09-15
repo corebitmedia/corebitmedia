@@ -32,3 +32,4 @@ export const getIndustry = (slug) => safeFetch(`/api/industries/${slug}`, null);
 export const getTestimonials = () => safeFetch('/api/testimonials', []);
 export const getFaqs = (scope) => safeFetch(`/api/faqs${scope ? `?scope=${scope}` : ''}`, []);
 export const getPage = (slug) => safeFetch(`/api/pages/${slug}`, null);
+export const getSiteSettings = () => safeFetch('/api/settings/theme', null);
