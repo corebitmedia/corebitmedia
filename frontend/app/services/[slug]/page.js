@@ -1,9 +1,10 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getServices, getService } from '../../../lib/api';
+import { getServices, getService, getCaseStudies, getBlogPosts } from '../../../lib/api';
 import StructuredData from '../../../components/StructuredData';
 import HeroAnimation from '../../../components/HeroAnimation';
 import FaqSection from '../../../components/FaqSection';
+import Carousel from '../../../components/Carousel';
 
 // Required for static export: tells Next.js which service pages to pre-render at build time
 export async function generateStaticParams() {
@@ -221,6 +222,77 @@ function ContentSection({ section, index }) {
   );
 }
 
+// Case studies carry a `category` field using the exact same
+// analytics/experimentation/marketing enum as a service's `navGroup` (see
+// backend/src/models/CaseStudy.js) — a real, pre-existing relation, so a
+// service's relevant case studies are simply those sharing its navGroup.
+function relatedCaseStudiesFor(service, caseStudies) {
+  return caseStudies.filter((cs) => cs.category && cs.category === service.navGroup);
+}
+
+// Blog posts have no direct foreign key to a service, only free-text
+// `tags` (e.g. "GA4", "Looker Studio", "AEO") authored per post — matched
+// here against the service's own title as a whole word, so a tag only
+// counts when it names something the title actually says, not an
+// incidental substring (e.g. "AI" inside "Paid Media"). A couple of
+// tags are common acronyms ("GTM", "LLMO") that don't literally appear
+// in the fuller service title they describe ("Google Tag Manager",
+// "AIO/LLM Optimization"), so those two get a plain-word alias.
+const TAG_ALIASES = { gtm: 'tag manager', llmo: 'llm' };
+
+function hasWordMatch(haystack, needle) {
+  const escaped = needle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp(`\\b${escaped}\\b`, 'i').test(haystack);
+}
+
+function relatedPostsFor(service, posts) {
+  return posts.filter((post) =>
+    (post.tags || []).some((tag) => hasWordMatch(service.title, TAG_ALIASES[tag.toLowerCase()] || tag))
+  );
+}
+
+// Same 15-word excerpt convention as the case-study listing page
+// (app/case-study/page.js) — the CaseStudy model has no separate excerpt
+// field, so this trims the challenge text client-side instead.
+function excerptOf(text, wordLimit = 15) {
+  if (!text) return '';
+  const words = text.trim().split(/\s+/);
+  if (words.length <= wordLimit) return text;
+  return `${words.slice(0, wordLimit).join(' ')}…`;
+}
+
+function RelatedCaseStudyCard({ cs }) {
+  return (
+    <Link href={`/case-study/${cs.slug}/`} className="card" style={{ padding: 0, overflow: 'hidden' }}>
+      {cs.coverImageUrl && (
+        <img src={cs.coverImageUrl} alt={cs.title} loading="lazy" style={{ width: '100%', height: 180, objectFit: 'cover' }} />
+      )}
+      <div style={{ padding: 20 }}>
+        <h3 style={{ fontSize: 17 }}>{cs.title}</h3>
+        <p className="text-muted" style={{ marginTop: 8, fontSize: 14 }}>{excerptOf(cs.challenge)}</p>
+      </div>
+    </Link>
+  );
+}
+
+function RelatedPostCard({ post }) {
+  return (
+    <Link href={`/resources/${post.slug}/`} className="card" style={{ padding: 15 }}>
+      {post.coverImageUrl && (
+        <img
+          src={post.coverImageUrl}
+          alt={post.title}
+          loading="lazy"
+          style={{ width: '100%', aspectRatio: '1 / 0.48', objectFit: 'cover', borderRadius: 8, marginBottom: 16 }}
+        />
+      )}
+      <h3 style={{ fontSize: 17, color: '#232358' }}>{post.title}</h3>
+      {post.excerpt && <p className="text-muted" style={{ marginTop: 8, fontSize: 14 }}>{post.excerpt}</p>}
+      <span style={{ marginTop: 10, display: 'inline-block', fontSize: 14.5, fontWeight: 600, color: '#232358' }}>Read More &raquo;</span>
+    </Link>
+  );
+}
+
 function ServiceLinkCard({ item }) {
   return (
     <Link href={`/services/${item.slug}/`} className="card hoverable" style={{ display: 'block' }}>
@@ -233,10 +305,17 @@ function ServiceLinkCard({ item }) {
 }
 
 export default async function ServiceDetailPage({ params }) {
-  const [service, allServices] = await Promise.all([getService(params.slug), getServices()]);
+  const [service, allServices, caseStudies, blogPosts] = await Promise.all([
+    getService(params.slug),
+    getServices(),
+    getCaseStudies(),
+    getBlogPosts()
+  ]);
   if (!service) notFound();
 
   const sections = groupIntoSections(parseBody(service.body));
+  const relatedCaseStudies = relatedCaseStudiesFor(service, caseStudies);
+  const relatedPosts = relatedPostsFor(service, blogPosts);
 
   // Sub-services nest under a pillar service (e.g. GA4 Implementation under
   // Analytics) — a pillar page shows its own children; a leaf page shows its
@@ -326,6 +405,32 @@ export default async function ServiceDetailPage({ params }) {
             <div className={`grid ${gridClassFor(relatedGrid.length)}`}>
               {relatedGrid.map((item) => <ServiceLinkCard key={item.slug} item={item} />)}
             </div>
+          </div>
+        </section>
+      )}
+
+      {relatedCaseStudies.length > 0 && (
+        <section className={`section${(sections.length + (relatedGrid.length > 0 ? 1 : 0)) % 2 === 1 ? ' section-alt' : ''}`}>
+          <div className="container" style={{ textAlign: 'center', maxWidth: 720, margin: '0 auto 36px' }}>
+            <h2>Related Case Studies</h2>
+          </div>
+          <div className="container">
+            <Carousel>
+              {relatedCaseStudies.map((cs) => <RelatedCaseStudyCard key={cs.slug} cs={cs} />)}
+            </Carousel>
+          </div>
+        </section>
+      )}
+
+      {relatedPosts.length > 0 && (
+        <section className={`section${(sections.length + (relatedGrid.length > 0 ? 1 : 0) + (relatedCaseStudies.length > 0 ? 1 : 0)) % 2 === 1 ? ' section-alt' : ''}`}>
+          <div className="container" style={{ textAlign: 'center', maxWidth: 720, margin: '0 auto 36px' }}>
+            <h2>Related Resources</h2>
+          </div>
+          <div className="container">
+            <Carousel>
+              {relatedPosts.map((post) => <RelatedPostCard key={post.slug} post={post} />)}
+            </Carousel>
           </div>
         </section>
       )}
