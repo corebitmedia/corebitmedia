@@ -12,10 +12,11 @@ import Theme from './pages/Theme.jsx';
 import Scripts from './pages/Scripts.jsx';
 import Customers from './pages/Customers.jsx';
 
-function ProtectedRoute({ children }) {
+function ProtectedRoute({ children, roles }) {
   const { user, loading } = useAuth();
   if (loading) return null;
   if (!user) return <Navigate to="/login" replace />;
+  if (roles && !roles.includes(user.role)) return <Navigate to="/" replace />;
   return children;
 }
 
@@ -28,11 +29,11 @@ export default function App() {
       <Route path="/content/:type/:id" element={<ProtectedRoute><ContentEditor /></ProtectedRoute>} />
       <Route path="/testimonials" element={<ProtectedRoute><Testimonials /></ProtectedRoute>} />
       <Route path="/faqs" element={<ProtectedRoute><Faqs /></ProtectedRoute>} />
-      <Route path="/leads" element={<ProtectedRoute><Leads /></ProtectedRoute>} />
+      <Route path="/leads" element={<ProtectedRoute roles={['admin']}><Leads /></ProtectedRoute>} />
       <Route path="/theme" element={<ProtectedRoute><Theme /></ProtectedRoute>} />
       <Route path="/scripts" element={<ProtectedRoute><Scripts /></ProtectedRoute>} />
-      <Route path="/customers" element={<ProtectedRoute><Customers /></ProtectedRoute>} />
-      <Route path="/users" element={<ProtectedRoute><Users /></ProtectedRoute>} />
+      <Route path="/customers" element={<ProtectedRoute roles={['admin']}><Customers /></ProtectedRoute>} />
+      <Route path="/users" element={<ProtectedRoute roles={['admin']}><Users /></ProtectedRoute>} />
     </Routes>
   );
 }

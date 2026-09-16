@@ -93,7 +93,7 @@ router.post('/contact', async (req, res) => {
   // Fire-and-forget: never let email delivery delay or fail the API response.
   sendContactNotification(submission).catch(() => {});
 });
-router.get('/admin/contact-submissions', requireAuth, requireRole('admin', 'editor'), async (req, res) => {
+router.get('/admin/contact-submissions', requireAuth, requireRole('admin'), async (req, res) => {
   const items = await ContactSubmission.findAll({ order: [['createdAt', 'DESC']] });
   res.json(items);
 });

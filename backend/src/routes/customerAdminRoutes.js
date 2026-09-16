@@ -8,7 +8,7 @@ const { requireAuth, requireRole } = require('../middleware/auth');
 // requireRole), never a customer token.
 const router = express.Router();
 
-router.get('/', requireAuth, requireRole('admin', 'editor'), async (req, res) => {
+router.get('/', requireAuth, requireRole('admin'), async (req, res) => {
   // Only passwordHash is actually sensitive — googleId needs to stay in
   // the query (just not in the response body below) so signupMethod can
   // tell the two apart; excluding it from `attributes` here made it
@@ -31,7 +31,7 @@ router.get('/', requireAuth, requireRole('admin', 'editor'), async (req, res) =>
   })));
 });
 
-router.get('/:id', requireAuth, requireRole('admin', 'editor'), async (req, res) => {
+router.get('/:id', requireAuth, requireRole('admin'), async (req, res) => {
   const customer = await Customer.findByPk(req.params.id, {
     attributes: { exclude: ['passwordHash', 'googleId'] }
   });

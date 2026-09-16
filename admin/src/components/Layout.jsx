@@ -23,8 +23,8 @@ export default function Layout({ children }) {
           <NavLink to="/content/industries">Industries</NavLink>
           <NavLink to="/testimonials">Testimonials</NavLink>
           <NavLink to="/faqs">FAQs</NavLink>
-          <NavLink to="/leads">Contact Leads</NavLink>
-          <NavLink to="/customers">Dashboard Signups</NavLink>
+          {user?.role === 'admin' && <NavLink to="/leads">Contact Leads</NavLink>}
+          {user?.role === 'admin' && <NavLink to="/customers">Dashboard Signups</NavLink>}
           <NavLink to="/theme">Theme</NavLink>
           <NavLink to="/scripts">Scripts & Tracking</NavLink>
           {user?.role === 'admin' && <NavLink to="/users">Team / Users</NavLink>}
