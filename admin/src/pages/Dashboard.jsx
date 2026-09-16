@@ -6,8 +6,6 @@ import { useAuth } from '../lib/AuthContext.jsx';
 export default function Dashboard() {
   const { user } = useAuth();
   const [counts, setCounts] = useState({});
-  const [webCreativeStatus, setWebCreativeStatus] = useState('idle'); // idle | running | done | error
-  const [webCreativeResult, setWebCreativeResult] = useState(null);
 
   useEffect(() => {
     Object.entries(CONTENT_TYPES).forEach(([key, cfg]) => {
@@ -22,20 +20,6 @@ export default function Dashboard() {
       });
     });
   }, []);
-
-  async function runWebCreativeAdd() {
-    if (!window.confirm('This adds a new "Web & Creative" pillar (Web Development, UI/UX Design, App Development, Content Writing) under the Marketing mega-menu. Run it now?')) return;
-    setWebCreativeStatus('running');
-    setWebCreativeResult(null);
-    try {
-      const result = await api.post('/api/admin/add-web-creative-services');
-      setWebCreativeResult(result);
-      setWebCreativeStatus('done');
-    } catch (err) {
-      setWebCreativeResult({ error: err.message });
-      setWebCreativeStatus('error');
-    }
-  }
 
   return (
     <Layout>
@@ -64,30 +48,6 @@ export default function Dashboard() {
           <li>Editors/Admins can approve pending content from its list view.</li>
         </ul>
       </div>
-
-      {user?.role === 'admin' && (
-        <div className="card" style={{ marginTop: 24, borderLeft: '3px solid #92400e' }}>
-          <h4 style={{ marginTop: 0 }}>Maintenance — add Web & Creative services</h4>
-          <p style={{ color: '#475569', fontSize: 14 }}>
-            Adds a new "Web & Creative" pillar under the Marketing mega-menu with 4 new services:
-            Web Development, UI/UX Design, App Development, and Content Writing. Safe to re-run
-            (upserts by slug). Remove this card once you've run it successfully.
-          </p>
-          <button onClick={runWebCreativeAdd} disabled={webCreativeStatus === 'running'}>
-            {webCreativeStatus === 'running' ? 'Running…' : 'Run Web & Creative Add'}
-          </button>
-          {webCreativeStatus === 'done' && (
-            <div style={{ marginTop: 12 }}>
-              <strong style={{ color: '#15803d' }}>Done.</strong> {webCreativeResult?.summary}
-            </div>
-          )}
-          {webCreativeStatus === 'error' && (
-            <div style={{ marginTop: 12 }}>
-              <strong style={{ color: '#dc2626' }}>Failed:</strong> {webCreativeResult?.error}
-            </div>
-          )}
-        </div>
-      )}
     </Layout>
   );
 }
