@@ -16,6 +16,7 @@ const customerAuthRoutes = require('./routes/customerAuthRoutes');
 const customerAdminRoutes = require('./routes/customerAdminRoutes');
 const { pagesRouter, servicesRouter, blogRouter, caseStudiesRouter, industriesRouter } = require('./routes/contentRoutes');
 const { startCredsSweeper } = require('./services/mcpGa4Client');
+const adminMaintenanceRoutes = require('./routes/adminMaintenanceRoutes'); // TEMPORARY — see that file's header comment
 
 const app = express();
 
@@ -65,6 +66,7 @@ app.use('/api/services', servicesRouter);
 app.use('/api/blog', blogRouter);
 app.use('/api/case-studies', caseStudiesRouter);
 app.use('/api/industries', industriesRouter);
+app.use('/api/admin', adminMaintenanceRoutes); // TEMPORARY — see that file's header comment
 app.use('/api/settings', settingsRoutes);
 app.use('/api/ga4', ga4Routes); // self-serve GA4 OAuth + shareable client reports
 app.use('/api/customers', customerAuthRoutes); // dashboard account signup/login
@@ -90,13 +92,20 @@ const PORT = process.env.PORT || 4000;
 // case so it's safe to run on every boot.
 async function ensureColumnsExist() {
   const statements = [
-    "ALTER TABLE `services` ADD COLUMN `navGroup` ENUM('analytics','experimentation','marketing') NULL",
-    "ALTER TABLE `case_studies` ADD COLUMN `category` ENUM('analytics','experimentation','marketing') NULL"
+    "ALTER TABLE `services` ADD COLUMN `navGroup` ENUM('analytics','experimentation','marketing','webdev') NULL",
+    "ALTER TABLE `case_studies` ADD COLUMN `category` ENUM('analytics','experimentation','marketing') NULL",
+    // Same "sync() never alters existing columns" issue as above, but
+    // widening an existing ENUM's allowed values (added 'webdev' as its own
+    // top-level Services mega-menu column) needs MODIFY, not ADD COLUMN —
+    // MySQL has no "add enum value" statement. Re-running MODIFY COLUMN
+    // with the same final definition on every boot is a safe no-op once
+    // applied, so no need to swallow a specific error code here.
+    "ALTER TABLE `services` MODIFY COLUMN `navGroup` ENUM('analytics','experimentation','marketing','webdev') NULL"
   ];
   for (const sql of statements) {
     try {
       await sequelize.query(sql);
-      console.log('[migrate] Added column:', sql);
+      console.log('[migrate] Applied:', sql);
     } catch (err) {
       if (err.original?.code !== 'ER_DUP_FIELDNAME') {
         console.error('[migrate] Failed:', sql, err.message);

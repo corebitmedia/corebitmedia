@@ -14,7 +14,7 @@ const Service = sequelize.define('Service', {
   // Which top-level nav column this service (pillar or child) belongs
   // under — orthogonal to parentId, which only says "which pillar within
   // this group". Nullable for anything not yet assigned to the new nav.
-  navGroup: { type: DataTypes.ENUM('analytics', 'experimentation', 'marketing'), allowNull: true },
+  navGroup: { type: DataTypes.ENUM('analytics', 'experimentation', 'marketing', 'webdev'), allowNull: true },
   sortOrder: { type: DataTypes.INTEGER, defaultValue: 0 },
   status: { type: DataTypes.ENUM('draft', 'pending_review', 'published'), defaultValue: 'draft' },
   ...seoFields()

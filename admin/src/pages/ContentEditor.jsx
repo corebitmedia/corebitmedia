@@ -20,7 +20,8 @@ const NAV_GROUPS = [
   { value: '', label: 'None' },
   { value: 'analytics', label: 'Analytics' },
   { value: 'experimentation', label: 'Experimentation & CRO' },
-  { value: 'marketing', label: 'Marketing' }
+  { value: 'marketing', label: 'Marketing' },
+  { value: 'webdev', label: 'Web & App Development' }
 ];
 
 export default function ContentEditor() {

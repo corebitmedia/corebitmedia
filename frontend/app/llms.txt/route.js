@@ -3,7 +3,8 @@ import { getServices, getBlogPosts, getCaseStudies, getIndustries } from '../../
 const NAV_GROUP_LABELS = {
   analytics: 'Analytics',
   experimentation: 'Experimentation & CRO',
-  marketing: 'Marketing'
+  marketing: 'Marketing',
+  webdev: 'Web & App Development'
 };
 
 // llms.txt (see llmstxt.org) — a plain-text index of the site written for
@@ -26,8 +27,9 @@ export async function GET() {
     '> Core Bit Media is a digital marketing agency built around Analytics (GA4, Adobe ' +
       'Analytics, AEP/CJA, tag management) and Experimentation & CRO (Adobe Target, VWO, ' +
       'A/B testing), plus Marketing services spanning paid media, SEO/AEO/GEO organic ' +
-      'growth, and measurement & attribution. 10+ years delivering measurable, ' +
-      'data-driven growth for startups through mid-market businesses.',
+      'growth, and measurement & attribution, and Web & App Development (websites, UI/UX ' +
+      'design, apps, and content writing). 10+ years delivering measurable, data-driven ' +
+      'growth for startups through mid-market businesses.',
   ];
 
   for (const [group, label] of Object.entries(NAV_GROUP_LABELS)) {

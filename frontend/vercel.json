@@ -10,6 +10,8 @@
     { "source": "/blogs/:path*", "destination": "/resources/:path*", "permanent": true },
     { "source": "/blogs/:path+/", "destination": "/resources/:path+/", "permanent": true },
     { "source": "/services/ga4-implementation-migration", "destination": "/services/ga4-implementation/", "permanent": true },
-    { "source": "/services/ga4-implementation-migration/", "destination": "/services/ga4-implementation/", "permanent": true }
+    { "source": "/services/ga4-implementation-migration/", "destination": "/services/ga4-implementation/", "permanent": true },
+    { "source": "/services/web-creative", "destination": "/services/web-app-development/", "permanent": true },
+    { "source": "/services/web-creative/", "destination": "/services/web-app-development/", "permanent": true }
   ]
 }

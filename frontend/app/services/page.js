@@ -97,7 +97,8 @@ const STATS = [
 const NAV_GROUPS = [
   { key: 'analytics', label: 'Analytics' },
   { key: 'experimentation', label: 'Experimentation & CRO' },
-  { key: 'marketing', label: 'Marketing' }
+  { key: 'marketing', label: 'Marketing' },
+  { key: 'webdev', label: 'Web & App Development' }
 ];
 
 export default async function ServicesPage() {

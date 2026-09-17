@@ -4,15 +4,16 @@ import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import ContactForm from './ContactForm';
 
-// Every service carries a `navGroup` ('analytics'|'experimentation'|'marketing')
-// deciding which column of the "Services" mega-menu it belongs under, and
-// `parentId` deciding which pillar within that group (see
-// backend/src/models/Service.js). Analytics and Experimentation each have
-// exactly one real pillar page ("Analytics", "Experimentation & CRO") with
-// every service in the group as its child — that pillar page is what the
-// column header links to. Marketing has 3 such pillars (Paid Media, SEO &
-// Organic Growth, Measurement & Attribution), so its column nests one more
-// level: pillar sub-headers, each with their own children underneath.
+// Every service carries a `navGroup`
+// ('analytics'|'experimentation'|'marketing'|'webdev') deciding which
+// column of the "Services" mega-menu it belongs under, and `parentId`
+// deciding which pillar within that group (see backend/src/models/Service.js).
+// Analytics, Experimentation, and Web & App Development each have exactly
+// one real pillar page with every service in the group as its child — that
+// pillar page is what the column header links to. Marketing has 3 such
+// pillars (Paid Media, SEO & Organic Growth, Measurement & Attribution), so
+// its column nests one more level: pillar sub-headers, each with their own
+// children underneath.
 function groupByNavGroup(services, navGroup) {
   const inGroup = services.filter((s) => s.navGroup === navGroup);
   const pillars = inGroup.filter((s) => !s.parentId);
@@ -46,17 +47,17 @@ function FlatMenu({ items, hrefFor }) {
   );
 }
 
-// The combined "Services" mega-menu: 3 columns — Analytics, Experimentation
-// & CRO, Marketing. The first two are single pillars, so their column is
-// just the header + a flat list of children. Marketing has 3 pillars, so
-// its column nests a sub-header + child list per pillar.
-function ServicesMegaMenu({ analyticsPillar, experimentationPillar, marketingPillars }) {
-  const hasContent = analyticsPillar || experimentationPillar || marketingPillars.length > 0;
+// The combined "Services" mega-menu: 4 columns — Analytics, Experimentation
+// & CRO, Marketing, Web & App Development. Three are single pillars, so
+// their column is just the header + a flat list of children. Marketing has
+// 3 pillars, so its column nests a sub-header + child list per pillar.
+function ServicesMegaMenu({ analyticsPillar, experimentationPillar, marketingPillars, webDevPillar }) {
+  const hasContent = analyticsPillar || experimentationPillar || marketingPillars.length > 0 || webDevPillar;
   if (!hasContent) return null;
 
   return (
     <div style={dropdownWrapStyle}>
-      <div className="container" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 28, padding: '32px 24px', maxHeight: '70vh', overflowY: 'auto' }}>
+      <div className="container" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 28, padding: '32px 24px', maxHeight: '70vh', overflowY: 'auto' }}>
         <div>
           <Link href="/services/analytics/" style={columnHeaderStyle}>Analytics</Link>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -89,6 +90,15 @@ function ServicesMegaMenu({ analyticsPillar, experimentationPillar, marketingPil
                   ))}
                 </div>
               </div>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <Link href={webDevPillar ? `/services/${webDevPillar.slug}/` : '/services/'} style={columnHeaderStyle}>Web & App Development</Link>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {(webDevPillar?.children || []).map((child) => (
+              <Link key={child.slug} href={`/services/${child.slug}/`} style={childLinkStyle}>{child.title}</Link>
             ))}
           </div>
         </div>
@@ -150,6 +160,7 @@ export default function Header({ services = [], industries = [] }) {
   const analyticsPillar = useMemo(() => groupByNavGroup(services, 'analytics')[0] || null, [services]);
   const experimentationPillar = useMemo(() => groupByNavGroup(services, 'experimentation')[0] || null, [services]);
   const marketingPillars = useMemo(() => groupByNavGroup(services, 'marketing'), [services]);
+  const webDevPillar = useMemo(() => groupByNavGroup(services, 'webdev')[0] || null, [services]);
 
   function openAudit(e) {
     e.preventDefault();
@@ -181,7 +192,7 @@ export default function Header({ services = [], industries = [] }) {
               <span style={{ fontSize: 10, marginTop: 2 }}>▾</span>
             </Link>
             {openMenu === 'services' && (
-              <ServicesMegaMenu analyticsPillar={analyticsPillar} experimentationPillar={experimentationPillar} marketingPillars={marketingPillars} />
+              <ServicesMegaMenu analyticsPillar={analyticsPillar} experimentationPillar={experimentationPillar} marketingPillars={marketingPillars} webDevPillar={webDevPillar} />
             )}
           </div>
 
@@ -291,6 +302,21 @@ export default function Header({ services = [], industries = [] }) {
                         </div>
                       </div>
                     ))}
+                  </div>
+                )}
+
+                {webDevPillar && (
+                  <div>
+                    <Link href={`/services/${webDevPillar.slug}/`} onClick={() => setMobileOpen(false)} style={{ padding: '10px 8px', fontSize: 14, fontWeight: 600, color: 'var(--text)', display: 'block' }}>
+                      Web & App Development
+                    </Link>
+                    <div style={{ paddingLeft: 16, display: 'flex', flexDirection: 'column' }}>
+                      {webDevPillar.children.map((child) => (
+                        <Link key={child.slug} href={`/services/${child.slug}/`} onClick={() => setMobileOpen(false)} style={{ padding: '8px', fontSize: 13, color: 'var(--muted)' }}>
+                          {child.title}
+                        </Link>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>

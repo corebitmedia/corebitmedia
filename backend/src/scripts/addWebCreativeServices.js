@@ -1,11 +1,16 @@
 require('dotenv').config();
 const { sequelize, Service } = require('../models');
 
-// One-off content addition: a 4th Marketing pillar — Web & Creative — for
-// services that don't fit the Analytics/Experimentation taxonomy at all
-// (web dev, design, apps, content). Mirrors restructureNav.js's pattern
-// (idempotent upsert by slug, real written content, no stub pages) but kept
-// as its own script since it's an addition, not part of that migration.
+// One-off content addition: "Web & App Development", a top-level Services
+// mega-menu column of its own (peer of Analytics/Experimentation/Marketing,
+// via navGroup: 'webdev' — see Service.js) for services that don't fit the
+// Analytics/Experimentation/Marketing taxonomy at all (web dev, design,
+// apps, content). Originally landed as a 4th pillar nested inside Marketing
+// and was promoted to its own top-level group by promoteWebCreativeGroup.js
+// — this file reflects that final state so a fresh install seeds it
+// correctly the first time. Mirrors restructureNav.js's pattern (idempotent
+// upsert by slug, real written content, no stub pages) but kept as its own
+// script since it's an addition, not part of that migration.
 const MEDIA = 'https://www.corebitmedia.com/media/uploads';
 
 async function upsertService(data) {
@@ -18,26 +23,26 @@ async function addWebCreativeServices() {
   await sequelize.sync();
 
   const pillar = await upsertService({
-    slug: 'web-creative',
-    title: 'Web & Creative',
-    navGroup: 'marketing',
+    slug: 'web-app-development',
+    title: 'Web & App Development',
+    navGroup: 'webdev',
     parentId: null,
     shortDescription: 'Websites, apps, design, and content — the creative and technical foundation every marketing campaign needs to actually convert.',
     body: `Marketing Needs Something to Point To
-The best campaigns still fail if they land on a slow website, a confusing app, or a page nobody designed with conversion in mind. We build the web presence, product experience, and content your marketing actually depends on:
+The best campaigns still fail if they land on a slow website, a confusing app, or a page nobody designed with conversion in mind. We build the web presence, product experience, and content your marketing depends on:
 - Web Development — fast, conversion-ready websites and landing pages
 - UI/UX Design — interfaces people can actually use, backed by research
 - App Development — mobile and web apps built to scale
 - Content Writing — copy that ranks, reads well, and converts
 
-This is the foundation every other Marketing service on this site drives traffic toward — it has to hold up once people arrive.
+This is the foundation your marketing campaigns point traffic toward — it has to hold up once people arrive.
 
 Ready to build something worth marketing?`,
     heroImageUrl: `${MEDIA}/2025/06/hero-1-bg-1.jpg`,
     status: 'published',
-    metaTitle: 'Web & Creative Services',
+    metaTitle: 'Web & App Development Services',
     metaDescription: 'Web development, UI/UX design, app development, and content writing — the creative and technical foundation for marketing that converts.',
-    aiAnswerSummary: "Core Bit Media's Web & Creative practice covers web development, UI/UX design, app development, and content writing — the technical and creative foundation supporting every marketing campaign."
+    aiAnswerSummary: "Core Bit Media's Web & App Development practice covers web development, UI/UX design, app development, and content writing — the technical and creative foundation supporting every marketing campaign."
   });
 
   const children = [
@@ -162,14 +167,14 @@ Key Benefits:
   for (const def of children) {
     await upsertService({
       ...def,
-      navGroup: 'marketing',
+      navGroup: 'webdev',
       parentId: pillar.id,
       heroImageUrl: `${MEDIA}/2025/06/hero-1-bg-1.jpg`,
       status: 'published'
     });
   }
 
-  return `Web & Creative pillar + ${children.length} services created/updated.`;
+  return `Web & App Development pillar + ${children.length} services created/updated.`;
 }
 
 if (require.main === module) {
