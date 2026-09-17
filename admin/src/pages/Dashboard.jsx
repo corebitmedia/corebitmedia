@@ -6,8 +6,6 @@ import { useAuth } from '../lib/AuthContext.jsx';
 export default function Dashboard() {
   const { user } = useAuth();
   const [counts, setCounts] = useState({});
-  const [promoteStatus, setPromoteStatus] = useState('idle'); // idle | running | done | error
-  const [promoteResult, setPromoteResult] = useState(null);
 
   useEffect(() => {
     Object.entries(CONTENT_TYPES).forEach(([key, cfg]) => {
@@ -22,20 +20,6 @@ export default function Dashboard() {
       });
     });
   }, []);
-
-  async function runPromote() {
-    if (!window.confirm('This moves "Web & Creative" out of the Marketing mega-menu column into its own top-level "Web & App Development" column, and renames its URL to /services/web-app-development/. Run it now?')) return;
-    setPromoteStatus('running');
-    setPromoteResult(null);
-    try {
-      const result = await api.post('/api/admin/promote-web-creative-group');
-      setPromoteResult(result);
-      setPromoteStatus('done');
-    } catch (err) {
-      setPromoteResult({ error: err.message });
-      setPromoteStatus('error');
-    }
-  }
 
   return (
     <Layout>
@@ -64,32 +48,6 @@ export default function Dashboard() {
           <li>Editors/Admins can approve pending content from its list view.</li>
         </ul>
       </div>
-
-      {user?.role === 'admin' && (
-        <div className="card" style={{ marginTop: 24, borderLeft: '3px solid #92400e' }}>
-          <h4 style={{ marginTop: 0 }}>Maintenance — promote Web & App Development</h4>
-          <p style={{ color: '#475569', fontSize: 14 }}>
-            Moves the Web Development / UI/UX Design / App Development / Content Writing pillar
-            out from under Marketing into its own top-level "Web & App Development" mega-menu
-            column, and renames its URL from /services/web-creative/ to
-            /services/web-app-development/ (a redirect is already in place). Safe to re-run.
-            Remove this card once you've run it successfully.
-          </p>
-          <button onClick={runPromote} disabled={promoteStatus === 'running'}>
-            {promoteStatus === 'running' ? 'Running…' : 'Run Promote Web & App Dev'}
-          </button>
-          {promoteStatus === 'done' && (
-            <div style={{ marginTop: 12 }}>
-              <strong style={{ color: '#15803d' }}>Done.</strong> {promoteResult?.summary}
-            </div>
-          )}
-          {promoteStatus === 'error' && (
-            <div style={{ marginTop: 12 }}>
-              <strong style={{ color: '#dc2626' }}>Failed:</strong> {promoteResult?.error}
-            </div>
-          )}
-        </div>
-      )}
     </Layout>
   );
 }
