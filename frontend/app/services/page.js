@@ -94,24 +94,59 @@ const STATS = [
   { value: 4251, title: 'Lines of Perfect Code', sub: 'Peaceful Code', bg: '#E8EDF0' }
 ];
 
-const NAV_GROUPS = [
-  { key: 'analytics', label: 'Analytics' },
-  { key: 'experimentation', label: 'Experimentation & CRO' },
-  { key: 'marketing', label: 'Marketing' },
-  { key: 'webdev', label: 'Web & App Development' }
+// The site's 6 top-level service categories (see Header.jsx and
+// backend/src/scripts/restructureSixCategories.js) — same navGroup keys,
+// each with its own accent color for the numbered category bar below,
+// echoing the client's own service-catalog infographic (colored bar per
+// category, icon cards underneath) in this site's own palette instead of
+// literally copying its colors.
+const CATEGORIES = [
+  { key: 'analytics', number: 1, label: 'Analytics Services', color: '#0fb5ae' },
+  { key: 'reporting', number: 2, label: 'Reporting & Data Solutions', color: '#2563eb' },
+  { key: 'conversion-tracking', number: 3, label: 'Conversion & Tracking Solutions', color: '#8e2680' },
+  { key: 'paid-advertising', number: 4, label: 'Paid Advertising Services', color: '#d97706' },
+  { key: 'seo-aeo', number: 5, label: 'SEO & AI-Driven Discovery Services', color: '#059669' },
+  { key: 'webdev', number: 6, label: 'Web & App Development', color: '#0b1f3a' }
 ];
+
+// A category's "items" are every child service under any of its pillars —
+// most categories have one pillar, but Analytics nests a second
+// (Experimentation & CRO) rather than losing it in the restructure, so this
+// collects children across however many pillars a category actually has.
+function itemsForCategory(services, key) {
+  const inGroup = services.filter((s) => s.navGroup === key);
+  const pillarIds = new Set(inGroup.filter((s) => !s.parentId).map((p) => p.id));
+  return inGroup.filter((s) => pillarIds.has(s.parentId));
+}
+
+function CategoryBar({ number, label, color }) {
+  return (
+    <div style={{ background: color, borderRadius: 10, padding: '14px 20px', display: 'flex', alignItems: 'center', gap: 14, marginBottom: 24 }}>
+      <span style={{ background: 'rgba(255,255,255,0.25)', color: 'white', width: 30, height: 30, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 700, flexShrink: 0 }}>
+        {number}
+      </span>
+      <h3 style={{ color: 'white', margin: 0, fontSize: 18 }}>{label}</h3>
+    </div>
+  );
+}
+
+function CategoryItemCard({ item, color }) {
+  return (
+    <Link href={`/services/${item.slug}/`} className="card hoverable" style={{ padding: 20, display: 'block' }}>
+      <div style={{ width: 36, height: 36, borderRadius: 10, background: `${color}1A`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <path d="M5 13l4 4L19 7" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </div>
+      <h3 style={{ fontSize: 15.5 }}>{item.title}</h3>
+      <p className="text-muted" style={{ fontSize: 13, marginTop: 6 }}>{item.shortDescription}</p>
+    </Link>
+  );
+}
 
 export default async function ServicesPage() {
   const [services, faqs] = await Promise.all([getServices(), getFaqs('global')]);
-  // Every service now carries a navGroup (see Header.jsx) — this overview
-  // page groups by that instead of the old single flat pillar list, so it
-  // stays a coherent "all services" index even though it's no longer
-  // directly linked from the main nav (Analytics/Experimentation/Marketing
-  // are their own top-level items now).
-  const groups = NAV_GROUPS.map((g) => ({
-    ...g,
-    items: services.filter((s) => s.navGroup === g.key && !s.parentId)
-  })).filter((g) => g.items.length > 0);
+  const categories = CATEGORIES.map((cat) => ({ ...cat, items: itemsForCategory(services, cat.key) })).filter((c) => c.items.length > 0);
 
   return (
     <>
@@ -169,27 +204,18 @@ export default async function ServicesPage() {
 
       <section className="section section-alt">
         <div className="container" style={{ textAlign: 'center', maxWidth: 720, margin: '0 auto 48px' }}>
-          <div className="eyebrow">Tailored Solutions for Your Digital Growth</div>
-          <h2>Impact-Driven Services</h2>
+          <div className="eyebrow">Our Services & Experience</div>
+          <h2>Data. Insights. Growth.</h2>
+          <p className="text-muted" style={{ marginTop: 12 }}>
+            End-to-end analytics, tracking, reporting, and digital marketing solutions across every service we offer.
+          </p>
         </div>
-        {groups.map((g) => (
-          <div key={g.key} id={g.key} className="container" style={{ marginBottom: 40, scrollMarginTop: 96 }}>
-            <h3 style={{ marginBottom: 20 }}>{g.label}</h3>
-            <Carousel>
-              {g.items.map((s, i) => (
-                <Link
-                  key={s.slug}
-                  href={`/services/${s.slug}/`}
-                  className="service-tile-stacked"
-                  style={{ background: i % 2 === 0 ? '#F4EFF6' : '#E8EDF0' }}
-                >
-                  {s.iconUrl && <img src={s.iconUrl} alt={s.title} loading="lazy" />}
-                  <h3 style={{ fontSize: 20 }}>{s.title}</h3>
-                  <p style={{ fontSize: 14, color: '#23242C' }}>{s.shortDescription}</p>
-                  <span style={{ marginTop: 'auto', paddingTop: 12, fontSize: 13, fontWeight: 700, color: 'var(--teal)' }}>Read More &raquo;</span>
-                </Link>
-              ))}
-            </Carousel>
+        {categories.map((cat) => (
+          <div key={cat.key} id={cat.key} className="container" style={{ marginBottom: 40, scrollMarginTop: 96 }}>
+            <CategoryBar number={cat.number} label={cat.label} color={cat.color} />
+            <div className="grid grid-4">
+              {cat.items.map((item) => <CategoryItemCard key={item.slug} item={item} color={cat.color} />)}
+            </div>
           </div>
         ))}
       </section>

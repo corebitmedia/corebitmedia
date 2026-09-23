@@ -18,9 +18,11 @@ function scoreClass(score) {
 
 const NAV_GROUPS = [
   { value: '', label: 'None' },
-  { value: 'analytics', label: 'Analytics' },
-  { value: 'experimentation', label: 'Experimentation & CRO' },
-  { value: 'marketing', label: 'Marketing' },
+  { value: 'analytics', label: 'Analytics Services' },
+  { value: 'reporting', label: 'Reporting & Data Solutions' },
+  { value: 'conversion-tracking', label: 'Conversion & Tracking Solutions' },
+  { value: 'paid-advertising', label: 'Paid Advertising Services' },
+  { value: 'seo-aeo', label: 'SEO & AI-Driven Discovery Services' },
   { value: 'webdev', label: 'Web & App Development' }
 ];
 

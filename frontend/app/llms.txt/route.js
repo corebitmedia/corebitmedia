@@ -1,9 +1,11 @@
 import { getServices, getBlogPosts, getCaseStudies, getIndustries } from '../../lib/api';
 
 const NAV_GROUP_LABELS = {
-  analytics: 'Analytics',
-  experimentation: 'Experimentation & CRO',
-  marketing: 'Marketing',
+  analytics: 'Analytics Services',
+  reporting: 'Reporting & Data Solutions',
+  'conversion-tracking': 'Conversion & Tracking Solutions',
+  'paid-advertising': 'Paid Advertising Services',
+  'seo-aeo': 'SEO & AI-Driven Discovery Services',
   webdev: 'Web & App Development'
 };
 
@@ -24,12 +26,15 @@ export async function GET() {
   const lines = [
     '# Core Bit Media',
     '',
-    '> Core Bit Media is a digital marketing agency built around Analytics (GA4, Adobe ' +
-      'Analytics, AEP/CJA, tag management) and Experimentation & CRO (Adobe Target, VWO, ' +
-      'A/B testing), plus Marketing services spanning paid media, SEO/AEO/GEO organic ' +
-      'growth, and measurement & attribution, and Web & App Development (websites, UI/UX ' +
-      'design, apps, and content writing). 10+ years delivering measurable, data-driven ' +
-      'growth for startups through mid-market businesses.',
+    '> Core Bit Media is a digital marketing agency organized around 6 service ' +
+      'categories: Analytics Services (GA4, Adobe Analytics, tag management, A/B testing ' +
+      '& CRO, cookie consent & data privacy), Reporting & Data Solutions (Looker Studio, ' +
+      'BigQuery, AEP, connectors & integrations), Conversion & Tracking Solutions ' +
+      '(conversion, e-commerce & event tracking, attribution), Paid Advertising Services ' +
+      '(Google, Meta, LinkedIn, Microsoft, native ads), SEO & AI-Driven Discovery Services ' +
+      '(technical/on-page/off-page/local SEO, AEO, GEO), and Web & App Development ' +
+      '(websites, UI/UX design, apps, content writing). 10+ years delivering measurable, ' +
+      'data-driven growth for startups through mid-market businesses.',
   ];
 
   for (const [group, label] of Object.entries(NAV_GROUP_LABELS)) {

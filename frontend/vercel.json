@@ -12,6 +12,8 @@
     { "source": "/services/ga4-implementation-migration", "destination": "/services/ga4-implementation/", "permanent": true },
     { "source": "/services/ga4-implementation-migration/", "destination": "/services/ga4-implementation/", "permanent": true },
     { "source": "/services/web-creative", "destination": "/services/web-app-development/", "permanent": true },
-    { "source": "/services/web-creative/", "destination": "/services/web-app-development/", "permanent": true }
+    { "source": "/services/web-creative/", "destination": "/services/web-app-development/", "permanent": true },
+    { "source": "/services/measurement-attribution", "destination": "/services/conversion-tracking-solutions/", "permanent": true },
+    { "source": "/services/measurement-attribution/", "destination": "/services/conversion-tracking-solutions/", "permanent": true }
   ]
 }

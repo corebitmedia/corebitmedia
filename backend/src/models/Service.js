@@ -14,7 +14,19 @@ const Service = sequelize.define('Service', {
   // Which top-level nav column this service (pillar or child) belongs
   // under — orthogonal to parentId, which only says "which pillar within
   // this group". Nullable for anything not yet assigned to the new nav.
-  navGroup: { type: DataTypes.ENUM('analytics', 'experimentation', 'marketing', 'webdev'), allowNull: true },
+  // 'experimentation' and 'marketing' are retained in the enum for backward
+  // compatibility but no longer assigned to anything as of the 6-category
+  // restructure (see backend/src/scripts/restructureSixCategories.js) —
+  // Experimentation & CRO became a second pillar nested under 'analytics',
+  // and Marketing's 3 pillars (Paid Media, SEO & Organic Growth,
+  // Measurement & Attribution) were promoted to their own top-level groups.
+  navGroup: {
+    type: DataTypes.ENUM(
+      'analytics', 'experimentation', 'marketing', 'webdev',
+      'reporting', 'conversion-tracking', 'paid-advertising', 'seo-aeo'
+    ),
+    allowNull: true
+  },
   sortOrder: { type: DataTypes.INTEGER, defaultValue: 0 },
   status: { type: DataTypes.ENUM('draft', 'pending_review', 'published'), defaultValue: 'draft' },
   ...seoFields()

@@ -4,16 +4,24 @@ import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import ContactForm from './ContactForm';
 
-// Every service carries a `navGroup`
-// ('analytics'|'experimentation'|'marketing'|'webdev') deciding which
-// column of the "Services" mega-menu it belongs under, and `parentId`
+// The 6 top-level "Services" mega-menu columns, matching the business's own
+// service-catalog taxonomy exactly (see
+// backend/src/scripts/restructureSixCategories.js). Every service carries a
+// `navGroup` deciding which column it belongs under, and `parentId`
 // deciding which pillar within that group (see backend/src/models/Service.js).
-// Analytics, Experimentation, and Web & App Development each have exactly
-// one real pillar page with every service in the group as its child — that
-// pillar page is what the column header links to. Marketing has 3 such
-// pillars (Paid Media, SEO & Organic Growth, Measurement & Attribution), so
-// its column nests one more level: pillar sub-headers, each with their own
-// children underneath.
+// Every group has exactly one pillar EXCEPT 'analytics', which nests two
+// (Analytics Services + Experimentation & CRO, kept as its own real page
+// rather than merged away) — groupByNavGroup below handles both shapes
+// generically, so ServicesMegaMenu doesn't special-case any one column.
+const SERVICE_CATEGORIES = [
+  { key: 'analytics', label: 'Analytics' },
+  { key: 'reporting', label: 'Reporting & Data' },
+  { key: 'conversion-tracking', label: 'Conversion & Tracking' },
+  { key: 'paid-advertising', label: 'Paid Advertising' },
+  { key: 'seo-aeo', label: 'SEO & AI Discovery' },
+  { key: 'webdev', label: 'Web & App Dev' }
+];
+
 function groupByNavGroup(services, navGroup) {
   const inGroup = services.filter((s) => s.navGroup === navGroup);
   const pillars = inGroup.filter((s) => !s.parentId);
@@ -28,8 +36,8 @@ const dropdownWrapStyle = {
   borderTop: '1px solid var(--border)', boxShadow: '0px 12px 24px rgba(35,35,88,0.12)',
   zIndex: 60
 };
-const columnHeaderStyle = { fontSize: 15, fontWeight: 700, color: 'var(--navy)', display: 'block', marginBottom: 12 };
-const childLinkStyle = { fontSize: 13.5, color: 'var(--muted)', lineHeight: 1.4 };
+const columnHeaderStyle = { fontSize: 14.5, fontWeight: 700, color: 'var(--navy)', display: 'block', marginBottom: 12 };
+const childLinkStyle = { fontSize: 13, color: 'var(--muted)', lineHeight: 1.4 };
 
 // Industries: a single flat column of links (no pillar/children structure).
 function FlatMenu({ items, hrefFor }) {
@@ -47,41 +55,27 @@ function FlatMenu({ items, hrefFor }) {
   );
 }
 
-// The combined "Services" mega-menu: 4 columns — Analytics, Experimentation
-// & CRO, Marketing, Web & App Development. Three are single pillars, so
-// their column is just the header + a flat list of children. Marketing has
-// 3 pillars, so its column nests a sub-header + child list per pillar.
-function ServicesMegaMenu({ analyticsPillar, experimentationPillar, marketingPillars, webDevPillar }) {
-  const hasContent = analyticsPillar || experimentationPillar || marketingPillars.length > 0 || webDevPillar;
-  if (!hasContent) return null;
+// One mega-menu column. A single-pillar group (5 of the 6) shows the
+// group's own page as the header, with that pillar's children flat below —
+// same as the old Analytics/Experimentation/Web&App Dev columns. A
+// multi-pillar group (just Analytics, nesting Experimentation & CRO) shows
+// a generic header linking to the overview page, then a sub-header + child
+// list per pillar — same as the old Marketing column used to.
+function ServicesMegaMenuColumn({ group }) {
+  const isSingle = group.pillars.length === 1;
+  const headerHref = isSingle ? `/services/${group.pillars[0].slug}/` : '/services/';
 
   return (
-    <div style={dropdownWrapStyle}>
-      <div className="container" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 28, padding: '32px 24px', maxHeight: '70vh', overflowY: 'auto' }}>
-        <div>
-          <Link href="/services/analytics/" style={columnHeaderStyle}>Analytics</Link>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {(analyticsPillar?.children || []).map((child) => (
+    <div>
+      <Link href={headerHref} style={columnHeaderStyle}>{group.label}</Link>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: isSingle ? 8 : 16 }}>
+        {isSingle
+          ? (group.pillars[0]?.children || []).map((child) => (
               <Link key={child.slug} href={`/services/${child.slug}/`} style={childLinkStyle}>{child.title}</Link>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <Link href="/services/experimentation-cro/" style={columnHeaderStyle}>Experimentation & CRO</Link>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {(experimentationPillar?.children || []).map((child) => (
-              <Link key={child.slug} href={`/services/${child.slug}/`} style={childLinkStyle}>{child.title}</Link>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <Link href="/services/" style={columnHeaderStyle}>Marketing</Link>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            {marketingPillars.map((pillar) => (
+            ))
+          : group.pillars.map((pillar) => (
               <div key={pillar.slug}>
-                <Link href={`/services/${pillar.slug}/`} style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--navy)', display: 'block', marginBottom: 6 }}>
+                <Link href={`/services/${pillar.slug}/`} style={{ fontSize: 13, fontWeight: 700, color: 'var(--navy)', display: 'block', marginBottom: 6 }}>
                   {pillar.title}
                 </Link>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -91,17 +85,22 @@ function ServicesMegaMenu({ analyticsPillar, experimentationPillar, marketingPil
                 </div>
               </div>
             ))}
-          </div>
-        </div>
+      </div>
+    </div>
+  );
+}
 
-        <div>
-          <Link href={webDevPillar ? `/services/${webDevPillar.slug}/` : '/services/'} style={columnHeaderStyle}>Web & App Development</Link>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {(webDevPillar?.children || []).map((child) => (
-              <Link key={child.slug} href={`/services/${child.slug}/`} style={childLinkStyle}>{child.title}</Link>
-            ))}
-          </div>
-        </div>
+function ServicesMegaMenu({ groups }) {
+  const hasContent = groups.some((g) => g.pillars.length > 0);
+  if (!hasContent) return null;
+
+  return (
+    <div style={dropdownWrapStyle}>
+      <div
+        className="container"
+        style={{ maxWidth: 1400, display: 'grid', gridTemplateColumns: `repeat(${groups.length}, 1fr)`, gap: 20, padding: '32px 20px', maxHeight: '75vh', overflowY: 'auto' }}
+      >
+        {groups.map((group) => <ServicesMegaMenuColumn key={group.key} group={group} />)}
       </div>
       <div style={{ borderTop: '1px solid var(--border)', textAlign: 'center', padding: '14px 24px' }}>
         <Link href="/services/" style={{ fontSize: 14, fontWeight: 700, color: 'var(--teal)' }}>
@@ -157,10 +156,10 @@ export default function Header({ services = [], industries = [] }) {
   const [mobileSection, setMobileSection] = useState(null);
   const [auditOpen, setAuditOpen] = useState(false);
 
-  const analyticsPillar = useMemo(() => groupByNavGroup(services, 'analytics')[0] || null, [services]);
-  const experimentationPillar = useMemo(() => groupByNavGroup(services, 'experimentation')[0] || null, [services]);
-  const marketingPillars = useMemo(() => groupByNavGroup(services, 'marketing'), [services]);
-  const webDevPillar = useMemo(() => groupByNavGroup(services, 'webdev')[0] || null, [services]);
+  const serviceGroups = useMemo(
+    () => SERVICE_CATEGORIES.map((cat) => ({ ...cat, pillars: groupByNavGroup(services, cat.key) })),
+    [services]
+  );
 
   function openAudit(e) {
     e.preventDefault();
@@ -191,9 +190,7 @@ export default function Header({ services = [], industries = [] }) {
               Services
               <span style={{ fontSize: 10, marginTop: 2 }}>▾</span>
             </Link>
-            {openMenu === 'services' && (
-              <ServicesMegaMenu analyticsPillar={analyticsPillar} experimentationPillar={experimentationPillar} marketingPillars={marketingPillars} webDevPillar={webDevPillar} />
-            )}
+            {openMenu === 'services' && <ServicesMegaMenu groups={serviceGroups} />}
           </div>
 
           <div
@@ -255,70 +252,45 @@ export default function Header({ services = [], industries = [] }) {
                   All Services
                 </Link>
 
-                {analyticsPillar && (
-                  <div>
-                    <Link href="/services/analytics/" onClick={() => setMobileOpen(false)} style={{ padding: '10px 8px', fontSize: 14, fontWeight: 600, color: 'var(--text)', display: 'block' }}>
-                      Analytics
-                    </Link>
-                    <div style={{ paddingLeft: 16, display: 'flex', flexDirection: 'column' }}>
-                      {analyticsPillar.children.map((child) => (
-                        <Link key={child.slug} href={`/services/${child.slug}/`} onClick={() => setMobileOpen(false)} style={{ padding: '8px', fontSize: 13, color: 'var(--muted)' }}>
-                          {child.title}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {experimentationPillar && (
-                  <div>
-                    <Link href="/services/experimentation-cro/" onClick={() => setMobileOpen(false)} style={{ padding: '10px 8px', fontSize: 14, fontWeight: 600, color: 'var(--text)', display: 'block' }}>
-                      Experimentation & CRO
-                    </Link>
-                    <div style={{ paddingLeft: 16, display: 'flex', flexDirection: 'column' }}>
-                      {experimentationPillar.children.map((child) => (
-                        <Link key={child.slug} href={`/services/${child.slug}/`} onClick={() => setMobileOpen(false)} style={{ padding: '8px', fontSize: 13, color: 'var(--muted)' }}>
-                          {child.title}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {marketingPillars.length > 0 && (
-                  <div>
-                    <span style={{ padding: '10px 8px', fontSize: 14, fontWeight: 600, color: 'var(--text)', display: 'block' }}>Marketing</span>
-                    {marketingPillars.map((pillar) => (
-                      <div key={pillar.slug} style={{ paddingLeft: 16 }}>
-                        <Link href={`/services/${pillar.slug}/`} onClick={() => setMobileOpen(false)} style={{ padding: '8px', fontSize: 13.5, fontWeight: 600, color: 'var(--text)', display: 'block' }}>
-                          {pillar.title}
-                        </Link>
-                        <div style={{ paddingLeft: 16, display: 'flex', flexDirection: 'column' }}>
-                          {pillar.children.map((child) => (
-                            <Link key={child.slug} href={`/services/${child.slug}/`} onClick={() => setMobileOpen(false)} style={{ padding: '8px', fontSize: 13, color: 'var(--muted)' }}>
-                              {child.title}
-                            </Link>
+                {serviceGroups.filter((g) => g.pillars.length > 0).map((group) => {
+                  const isSingle = group.pillars.length === 1;
+                  return (
+                    <div key={group.key}>
+                      {isSingle ? (
+                        <>
+                          <Link href={`/services/${group.pillars[0].slug}/`} onClick={() => setMobileOpen(false)} style={{ padding: '10px 8px', fontSize: 14, fontWeight: 600, color: 'var(--text)', display: 'block' }}>
+                            {group.label}
+                          </Link>
+                          <div style={{ paddingLeft: 16, display: 'flex', flexDirection: 'column' }}>
+                            {group.pillars[0].children.map((child) => (
+                              <Link key={child.slug} href={`/services/${child.slug}/`} onClick={() => setMobileOpen(false)} style={{ padding: '8px', fontSize: 13, color: 'var(--muted)' }}>
+                                {child.title}
+                              </Link>
+                            ))}
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <span style={{ padding: '10px 8px', fontSize: 14, fontWeight: 600, color: 'var(--text)', display: 'block' }}>{group.label}</span>
+                          {group.pillars.map((pillar) => (
+                            <div key={pillar.slug} style={{ paddingLeft: 16 }}>
+                              <Link href={`/services/${pillar.slug}/`} onClick={() => setMobileOpen(false)} style={{ padding: '8px', fontSize: 13.5, fontWeight: 600, color: 'var(--text)', display: 'block' }}>
+                                {pillar.title}
+                              </Link>
+                              <div style={{ paddingLeft: 16, display: 'flex', flexDirection: 'column' }}>
+                                {pillar.children.map((child) => (
+                                  <Link key={child.slug} href={`/services/${child.slug}/`} onClick={() => setMobileOpen(false)} style={{ padding: '8px', fontSize: 13, color: 'var(--muted)' }}>
+                                    {child.title}
+                                  </Link>
+                                ))}
+                              </div>
+                            </div>
                           ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {webDevPillar && (
-                  <div>
-                    <Link href={`/services/${webDevPillar.slug}/`} onClick={() => setMobileOpen(false)} style={{ padding: '10px 8px', fontSize: 14, fontWeight: 600, color: 'var(--text)', display: 'block' }}>
-                      Web & App Development
-                    </Link>
-                    <div style={{ paddingLeft: 16, display: 'flex', flexDirection: 'column' }}>
-                      {webDevPillar.children.map((child) => (
-                        <Link key={child.slug} href={`/services/${child.slug}/`} onClick={() => setMobileOpen(false)} style={{ padding: '8px', fontSize: 13, color: 'var(--muted)' }}>
-                          {child.title}
-                        </Link>
-                      ))}
+                        </>
+                      )}
                     </div>
-                  </div>
-                )}
+                  );
+                })}
               </div>
             )}
           </div>
