@@ -17,6 +17,7 @@ const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
 const ZIP_URL = '/downloads/web-analytics-auditor-extension.zip';
 const LEAD_SOURCE = 'web-analytics-auditor-extension';
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const CAPTCHA_TIMEOUT_MS = 15000;
 
 const OpenContext = createContext(() => {});
 
@@ -64,7 +65,6 @@ export function ExtensionLeadProvider({ children }) {
   const [open, setOpen] = useState(false);
   const [origin, setOrigin] = useState('');
   const [wantCaptcha, setWantCaptcha] = useState(false);
-  const [captchaLoaded, setCaptchaLoaded] = useState(false);
 
   const openModal = useCallback((where) => {
     setOrigin(where || '');
@@ -80,15 +80,10 @@ export function ExtensionLeadProvider({ children }) {
     <OpenContext.Provider value={openModal}>
       {children}
       {RECAPTCHA_SITE_KEY && wantCaptcha && (
-        <Script
-          src="https://www.google.com/recaptcha/api.js?render=explicit"
-          strategy="afterInteractive"
-          onLoad={() => setCaptchaLoaded(true)}
-          onReady={() => setCaptchaLoaded(true)}
-        />
+        <Script src="https://www.google.com/recaptcha/api.js?render=explicit" strategy="afterInteractive" />
       )}
       {open && (
-        <LeadModal origin={origin} captchaLoaded={captchaLoaded} onClose={closeModal} />
+        <LeadModal origin={origin} onClose={closeModal} />
       )}
     </OpenContext.Provider>
   );
@@ -103,13 +98,14 @@ export function GetExtensionButton({ children = 'Get the extension', className =
   );
 }
 
-function LeadModal({ origin, captchaLoaded, onClose }) {
+function LeadModal({ origin, onClose }) {
   const [form, setForm] = useState({ name: '', email: '', website: '', phone: '', trap: '' });
   const [errors, setErrors] = useState({});
   const [status, setStatus] = useState('idle'); // idle | sending | done | error
   const [serverError, setServerError] = useState('');
   const [captchaMissing, setCaptchaMissing] = useState(false);
   const [captchaShown, setCaptchaShown] = useState(false);
+  const [captchaFailed, setCaptchaFailed] = useState(false);
 
   const dialogRef = useRef(null);
   const captchaBoxRef = useRef(null);
@@ -141,29 +137,31 @@ function LeadModal({ origin, captchaLoaded, onClose }) {
     };
   }, [onClose]);
 
-  // Render the reCAPTCHA widget into this modal instance once the script is ready.
-  // api.js defines grecaptcha.ready() first and grecaptcha.render() a moment later, so wait via ready()
-  // instead of checking once (a single check can run too early and the widget would never appear).
+  // Render the reCAPTCHA widget into this modal instance as soon as grecaptcha exists.
+  // This deliberately does NOT rely on <Script onLoad>: on corebitmedia.com that callback never fired in
+  // production (the script still loaded and worked), so the widget never appeared. Polling for the global
+  // is independent of how the script tag was injected. api.js defines grecaptcha.ready() before render(),
+  // so the actual render goes through ready().
   useEffect(() => {
-    if (!RECAPTCHA_SITE_KEY || !captchaLoaded || status === 'done') return;
+    if (!RECAPTCHA_SITE_KEY) return;
     let cancelled = false;
+    let requested = false;
     function render() {
       if (cancelled || !captchaBoxRef.current || captchaWidget.current !== null) return;
       captchaWidget.current = window.grecaptcha.render(captchaBoxRef.current, { sitekey: RECAPTCHA_SITE_KEY });
       setCaptchaShown(true);
     }
-    let poll = null;
-    if (window.grecaptcha?.ready) {
-      window.grecaptcha.ready(render);
-    } else {
-      poll = setInterval(() => {
-        if (!window.grecaptcha?.ready) return;
-        clearInterval(poll);
+    const startedAt = Date.now();
+    const poll = setInterval(() => {
+      if (!requested && window.grecaptcha?.ready) {
+        requested = true;
         window.grecaptcha.ready(render);
-      }, 200);
-    }
-    return () => { cancelled = true; if (poll) clearInterval(poll); };
-  }, [captchaLoaded, status]);
+      }
+      if (captchaWidget.current !== null) clearInterval(poll);
+      else if (Date.now() - startedAt > CAPTCHA_TIMEOUT_MS) { clearInterval(poll); setCaptchaFailed(true); }
+    }, 150);
+    return () => { cancelled = true; clearInterval(poll); };
+  }, []);
 
   const set = (key) => (e) => {
     setForm((f) => ({ ...f, [key]: e.target.value }));
@@ -279,7 +277,13 @@ function LeadModal({ origin, captchaLoaded, onClose }) {
 
             {RECAPTCHA_SITE_KEY && (
               <div className="waa-captcha-wrap">
-                {!captchaShown && <p className="waa-fine waa-captcha-wait">Loading security check…</p>}
+                {!captchaShown && (
+                  <p className={captchaFailed ? 'waa-err waa-captcha-wait' : 'waa-fine waa-captcha-wait'}>
+                    {captchaFailed
+                      ? 'The security check could not load. Please refresh the page, or email sales@corebitmedia.com and we will send the extension.'
+                      : 'Loading security check…'}
+                  </p>
+                )}
                 <div ref={captchaBoxRef} className="waa-captcha" />
               </div>
             )}
