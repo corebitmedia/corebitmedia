@@ -141,10 +141,26 @@ function LeadModal({ origin, captchaLoaded, onClose }) {
   }, [onClose]);
 
   // Render the reCAPTCHA widget into this modal instance once the script is ready.
+  // api.js defines grecaptcha.ready() first and grecaptcha.render() a moment later, so wait via ready()
+  // instead of checking once (a single check can run too early and the widget would never appear).
   useEffect(() => {
     if (!RECAPTCHA_SITE_KEY || !captchaLoaded || status === 'done') return;
-    if (!captchaBoxRef.current || captchaWidget.current !== null || !window.grecaptcha?.render) return;
-    captchaWidget.current = window.grecaptcha.render(captchaBoxRef.current, { sitekey: RECAPTCHA_SITE_KEY });
+    let cancelled = false;
+    function render() {
+      if (cancelled || !captchaBoxRef.current || captchaWidget.current !== null) return;
+      captchaWidget.current = window.grecaptcha.render(captchaBoxRef.current, { sitekey: RECAPTCHA_SITE_KEY });
+    }
+    let poll = null;
+    if (window.grecaptcha?.ready) {
+      window.grecaptcha.ready(render);
+    } else {
+      poll = setInterval(() => {
+        if (!window.grecaptcha?.ready) return;
+        clearInterval(poll);
+        window.grecaptcha.ready(render);
+      }, 200);
+    }
+    return () => { cancelled = true; if (poll) clearInterval(poll); };
   }, [captchaLoaded, status]);
 
   const set = (key) => (e) => {
