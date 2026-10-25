@@ -82,7 +82,7 @@ export function ExtensionLeadProvider({ children }) {
       {RECAPTCHA_SITE_KEY && wantCaptcha && (
         <Script
           src="https://www.google.com/recaptcha/api.js?render=explicit"
-          strategy="lazyOnload"
+          strategy="afterInteractive"
           onLoad={() => setCaptchaLoaded(true)}
           onReady={() => setCaptchaLoaded(true)}
         />
@@ -109,6 +109,7 @@ function LeadModal({ origin, captchaLoaded, onClose }) {
   const [status, setStatus] = useState('idle'); // idle | sending | done | error
   const [serverError, setServerError] = useState('');
   const [captchaMissing, setCaptchaMissing] = useState(false);
+  const [captchaShown, setCaptchaShown] = useState(false);
 
   const dialogRef = useRef(null);
   const captchaBoxRef = useRef(null);
@@ -149,6 +150,7 @@ function LeadModal({ origin, captchaLoaded, onClose }) {
     function render() {
       if (cancelled || !captchaBoxRef.current || captchaWidget.current !== null) return;
       captchaWidget.current = window.grecaptcha.render(captchaBoxRef.current, { sitekey: RECAPTCHA_SITE_KEY });
+      setCaptchaShown(true);
     }
     let poll = null;
     if (window.grecaptcha?.ready) {
@@ -275,7 +277,12 @@ function LeadModal({ origin, captchaLoaded, onClose }) {
               <input id="waa-trap" name="company_url" tabIndex={-1} autoComplete="off" value={form.trap} onChange={set('trap')} />
             </div>
 
-            {RECAPTCHA_SITE_KEY && <div ref={captchaBoxRef} className="waa-captcha" />}
+            {RECAPTCHA_SITE_KEY && (
+              <div className="waa-captcha-wrap">
+                {!captchaShown && <p className="waa-fine waa-captcha-wait">Loading security check…</p>}
+                <div ref={captchaBoxRef} className="waa-captcha" />
+              </div>
+            )}
             {captchaMissing && <p className="waa-err" role="alert">Please complete the reCAPTCHA check.</p>}
 
             <button type="submit" className="btn btn-lg waa-submit" disabled={status === 'sending'}>
