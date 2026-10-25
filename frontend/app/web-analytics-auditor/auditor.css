@@ -1,0 +1,119 @@
+/* Styles for /web-analytics-auditor. Everything is prefixed .waa- so nothing leaks into other pages. */
+
+/* ---- hero */
+.waa-hero { color: white; padding: 64px 0 72px; }
+.waa-hero-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 48px; align-items: center; }
+.waa-lede { font-size: 18px; color: rgba(255, 255, 255, 0.85); margin: 18px 0 26px; max-width: 54ch; }
+.waa-cta-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.waa-btn-light { background: white; color: var(--navy); box-shadow: none; }
+.waa-btn-light:hover { background: #eef2f7; color: var(--navy); }
+.waa-ticks { list-style: none; margin-top: 26px; display: grid; gap: 8px; font-size: 15px; }
+.waa-ticks li { position: relative; padding-left: 28px; }
+.waa-ticks li::before {
+  content: '✓'; position: absolute; left: 0; top: 2px; width: 20px; height: 20px; border-radius: 50%;
+  background: var(--teal); color: var(--navy); font-size: 12px; font-weight: 800;
+  display: grid; place-items: center; line-height: 1;
+}
+
+/* ---- sample report (illustrative) */
+.waa-mock { margin: 0; background: #fff; color: var(--text); border-radius: 16px; overflow: hidden; width: 100%; max-width: 460px; justify-self: end; box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.5); }
+.waa-mock-bar { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: #f0f2f8; border-bottom: 1px solid var(--border); font-size: 12px; font-weight: 600; color: var(--muted); }
+.waa-dots { display: flex; gap: 6px; }
+.waa-dots i { width: 10px; height: 10px; border-radius: 50%; background: #cbd5e1; display: block; }
+.waa-mock-body { padding: 6px 16px 14px; background: var(--bg-alt); font-size: 14px; }
+.waa-mock figcaption { text-align: center; font-size: 11.5px; color: var(--muted); margin-top: 8px; }
+.waa-rep-head { display: flex; align-items: center; gap: 14px; padding: 12px 0 10px; }
+.waa-ring { width: 84px; height: 84px; flex: none; }
+.waa-ring-track { fill: none; stroke: #e6e9f2; stroke-width: 7; }
+.waa-ring-fill { fill: none; stroke: #b86e00; stroke-width: 7; stroke-linecap: round; }
+.waa-ring-score { font-size: 22px; font-weight: 700; fill: var(--text); }
+.waa-ring-grade { font-size: 8px; fill: var(--muted); }
+.waa-host { font-weight: 650; font-size: 16px; }
+.waa-sub { color: var(--muted); font-size: 12px; }
+.waa-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.waa-chip { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 99px; }
+.waa-chip-crit { background: #fde8ec; color: #d92d4b; }
+.waa-chip-warn { background: #fff1d6; color: #b86e00; }
+.waa-chip-pass { background: #dff5e6; color: #15803d; }
+.waa-tool { background: white; border: 1px solid var(--border); border-left: 3px solid #15803d; border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; }
+.waa-badge { font-size: 10.5px; font-weight: 700; padding: 1px 7px; border-radius: 99px; text-transform: uppercase; letter-spacing: 0.03em; margin-left: 4px; }
+.waa-badge-ok { background: #dff5e6; color: #15803d; }
+.waa-badge-warn { background: #fff1d6; color: #b86e00; }
+.waa-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; }
+.waa-id { font: 12px ui-monospace, Consolas, monospace; background: #f0f2f8; border: 1px solid var(--border); border-radius: 6px; padding: 1px 7px; }
+.waa-ev { font-size: 11.5px; font-weight: 600; background: #e3f6f5; color: var(--teal-dark); border-radius: 6px; padding: 1px 7px; }
+.waa-finding { background: white; border: 1px solid var(--border); border-left: 3px solid #b86e00; border-radius: 10px; padding: 10px 12px; }
+.waa-finding p { margin-top: 6px; color: var(--muted); font-size: 13px; }
+.waa-finding b { color: var(--text); }
+.waa-sev { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: #b86e00; }
+
+/* ---- sections */
+.waa-strip { background: var(--navy); color: #d8e3f0; }
+.waa-strip .container { padding-top: 26px; padding-bottom: 26px; font-size: 17px; max-width: 940px; }
+.waa-strip strong { color: white; }
+.waa-section-lede { font-size: 18px; margin-top: 12px; max-width: 60ch; }
+.waa-ico { width: 42px; height: 42px; border-radius: 11px; display: grid; place-items: center; color: white; font-size: 20px; font-weight: 700; }
+
+.waa-how { list-style: none; margin-top: 32px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.waa-how li { display: flex; gap: 16px; align-items: flex-start; }
+.waa-how h3 { margin-bottom: 6px; }
+.waa-num { flex: none; width: 40px; height: 40px; border-radius: 50%; background: var(--navy); color: white; font-weight: 700; display: grid; place-items: center; }
+
+.waa-checks { list-style: none; margin-top: 24px; display: grid; gap: 10px; }
+.waa-checks li { display: flex; gap: 12px; align-items: baseline; padding: 10px 14px; background: var(--bg-alt); border-radius: 10px; font-size: 15.5px; }
+.waa-checks .waa-sev { flex: none; min-width: 62px; }
+.waa-sev-critical { color: #d92d4b; } .waa-sev-warning { color: #b86e00; }
+.waa-sev-info { color: #2563eb; } .waa-sev-pass { color: #15803d; }
+.waa-checks code, .section code, .waa-modal code { font: 0.88em ui-monospace, Consolas, monospace; background: #eef1f6; padding: 1px 6px; border-radius: 5px; }
+.waa-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+.waa-pills span { font-size: 13.5px; padding: 4px 11px; border-radius: 99px; background: #f0f2f8; border: 1px solid var(--border); }
+.waa-pills .waa-more { background: #e3f6f5; border-color: transparent; color: var(--teal-dark); font-weight: 650; }
+
+.waa-install { list-style: none; counter-reset: waa; display: grid; gap: 12px; }
+.waa-install li { counter-increment: waa; position: relative; padding: 14px 16px 14px 56px; background: var(--bg-alt); border-radius: 12px; font-size: 15.5px; }
+.waa-install li::before { content: counter(waa); position: absolute; left: 14px; top: 13px; width: 28px; height: 28px; border-radius: 50%; background: var(--teal); color: var(--navy); font-weight: 800; display: grid; place-items: center; font-size: 14px; }
+
+.waa-faq { background: white; border: 1px solid var(--border); border-radius: 12px; margin-top: 12px; }
+.waa-faq summary { cursor: pointer; padding: 16px 20px; font-weight: 650; color: var(--navy); list-style: none; display: flex; justify-content: space-between; gap: 12px; }
+.waa-faq summary::-webkit-details-marker { display: none; }
+.waa-faq summary::after { content: '+'; font-size: 22px; line-height: 1; color: var(--teal-dark); }
+.waa-faq[open] summary::after { content: '–'; }
+.waa-faq p { padding: 0 20px 18px; }
+
+.waa-band { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 28px; }
+.waa-legal { margin-top: 36px; font-size: 12px; color: rgba(255, 255, 255, 0.6); }
+
+/* ---- lead modal */
+.waa-backdrop { position: fixed; inset: 0; z-index: 1000; background: rgba(11, 31, 58, 0.6); display: flex; align-items: flex-start; justify-content: center; padding: 24px 16px; overflow-y: auto; }
+.waa-modal { position: relative; background: white; border-radius: 16px; width: 100%; max-width: 460px; margin: auto; padding: 32px 28px 26px; box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.5); }
+.waa-modal h2 { font-size: 24px; }
+.waa-close { position: absolute; top: 10px; right: 12px; width: 36px; height: 36px; border: none; background: none; font-size: 28px; line-height: 1; color: var(--muted); cursor: pointer; border-radius: 8px; }
+.waa-close:hover { background: #f0f2f8; color: var(--navy); }
+.waa-field { margin-bottom: 14px; }
+.waa-field label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+.waa-field input { width: 100%; padding: 11px 12px; border: 1px solid var(--border); border-radius: 8px; font: inherit; color: var(--text); }
+.waa-field input:focus-visible { outline: 2px solid var(--teal); outline-offset: 1px; border-color: var(--teal); }
+.waa-field input[aria-invalid='true'] { border-color: #dc2626; }
+.waa-err { color: #dc2626; font-size: 13px; margin-top: 6px; }
+.waa-trap { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.waa-captcha { margin: 4px 0 14px; min-height: 78px; }
+.waa-submit { width: 100%; justify-content: center; margin-top: 6px; }
+.waa-fine { color: var(--muted); font-size: 12px; margin-top: 14px; }
+.waa-link { color: var(--teal-dark); text-decoration: underline; }
+.waa-done { text-align: center; }
+.waa-done .waa-steps { text-align: left; margin: 16px 0 14px 20px; display: grid; gap: 8px; font-size: 14.5px; }
+.waa-check { width: 52px; height: 52px; margin: 0 auto 14px; border-radius: 50%; background: var(--teal); color: var(--navy); font-size: 26px; font-weight: 800; display: grid; place-items: center; }
+.waa-small { font-size: 13px; margin: 0 0 18px; }
+
+/* ---- responsive */
+@media (max-width: 900px) {
+  .waa-hero-grid { grid-template-columns: 1fr; gap: 36px; }
+  .waa-mock { justify-self: center; }
+  .waa-how { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .waa-hero { padding: 40px 0 48px; }
+  .waa-checks li { flex-direction: column; gap: 4px; }
+  .waa-cta-row .btn { width: 100%; justify-content: center; }
+  .waa-modal { padding: 28px 18px 22px; }
+}
